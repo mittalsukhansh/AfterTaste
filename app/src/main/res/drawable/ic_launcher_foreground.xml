@@ -5,53 +5,130 @@
     android:viewportWidth="108"
     android:viewportHeight="108">
 
-    <!-- Coffee Steam Smoke Effect -->
+    <!-- 1. "aftertaste" Brush Script Title (Centered in Safe Zone) -->
+    <!-- 'a' -->
     <path
-        android:fillColor="#00000000"
-        android:pathData="M52,58 C55,54 49,50 53,44 C56,39 52,36 54,30"
+        android:fillColor="#2A1810"
+        android:pathData="M24,40 C22,37 26,35 28,38 C28,42 26,44 24,40 M28,36 L28,43"
         android:strokeWidth="2.2"
-        android:strokeColor="#A88B74"
+        android:strokeColor="#2A1810"
+        android:strokeLineCap="round"/>
+
+    <!-- 'f' -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M33,32 C33,28 31,28 31,46 M29,36 L34,36"
+        android:strokeWidth="2.5"
+        android:strokeColor="#2A1810"
+        android:strokeLineCap="round"/>
+
+    <!-- 't' -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M38,30 L38,43 C38,45 40,44 41,42 M35,36 L41,36"
+        android:strokeWidth="2.5"
+        android:strokeColor="#2A1810"
+        android:strokeLineCap="round"/>
+
+    <!-- 'e' -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M43,40 C43,37 47,36 46,39 C44,41 43,42 47,43"
+        android:strokeWidth="2.2"
+        android:strokeColor="#2A1810"
+        android:strokeLineCap="round"/>
+
+    <!-- 'r' -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M50,37 L50,43 M50,38 C51,36 53,36 54,38"
+        android:strokeWidth="2.2"
+        android:strokeColor="#2A1810"
+        android:strokeLineCap="round"/>
+
+    <!-- 't' (middle 't' with steam trailing down) -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M58,28 L58,43 C58,45 59,44 61,42 M55,35 L62,35"
+        android:strokeWidth="2.6"
+        android:strokeColor="#2A1810"
+        android:strokeLineCap="round"/>
+
+    <!-- 'a' -->
+    <path
+        android:fillColor="#2A1810"
+        android:pathData="M64,40 C62,37 66,35 68,38 C68,42 66,44 64,40 M68,36 L68,43"
+        android:strokeWidth="2.2"
+        android:strokeColor="#2A1810"
+        android:strokeLineCap="round"/>
+
+    <!-- 's' -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M72,37 C74,35 71,39 74,42"
+        android:strokeWidth="2.2"
+        android:strokeColor="#2A1810"
+        android:strokeLineCap="round"/>
+
+    <!-- 't' -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M78,30 L78,43 C78,45 80,44 81,42 M75,36 L81,36"
+        android:strokeWidth="2.5"
+        android:strokeColor="#2A1810"
+        android:strokeLineCap="round"/>
+
+    <!-- 'e' -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M83,40 C83,37 87,36 86,39 C84,41 83,42 87,43"
+        android:strokeWidth="2.2"
+        android:strokeColor="#2A1810"
+        android:strokeLineCap="round"/>
+
+    <!-- 2. Rising Coffee Steam Line (Connecting 't' down to cup) -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M58,46 C62,51 52,55 56,61"
+        android:strokeWidth="2.0"
+        android:strokeColor="#9B816F"
         android:strokeLineCap="round"/>
 
     <path
         android:fillColor="#00000000"
-        android:pathData="M57,59 C59,56 55,53 58,47 C60,42 57,40 58,35"
-        android:strokeWidth="1.5"
-        android:strokeColor="#C5AF9C"
+        android:pathData="M59,48 C63,52 54,56 57,62"
+        android:strokeWidth="1.2"
+        android:strokeColor="#BCA99A"
         android:strokeLineCap="round"/>
 
-    <!-- Coffee Cup Body -->
+    <!-- 3. Coffee Cup Body -->
     <path
-        android:fillColor="#2C1A11"
-        android:pathData="M38,62 C38,62 40,76 54,76 C68,76 70,62 70,62 Z"/>
+        android:fillColor="#2A1810"
+        android:pathData="M42,65 C42,75 49,79 54,79 C59,79 66,75 66,65 Z"/>
 
-    <!-- Inner Coffee Surface -->
+    <!-- Inner Coffee Liquid Surface -->
     <path
-        android:fillColor="#4A2F22"
-        android:pathData="M39,62 C39,60 69,60 69,62 C69,64 39,64 39,62 Z"/>
+        android:fillColor="#4D3022"
+        android:pathData="M43,65 C43,63.5 65,63.5 65,65 C65,66.5 43,66.5 43,65 Z"/>
 
     <path
-        android:fillColor="#2C1A11"
-        android:pathData="M41,62 C41,61 67,61 67,62 C67,63 41,63 41,62 Z"/>
+        android:fillColor="#2A1810"
+        android:pathData="M45,65 C45,64 63,64 63,65 C63,66 45,66 45,65 Z"/>
 
     <!-- Cup Handle -->
     <path
         android:fillColor="#00000000"
-        android:pathData="M70,64 C76,64 76,71 70,72"
-        android:strokeWidth="3"
-        android:strokeColor="#2C1A11"
+        android:pathData="M66,67 C72,67 72,74 66,75"
+        android:strokeWidth="2.8"
+        android:strokeColor="#2A1810"
         android:strokeLineCap="round"/>
 
     <!-- Saucer Plate -->
     <path
         android:fillColor="#00000000"
-        android:pathData="M33,80 C44,84 64,84 75,80"
-        android:strokeWidth="3.5"
-        android:strokeColor="#2C1A11"
+        android:pathData="M38,82 C46,85 62,85 70,82"
+        android:strokeWidth="3.2"
+        android:strokeColor="#2A1810"
         android:strokeLineCap="round"/>
 
-    <!-- Hand-drawn "aftertaste" script title on icon -->
-    <path
-        android:fillColor="#2C1A11"
-        android:pathData="M24,28 Q27,22 30,34 M28,30 Q34,28 36,32 M38,26 Q38,34 38,34 M42,28 Q44,28 46,32 M48,26 Q50,34 52,28 M54,28 Q56,28 58,32 M60,26 Q62,34 64,28 M66,28 Q68,28 72,32 M74,26 Q76,34 78,28 M80,28 Q82,28 84,32"/>
 </vector>

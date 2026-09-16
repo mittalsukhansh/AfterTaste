@@ -1,6 +1,9 @@
 package com.aftertaste.ui.search
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,6 +24,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.BookmarkAdd
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.FilterList
@@ -29,6 +33,8 @@ import androidx.compose.material.icons.filled.Power
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.Wifi
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -37,6 +43,7 @@ import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
@@ -57,8 +64,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.aftertaste.data.local.entity.CafeVisitWithDetails
 import com.aftertaste.ui.components.CoffeeBeanRatingBar
 import com.aftertaste.ui.theme.AfterTasteTitleStyle
@@ -79,6 +88,7 @@ fun SearchFilterScreen(
     modifier: Modifier = Modifier,
     onNavigateToVisitDetail: (Long) -> Unit = {}
 ) {
+    val context = LocalContext.current
     val searchQuery by viewModel.searchQuery.collectAsState()
     val allVisits by viewModel.visits.collectAsState()
     val availableTags by viewModel.allTags.collectAsState()
@@ -136,6 +146,13 @@ fun SearchFilterScreen(
         }
     }
 
+    val handleGoogleWebSearch = { queryText: String ->
+        val query = if (queryText.isNotBlank()) queryText else "cafes near me"
+        val url = "https://www.google.com/search?q=${Uri.encode(query)}"
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+        context.startActivity(intent)
+    }
+
     Scaffold(
         modifier = modifier.fillMaxSize(),
         containerColor = CoffeeClay
@@ -147,34 +164,68 @@ fun SearchFilterScreen(
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
-            // Item 1: Search Text Field
+            // Item 1: Search Text Field & Google Search Action Bar
             item {
-                OutlinedTextField(
-                    value = searchQuery,
-                    onValueChange = { viewModel.setSearchQuery(it) },
-                    placeholder = { Text("Search cafes, items, notes, tags...") },
-                    leadingIcon = {
-                        Icon(Icons.Default.Search, contentDescription = null, tint = TerracottaAccent)
-                    },
-                    trailingIcon = {
-                        if (searchQuery.isNotEmpty()) {
-                            IconButton(onClick = { viewModel.setSearchQuery("") }) {
-                                Icon(Icons.Default.Clear, contentDescription = "Clear", tint = CoffeeClay)
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    OutlinedTextField(
+                        value = searchQuery,
+                        onValueChange = { viewModel.setSearchQuery(it) },
+                        placeholder = { Text("Search cafes, Tim Hortons, Starbucks, notes...") },
+                        leadingIcon = {
+                            Icon(Icons.Default.Search, contentDescription = null, tint = TerracottaAccent)
+                        },
+                        trailingIcon = {
+                            if (searchQuery.isNotEmpty()) {
+                                IconButton(onClick = { viewModel.setSearchQuery("") }) {
+                                    Icon(Icons.Default.Clear, contentDescription = "Clear", tint = CoffeeClay)
+                                }
+                            }
+                        },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = TerracottaAccent,
+                            unfocusedBorderColor = CoffeeOutline,
+                            focusedContainerColor = ParchmentCream,
+                            unfocusedContainerColor = ParchmentCream,
+                            focusedTextColor = EspressoText,
+                            unfocusedTextColor = EspressoText
+                        )
+                    )
+
+                    if (searchQuery.isNotBlank()) {
+                        Surface(
+                            shape = RoundedCornerShape(12.dp),
+                            color = TerracottaAccent,
+                            shadowElevation = 4.dp,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(12.dp))
+                                .clickable { handleGoogleWebSearch(searchQuery) }
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 14.dp, vertical = 10.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Icon(Icons.Default.Search, contentDescription = null, tint = EspressoText, modifier = Modifier.size(20.dp))
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Text(
+                                        text = "Search Google for '$searchQuery'",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        fontWeight = FontWeight.Bold,
+                                        color = EspressoText
+                                    )
+                                }
+                                Icon(Icons.Default.ChevronRight, contentDescription = null, tint = EspressoText, modifier = Modifier.size(20.dp))
                             }
                         }
-                    },
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(16.dp),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = TerracottaAccent,
-                        unfocusedBorderColor = CoffeeOutline,
-                        focusedContainerColor = ParchmentCream,
-                        unfocusedContainerColor = ParchmentCream,
-                        focusedTextColor = EspressoText,
-                        unfocusedTextColor = EspressoText
-                    )
-                )
+                    }
+                }
             }
 
             // Item 2: Collapsible Filters Panel Card
@@ -379,7 +430,8 @@ fun SearchFilterScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(24.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Search,
@@ -387,19 +439,46 @@ fun SearchFilterScreen(
                                 tint = TerracottaAccent,
                                 modifier = Modifier.size(48.dp)
                             )
-                            Spacer(modifier = Modifier.height(12.dp))
                             Text(
-                                text = "No matching visits found",
+                                text = if (searchQuery.isBlank()) "No visits logged yet" else "No local logs for '$searchQuery'",
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
                                 color = EspressoText
                             )
-                            Spacer(modifier = Modifier.height(4.dp))
                             Text(
-                                text = "Try adjusting your search query or loosening your filter criteria.",
+                                text = "Search Google Web to discover menus, photos, or add '$searchQuery' to your coffee wishlist.",
                                 style = MaterialTheme.typography.bodySmall,
-                                color = EspressoText.copy(alpha = 0.7f)
+                                color = EspressoText.copy(alpha = 0.7f),
+                                textAlign = androidx.compose.ui.text.style.TextAlign.Center
                             )
+
+                            Button(
+                                onClick = { handleGoogleWebSearch(searchQuery) },
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = TerracottaAccent,
+                                    contentColor = EspressoText
+                                ),
+                                shape = RoundedCornerShape(14.dp),
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Icon(Icons.Default.Search, contentDescription = null)
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text("Search '$searchQuery' on Google 🔍", fontWeight = FontWeight.Bold)
+                            }
+
+                            if (searchQuery.isNotBlank()) {
+                                OutlinedButton(
+                                    onClick = {
+                                        viewModel.addToWishlist(cafeName = searchQuery, location = "")
+                                    },
+                                    shape = RoundedCornerShape(14.dp),
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    Icon(Icons.Default.BookmarkAdd, contentDescription = null, tint = TerracottaAccent)
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Text("Add '$searchQuery' to Wishlist", fontWeight = FontWeight.Bold, color = EspressoText)
+                                }
+                            }
                         }
                     }
                 }

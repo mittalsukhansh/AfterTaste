@@ -616,6 +616,8 @@ fun FloatingCafeMapCard(
     onClose: () -> Unit,
     onNavigateToCafeDetail: () -> Unit
 ) {
+    val context = LocalContext.current
+
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(20.dp),
@@ -685,22 +687,36 @@ fun FloatingCafeMapCard(
                 }
             }
 
+            Surface(
+                shape = RoundedCornerShape(10.dp),
+                color = TerracottaAccent.copy(alpha = 0.2f)
+            ) {
+                Text(
+                    text = if (pin.distanceKm > 0) "Distance: ${String.format(Locale.getDefault(), "%.1f km away", pin.distanceKm)}" else "Rating: ${String.format(Locale.getDefault(), "%.1f ★", pin.rating)}",
+                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = EspressoText,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Surface(
-                    shape = RoundedCornerShape(10.dp),
-                    color = TerracottaAccent.copy(alpha = 0.2f)
+                androidx.compose.material3.OutlinedButton(
+                    onClick = {
+                        val query = "${pin.name}, ${pin.location} near me"
+                        val searchUrl = "https://www.google.com/search?q=${Uri.encode(query)}"
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(searchUrl))
+                        context.startActivity(intent)
+                    },
+                    shape = RoundedCornerShape(12.dp)
                 ) {
-                    Text(
-                        text = if (pin.distanceKm > 0) "Distance: ${String.format(Locale.getDefault(), "%.1f km away", pin.distanceKm)}" else "Rating: ${String.format(Locale.getDefault(), "%.1f ★", pin.rating)}",
-                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = EspressoText,
-                        fontWeight = FontWeight.Bold
-                    )
+                    Icon(Icons.Default.Search, contentDescription = null, modifier = Modifier.size(16.dp), tint = TerracottaAccent)
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text("Google Search 🔍", fontWeight = FontWeight.Bold, fontSize = 12.sp, color = EspressoText)
                 }
 
                 Button(

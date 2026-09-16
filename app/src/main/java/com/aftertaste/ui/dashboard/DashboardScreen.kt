@@ -40,6 +40,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -96,6 +97,23 @@ fun DashboardScreen(
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = onNavigateToAddVisit,
+                containerColor = TerracottaAccent,
+                contentColor = EspressoText,
+                shape = RoundedCornerShape(18.dp)
+            ) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 14.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(Icons.Default.Add, contentDescription = "Log Coffee")
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text("Log Coffee", fontWeight = FontWeight.Bold)
+                }
+            }
+        },
         containerColor = CoffeeClay
     ) { innerPadding ->
         Column(

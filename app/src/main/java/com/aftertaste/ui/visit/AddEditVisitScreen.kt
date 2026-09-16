@@ -33,6 +33,8 @@ import androidx.compose.material.icons.filled.AddAPhoto
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Fastfood
+import androidx.compose.material.icons.filled.LocalCafe
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Store
 import androidx.compose.material.icons.filled.Wifi
@@ -107,6 +109,10 @@ private val PRESET_TAGS = listOf(
     "FastWifi"
 )
 
+private val ROAST_PROFILES = listOf("Light Roast", "Medium Roast", "Dark Roast", "Omni Roast")
+private val BREW_METHODS = listOf("Espresso", "Pour Over", "Cold Brew", "Aeropress", "French Press")
+private val FOOD_SUGGESTIONS = listOf("Pizza", "Almond Croissant", "Cheesecake", "Avocado Toast", "Bagel", "Sandwich")
+
 private val SEATING_TYPES = listOf("Couch", "Bar", "Outdoor", "Mixed")
 private val NOISE_LEVELS = listOf("Low", "Medium", "High")
 private val CROWD_LEVELS = listOf("Empty", "Moderate", "Packed")
@@ -134,6 +140,11 @@ fun AddEditVisitScreen(
     var location by remember { mutableStateOf(prefilledLocation ?: "") }
     var visitDate by remember { mutableLongStateOf(System.currentTimeMillis()) }
     var overallRating by remember { mutableFloatStateOf(4.0f) }
+
+    // Coffee Beans & Roast
+    var beanOrigin by remember { mutableStateOf("") }
+    var selectedRoastProfile by remember { mutableStateOf("Medium Roast") }
+    var selectedBrewMethod by remember { mutableStateOf("Espresso") }
 
     // Sub-scores
     var tasteRating by remember { mutableFloatStateOf(4.0f) }
@@ -335,7 +346,55 @@ fun AddEditVisitScreen(
                 }
             }
 
-            // 2. Overall Rating & Sub-scores Card
+            // 2. Coffee Beans & Brew Card
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(20.dp),
+                colors = CardDefaults.cardColors(containerColor = ParchmentCream)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(Icons.Default.LocalCafe, contentDescription = null, tint = TerracottaAccent)
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "Coffee Beans & Brew Profile",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = EspressoText
+                        )
+                    }
+
+                    OutlinedTextField(
+                        value = beanOrigin,
+                        onValueChange = { beanOrigin = it },
+                        label = { Text("Coffee Bean Variety / Origin (e.g. Ethiopia Yirgacheffe)") },
+                        modifier = Modifier.fillMaxWidth(),
+                        singleLine = true,
+                        colors = customOutlinedTextFieldColors()
+                    )
+
+                    ChoiceChipsSection(
+                        title = "Roast Level",
+                        options = ROAST_PROFILES,
+                        selectedOption = selectedRoastProfile,
+                        onOptionSelected = { selectedRoastProfile = it }
+                    )
+
+                    ChoiceChipsSection(
+                        title = "Brewing Method",
+                        options = BREW_METHODS,
+                        selectedOption = selectedBrewMethod,
+                        onOptionSelected = { selectedBrewMethod = it }
+                    )
+                }
+            }
+
+            // 3. Overall Rating & Sub-scores Card
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(20.dp),
@@ -386,7 +445,170 @@ fun AddEditVisitScreen(
                 }
             }
 
-            // 3. Vibe Tags Card
+            // 4. Ordered Items & Food Consumed Card (e.g. Pizza, Croissant, Pastry)
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(20.dp),
+                colors = CardDefaults.cardColors(containerColor = ParchmentCream)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(Icons.Default.Fastfood, contentDescription = null, tint = TerracottaAccent)
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = "Food & Items Consumed",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = EspressoText
+                            )
+                        }
+
+                        TextButton(onClick = { showAddItemDialog = true }) {
+                            Icon(Icons.Default.Add, contentDescription = null, tint = TerracottaAccent)
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text("Add Item", color = TerracottaAccent, fontWeight = FontWeight.Bold)
+                        }
+                    }
+
+                    // Quick Food Suggestions
+                    Text(
+                        text = "Quick Food Suggestions:",
+                        style = MaterialTheme.typography.bodySmall,
+                        fontWeight = FontWeight.SemiBold,
+                        color = EspressoText.copy(alpha = 0.7f)
+                    )
+
+                    FlowRow(
+                        horizontalArrangement = Arrangement.spacedBy(6.dp),
+                        verticalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        FOOD_SUGGESTIONS.forEach { foodName ->
+                            Surface(
+                                shape = RoundedCornerShape(10.dp),
+                                color = CoffeeClay.copy(alpha = 0.1f),
+                                modifier = Modifier.clickable {
+                                    orderedItems.add(TempItem(foodName, 8.0, 4.5f))
+                                }
+                            ) {
+                                Text(
+                                    text = "+ $foodName",
+                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = EspressoText,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                        }
+                    }
+
+                    if (orderedItems.isEmpty()) {
+                        Text(
+                            text = "No food or drink items recorded yet. Tap '+ Add Item' or a food suggestion above (e.g. Pizza, Croissant) to record what you consumed.",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = EspressoText.copy(alpha = 0.6f)
+                        )
+                    } else {
+                        orderedItems.forEachIndexed { index, item ->
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clip(RoundedCornerShape(12.dp))
+                                    .background(CoffeeClay.copy(alpha = 0.08f))
+                                    .padding(12.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text(
+                                        text = item.name,
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        fontWeight = FontWeight.Bold,
+                                        color = EspressoText
+                                    )
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        Text(
+                                            text = String.format(Locale.getDefault(), "$%.2f", item.price),
+                                            style = MaterialTheme.typography.bodySmall,
+                                            fontWeight = FontWeight.SemiBold,
+                                            color = TerracottaAccent
+                                        )
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                        CoffeeBeanRatingBar(
+                                            rating = item.rating,
+                                            isSelectable = false,
+                                            beanSize = 16.dp,
+                                            beanPadding = 2.dp
+                                        )
+                                    }
+                                }
+
+                                IconButton(onClick = { orderedItems.removeAt(index) }) {
+                                    Icon(
+                                        imageVector = Icons.Default.Delete,
+                                        contentDescription = "Remove Item",
+                                        tint = CoffeeClay
+                                    )
+                                }
+                            }
+                        }
+
+                        // Spend & Ratio Summary Box
+                        Surface(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(12.dp),
+                            color = CoffeeClay.copy(alpha = 0.12f)
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(12.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Column {
+                                    Text(
+                                        text = "Total Spend",
+                                        style = MaterialTheme.typography.labelMedium,
+                                        color = EspressoText.copy(alpha = 0.7f)
+                                    )
+                                    Text(
+                                        text = String.format(Locale.getDefault(), "$%.2f", totalSpend),
+                                        style = MaterialTheme.typography.titleMedium,
+                                        fontWeight = FontWeight.Bold,
+                                        color = EspressoText
+                                    )
+                                }
+
+                                Column(horizontalAlignment = Alignment.End) {
+                                    Text(
+                                        text = "Price-to-Quality Ratio",
+                                        style = MaterialTheme.typography.labelMedium,
+                                        color = EspressoText.copy(alpha = 0.7f)
+                                    )
+                                    Text(
+                                        text = String.format(Locale.getDefault(), "%.2f pts/$", priceToQualityRatio),
+                                        style = MaterialTheme.typography.titleMedium,
+                                        fontWeight = FontWeight.Bold,
+                                        color = TerracottaAccent
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // 5. Vibe Tags Card
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(20.dp),
@@ -460,7 +682,7 @@ fun AddEditVisitScreen(
                 }
             }
 
-            // 4. Practical Details Card
+            // 6. Practical Details Card
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(20.dp),
@@ -572,135 +794,7 @@ fun AddEditVisitScreen(
                 }
             }
 
-            // 5. Ordered Items Card
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(20.dp),
-                colors = CardDefaults.cardColors(containerColor = ParchmentCream)
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "Ordered Items",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = EspressoText
-                        )
-
-                        TextButton(onClick = { showAddItemDialog = true }) {
-                            Icon(Icons.Default.Add, contentDescription = null, tint = TerracottaAccent)
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Text("Add Item", color = TerracottaAccent, fontWeight = FontWeight.Bold)
-                        }
-                    }
-
-                    if (orderedItems.isEmpty()) {
-                        Text(
-                            text = "No items added yet. Click 'Add Item' to record coffee or food ordered.",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = EspressoText.copy(alpha = 0.6f)
-                        )
-                    } else {
-                        orderedItems.forEachIndexed { index, item ->
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clip(RoundedCornerShape(12.dp))
-                                    .background(CoffeeClay.copy(alpha = 0.08f))
-                                    .padding(12.dp),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Text(
-                                        text = item.name,
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        fontWeight = FontWeight.Bold,
-                                        color = EspressoText
-                                    )
-                                    Row(verticalAlignment = Alignment.CenterVertically) {
-                                        Text(
-                                            text = String.format(Locale.getDefault(), "$%.2f", item.price),
-                                            style = MaterialTheme.typography.bodySmall,
-                                            fontWeight = FontWeight.SemiBold,
-                                            color = TerracottaAccent
-                                        )
-                                        Spacer(modifier = Modifier.width(8.dp))
-                                        CoffeeBeanRatingBar(
-                                            rating = item.rating,
-                                            isSelectable = false,
-                                            beanSize = 16.dp,
-                                            beanPadding = 2.dp
-                                        )
-                                    }
-                                }
-
-                                IconButton(onClick = { orderedItems.removeAt(index) }) {
-                                    Icon(
-                                        imageVector = Icons.Default.Delete,
-                                        contentDescription = "Remove Item",
-                                        tint = CoffeeClay
-                                    )
-                                }
-                            }
-                        }
-
-                        // Spend & Ratio Summary Box
-                        Surface(
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(12.dp),
-                            color = CoffeeClay.copy(alpha = 0.12f)
-                        ) {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(12.dp),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Column {
-                                    Text(
-                                        text = "Total Spend",
-                                        style = MaterialTheme.typography.labelMedium,
-                                        color = EspressoText.copy(alpha = 0.7f)
-                                    )
-                                    Text(
-                                        text = String.format(Locale.getDefault(), "$%.2f", totalSpend),
-                                        style = MaterialTheme.typography.titleMedium,
-                                        fontWeight = FontWeight.Bold,
-                                        color = EspressoText
-                                    )
-                                }
-
-                                Column(horizontalAlignment = Alignment.End) {
-                                    Text(
-                                        text = "Price-to-Quality Ratio",
-                                        style = MaterialTheme.typography.labelMedium,
-                                        color = EspressoText.copy(alpha = 0.7f)
-                                    )
-                                    Text(
-                                        text = String.format(Locale.getDefault(), "%.2f pts/$", priceToQualityRatio),
-                                        style = MaterialTheme.typography.titleMedium,
-                                        fontWeight = FontWeight.Bold,
-                                        color = TerracottaAccent
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            // 6. Photo Attachments Card
+            // 7. Photo Attachments Card
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(20.dp),
@@ -775,7 +869,7 @@ fun AddEditVisitScreen(
                 }
             }
 
-            // 7. Journal Notes Card
+            // 8. Journal Notes Card
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(20.dp),
@@ -797,7 +891,7 @@ fun AddEditVisitScreen(
                     OutlinedTextField(
                         value = notes,
                         onValueChange = { notes = it },
-                        placeholder = { Text("Write tasting notes, roast profile, barista recommendation, seating vibes...") },
+                        placeholder = { Text("Write tasting notes, barista recommendation, seating vibes...") },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(130.dp),
@@ -811,6 +905,12 @@ fun AddEditVisitScreen(
             Button(
                 onClick = {
                     if (cafeName.isBlank()) return@Button
+
+                    val fullNotes = buildString {
+                        if (beanOrigin.isNotBlank()) append("Beans: $beanOrigin | ")
+                        append("Roast: $selectedRoastProfile | Brew: $selectedBrewMethod")
+                        if (notes.isNotBlank()) append("\n$notes")
+                    }
 
                     val visit = CafeVisit(
                         id = visitId ?: 0L,
@@ -826,7 +926,7 @@ fun AddEditVisitScreen(
                         serviceRating = serviceRating,
                         noiseLevel = noiseLevel,
                         wouldReturn = wouldReturn,
-                        notes = notes.ifBlank { null },
+                        notes = fullNotes.ifBlank { null },
                         powerOutlets = powerOutlets,
                         crowdLevel = crowdLevel,
                         wifiPassword = wifiPassword.ifBlank { null },
@@ -842,7 +942,7 @@ fun AddEditVisitScreen(
                         )
                     }
 
-                    val tags = selectedTags.map {
+                    val tags = (selectedTags + listOf(selectedRoastProfile, selectedBrewMethod)).distinct().map {
                         Tag(visitId = visitId ?: 0L, tagName = it)
                     }
 
@@ -971,7 +1071,7 @@ private fun AddItemDialog(
         onDismissRequest = onDismiss,
         title = {
             Text(
-                text = "Add Ordered Item",
+                text = "Add Item (Food / Drink)",
                 fontWeight = FontWeight.Bold,
                 color = EspressoText
             )
@@ -984,7 +1084,7 @@ private fun AddItemDialog(
                 OutlinedTextField(
                     value = itemName,
                     onValueChange = { itemName = it },
-                    label = { Text("Item Name (e.g. Cortado, Croissant)") },
+                    label = { Text("Item Name (e.g. Pizza, Cortado, Croissant)") },
                     singleLine = true,
                     colors = customOutlinedTextFieldColors()
                 )
@@ -1027,7 +1127,7 @@ private fun AddItemDialog(
                 ),
                 enabled = itemName.isNotBlank()
             ) {
-                Text("Add")
+                Text("Add Item")
             }
         },
         dismissButton = {

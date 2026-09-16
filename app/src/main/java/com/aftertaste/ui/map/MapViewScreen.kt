@@ -468,6 +468,43 @@ fun MapViewScreen(
                         }
                     }
 
+                    // Location Refresh Ring Floating Button (Top Right Ring)
+                    Box(
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .align(Alignment.TopEnd)
+                    ) {
+                        Surface(
+                            shape = CircleShape,
+                            color = TerracottaAccent,
+                            shadowElevation = 6.dp,
+                            modifier = Modifier
+                                .size(44.dp)
+                                .clip(CircleShape)
+                                .clickable { loadLocationAndPlaces() }
+                        ) {
+                            Box(
+                                contentAlignment = Alignment.Center,
+                                modifier = Modifier.fillMaxSize()
+                            ) {
+                                if (isLoadingLocation || isLoadingPlaces) {
+                                    CircularProgressIndicator(
+                                        color = EspressoText,
+                                        modifier = Modifier.size(22.dp),
+                                        strokeWidth = 2.5.dp
+                                    )
+                                } else {
+                                    Icon(
+                                        imageVector = Icons.Default.Refresh,
+                                        contentDescription = "Refresh Location Ring",
+                                        tint = EspressoText,
+                                        modifier = Modifier.size(24.dp)
+                                    )
+                                }
+                            }
+                        }
+                    }
+
                     // Floating Preview Card when pin is selected
                     selectedPin?.let { pin ->
                         Box(

@@ -1,7 +1,13 @@
 package com.aftertaste.ui.map
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -42,6 +48,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -56,8 +63,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.aftertaste.BuildConfig
+import androidx.compose.ui.viewinterop.AndroidView
 import com.aftertaste.ui.components.CoffeeBeanIcon
 import com.aftertaste.ui.components.CoffeeCupIcon
 import com.aftertaste.ui.theme.CoffeeClay
@@ -68,16 +74,12 @@ import com.aftertaste.ui.viewmodel.CafeViewModel
 import com.aftertaste.util.GeofenceManager
 import com.aftertaste.util.LocationHelper
 import com.aftertaste.util.NearbyCafeSpot
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.model.CameraPosition
-import com.google.android.gms.maps.model.LatLng
-import com.google.maps.android.compose.GoogleMap
-import com.google.maps.android.compose.MapProperties
-import com.google.maps.android.compose.MapUiSettings
-import com.google.maps.android.compose.Marker
-import com.google.maps.android.compose.rememberCameraPositionState
-import com.google.maps.android.compose.rememberMarkerState
 import kotlinx.coroutines.launch
+import org.osmdroid.config.Configuration
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory
+import org.osmdroid.util.GeoPoint
+import org.osmdroid.views.MapView
+import org.osmdroid.views.overlay.Marker
 import java.util.Locale
 
 enum class MapFilter {
@@ -93,7 +95,7 @@ data class MapPinItem(
     val isNearbySpot: Boolean,
     val rating: Float,
     val reviewCount: Int,
-    val latLng: LatLng
+    val geoPoint: GeoPoint
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -106,6 +108,13 @@ fun MapViewScreen(
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
+
+    // Configure OSMDroid
+    DisposableEffect(Unit) {
+        Configuration.getInstance().load(context, context.getSharedPreferences("osmdroid", Context.MODE_PRIVATE))
+        Configuration.getInstance().userAgentValue = context.packageName
+        onDispose { }
+    }
 
     val cafes by viewModel.cafes.collectAsState()
     val wishlistCafes by viewModel.wishlist.collectAsState()
@@ -126,7 +135,6 @@ fun MapViewScreen(
         hasPermission = granted
     }
 
-    // Function to load real location and Places API
     val loadLocationAndPlaces = {
         coroutineScope.launch {
             if (LocationHelper.hasLocationPermission(context)) {
@@ -137,12 +145,10 @@ fun MapViewScreen(
 
                 if (loc != null) {
                     isLoadingPlaces = true
-                    val apiKey = BuildConfig.MAPS_API_KEY
-                    val spots = LocationHelper.fetchNearbyCafes(loc.latitude, loc.longitude, apiKey)
+                    val spots = LocationHelper.fetchNearbyCafes(loc.latitude, loc.longitude)
                     nearbySpots = spots
                     isLoadingPlaces = false
 
-                    // Register geofences for nearby cafes
                     GeofenceManager.registerCafeGeofences(context, spots)
                 }
             }
@@ -155,22 +161,7 @@ fun MapViewScreen(
         }
     }
 
-    val defaultLatLng = remember { LatLng(37.7749, -122.4194) }
-    val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(defaultLatLng, 14f)
-    }
-
-    LaunchedEffect(userLocation) {
-        userLocation?.let { loc ->
-            val targetLatLng = LatLng(loc.latitude, loc.longitude)
-            cameraPositionState.animate(
-                CameraUpdateFactory.newLatLngZoom(targetLatLng, 14.5f),
-                1000
-            )
-        }
-    }
-
-    // Convert nearby spots, visited cafes, and wishlist to real LatLng map pins
+    // Convert nearby spots, visited cafes, and wishlist to GeoPoint map pins
     val mapPins = remember(cafes, wishlistCafes, nearbySpots, selectedFilter) {
         val pins = mutableListOf<MapPinItem>()
 
@@ -186,7 +177,7 @@ fun MapViewScreen(
                         isNearbySpot = true,
                         rating = spot.rating,
                         reviewCount = spot.reviewCount,
-                        latLng = LatLng(spot.lat, spot.lng)
+                        geoPoint = GeoPoint(spot.lat, spot.lng)
                     )
                 )
             }
@@ -207,7 +198,7 @@ fun MapViewScreen(
                             isNearbySpot = false,
                             rating = c.avgOverallRating,
                             reviewCount = c.visitCount,
-                            latLng = LatLng(userLat, userLng)
+                            geoPoint = GeoPoint(userLat, userLng)
                         )
                     )
                 }
@@ -228,7 +219,7 @@ fun MapViewScreen(
                         isNearbySpot = false,
                         rating = 0f,
                         reviewCount = 0,
-                        latLng = LatLng(userLat, userLng)
+                        geoPoint = GeoPoint(userLat, userLng)
                     )
                 )
             }
@@ -334,7 +325,7 @@ fun MapViewScreen(
                                     textAlign = TextAlign.Center
                                 )
                                 Text(
-                                    text = "Grant location permission to discover real nearby cafes on Google Maps.",
+                                    text = "Grant location permission to discover real nearby cafes on OpenStreetMap.",
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = ParchmentCream.copy(alpha = 0.8f),
                                     textAlign = TextAlign.Center
@@ -377,33 +368,56 @@ fun MapViewScreen(
                         }
                     }
                 } else {
-                    // Active Google Map Render
-                    GoogleMap(
-                        modifier = Modifier.fillMaxSize(),
-                        cameraPositionState = cameraPositionState,
-                        properties = MapProperties(
-                            isMyLocationEnabled = hasPermission
-                        ),
-                        uiSettings = MapUiSettings(
-                            zoomControlsEnabled = true,
-                            myLocationButtonEnabled = true
-                        )
-                    ) {
-                        mapPins.forEach { pin ->
-                            val markerState = rememberMarkerState(key = pin.id, position = pin.latLng)
-                            Marker(
-                                state = markerState,
-                                title = pin.name,
-                                snippet = "${pin.location} • ${String.format(Locale.getDefault(), "%.1f km", pin.distanceKm)}",
-                                onClick = {
-                                    selectedPin = pin
-                                    true
-                                }
-                            )
-                        }
-                    }
+                    // OpenStreetMap View
+                    AndroidView(
+                        factory = { ctx ->
+                            MapView(ctx).apply {
+                                setTileSource(TileSourceFactory.MAPNIK)
+                                setMultiTouchControls(true)
+                                controller.setZoom(15.5)
+                            }
+                        },
+                        update = { mapView ->
+                            mapView.overlays.clear()
 
-                    // Floating Location / GPS Status Pill Overlay
+                            userLocation?.let { loc ->
+                                val userGeoPoint = GeoPoint(loc.latitude, loc.longitude)
+                                mapView.controller.setCenter(userGeoPoint)
+
+                                // User position marker
+                                val userMarker = Marker(mapView).apply {
+                                    position = userGeoPoint
+                                    title = "You Are Here 📍"
+                                    snippet = "Current GPS Position"
+                                    icon = createCoffeeMarkerDrawable(context, "#C05A3E", "📍")
+                                }
+                                mapView.overlays.add(userMarker)
+                            }
+
+                            mapPins.forEach { pin ->
+                                val cafeMarker = Marker(mapView).apply {
+                                    position = pin.geoPoint
+                                    title = pin.name
+                                    snippet = "${pin.location} • ${String.format(Locale.getDefault(), "%.1f km", pin.distanceKm)}"
+                                    icon = createCoffeeMarkerDrawable(
+                                        context,
+                                        if (pin.isWishlist) "#F4ECE1" else "#2A1810",
+                                        if (pin.isWishlist) "♡" else "☕"
+                                    )
+                                    setOnMarkerClickListener { _, _ ->
+                                        selectedPin = pin
+                                        true
+                                    }
+                                }
+                                mapView.overlays.add(cafeMarker)
+                            }
+
+                            mapView.invalidate()
+                        },
+                        modifier = Modifier.fillMaxSize()
+                    )
+
+                    // Floating GPS Status Pill Overlay
                     Box(
                         modifier = Modifier
                             .padding(16.dp)
@@ -593,4 +607,33 @@ fun FloatingCafeMapCard(
             }
         }
     }
+}
+
+// Helper to create custom colored marker drawable for OpenStreetMap
+private fun createCoffeeMarkerDrawable(context: Context, colorHex: String, symbol: String): Drawable {
+    val px = (36 * context.resources.displayMetrics.density).toInt()
+    val bitmap = Bitmap.createBitmap(px, px, Bitmap.Config.ARGB_8888)
+    val canvas = Canvas(bitmap)
+
+    val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = android.graphics.Color.parseColor(colorHex)
+        style = Paint.Style.FILL
+    }
+    canvas.drawCircle(px / 2f, px / 2f, px / 2f - 2f, paint)
+
+    val strokePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = android.graphics.Color.WHITE
+        style = Paint.Style.STROKE
+        strokeWidth = 3f
+    }
+    canvas.drawCircle(px / 2f, px / 2f, px / 2f - 3f, strokePaint)
+
+    val textPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = android.graphics.Color.WHITE
+        textSize = px * 0.45f
+        textAlign = Paint.Align.CENTER
+    }
+    canvas.drawText(symbol, px / 2f, px / 2f + (px * 0.15f), textPaint)
+
+    return BitmapDrawable(context.resources, bitmap)
 }

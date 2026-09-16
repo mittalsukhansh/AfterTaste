@@ -73,10 +73,11 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     debugImplementation(libs.androidx.compose.ui.tooling)
 
-    // Google Maps & Location & Maps Compose
+    // OpenStreetMap (OSMDroid - Free Open-Source Map)
+    implementation("org.osmdroid:osmdroid-android:6.1.20")
+
+    // Location Services (FusedLocationProvider)
     implementation("com.google.android.gms:play-services-location:21.3.0")
-    implementation("com.google.android.gms:play-services-maps:19.0.0")
-    implementation("com.google.maps.android:maps-compose:6.4.1")
 
     // Lifecycle / ViewModel
     implementation(libs.androidx.lifecycle.viewmodel.ktx)

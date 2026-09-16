@@ -1,0 +1,58 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="200dp"
+    android:viewportWidth="200"
+    android:viewportHeight="200">
+
+    <!-- Glass Jar Outer Frame -->
+    <path
+        android:pathData="M60,60 C60,55 65,50 72,50 L128,50 C135,50 140,55 140,60 L145,165 C145,173 138,180 130,180 L70,180 C62,180 55,173 55,165 Z"
+        android:fillColor="#FDFBF7"
+        android:strokeColor="#D4A373"
+        android:strokeWidth="4" />
+
+    <!-- Wooden Lid Cap -->
+    <path
+        android:pathData="M60,35 C60,30 65,25 72,25 L128,25 C135,25 140,30 140,35 L145,50 L55,50 Z"
+        android:fillColor="#986252" />
+
+    <!-- Lid Rubber Seal Band -->
+    <path
+        android:pathData="M65,46 L135,46 L135,50 L65,50 Z"
+        android:fillColor="#7A4B3C" />
+
+    <!-- Coffee Fill Line inside Jar -->
+    <path
+        android:pathData="M57,90 C70,85 130,95 143,90 L144,165 C144,172 138,178 130,178 L70,178 C62,178 56,172 56,165 Z"
+        android:fillColor="#2C1A11" />
+
+    <!-- Passport Stamp Badge on Jar (Star / Stamp Badge) -->
+    <path
+        android:pathData="M100,105 A22,22 0 1,0 100,149 A22,22 0 1,0 100,105 Z"
+        android:fillColor="#D4A373" />
+    <path
+        android:pathData="M100,110 A17,17 0 1,0 100,144 A17,17 0 1,0 100,110 Z"
+        android:strokeColor="#FDFBF7"
+        android:strokeWidth="2"
+        android:fillColor="#00000000" />
+    <!-- Star inside stamp -->
+    <path
+        android:pathData="M100,117 L103,123 L110,124 L105,129 L106,136 L100,133 L94,136 L95,129 L90,124 L97,123 Z"
+        android:fillColor="#FDFBF7" />
+
+    <!-- Coffee Beans inside glass top section -->
+    <path
+        android:pathData="M75,70 C70,66 68,76 74,80 C80,84 82,74 75,70 Z"
+        android:fillColor="#7A4B3C" />
+    <path
+        android:pathData="M115,72 C110,68 108,78 114,82 C120,86 122,76 115,72 Z"
+        android:fillColor="#986252" />
+
+    <!-- Glass Reflection Highlights -->
+    <path
+        android:pathData="M65,60 L65,165"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="3"
+        android:strokeLineCap="round" />
+
+</vector>

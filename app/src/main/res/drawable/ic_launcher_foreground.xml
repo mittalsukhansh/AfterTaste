@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Coffee Steam Smoke Effect -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M52,58 C55,54 49,50 53,44 C56,39 52,36 54,30"
+        android:strokeWidth="2.2"
+        android:strokeColor="#A88B74"
+        android:strokeLineCap="round"/>
+
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M57,59 C59,56 55,53 58,47 C60,42 57,40 58,35"
+        android:strokeWidth="1.5"
+        android:strokeColor="#C5AF9C"
+        android:strokeLineCap="round"/>
+
+    <!-- Coffee Cup Body -->
+    <path
+        android:fillColor="#2C1A11"
+        android:pathData="M38,62 C38,62 40,76 54,76 C68,76 70,62 70,62 Z"/>
+
+    <!-- Inner Coffee Surface -->
+    <path
+        android:fillColor="#4A2F22"
+        android:pathData="M39,62 C39,60 69,60 69,62 C69,64 39,64 39,62 Z"/>
+
+    <path
+        android:fillColor="#2C1A11"
+        android:pathData="M41,62 C41,61 67,61 67,62 C67,63 41,63 41,62 Z"/>
+
+    <!-- Cup Handle -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M70,64 C76,64 76,71 70,72"
+        android:strokeWidth="3"
+        android:strokeColor="#2C1A11"
+        android:strokeLineCap="round"/>
+
+    <!-- Saucer Plate -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M33,80 C44,84 64,84 75,80"
+        android:strokeWidth="3.5"
+        android:strokeColor="#2C1A11"
+        android:strokeLineCap="round"/>
+
+    <!-- Hand-drawn "aftertaste" script title on icon -->
+    <path
+        android:fillColor="#2C1A11"
+        android:pathData="M24,28 Q27,22 30,34 M28,30 Q34,28 36,32 M38,26 Q38,34 38,34 M42,28 Q44,28 46,32 M48,26 Q50,34 52,28 M54,28 Q56,28 58,32 M60,26 Q62,34 64,28 M66,28 Q68,28 72,32 M74,26 Q76,34 78,28 M80,28 Q82,28 84,32"/>
+</vector>

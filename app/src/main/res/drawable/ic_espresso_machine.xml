@@ -1,0 +1,95 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="200dp"
+    android:viewportWidth="200"
+    android:viewportHeight="200">
+
+    <!-- Machine Body / Outer Frame -->
+    <path
+        android:pathData="M30,50 C30,35 45,30 100,30 C155,30 170,35 170,50 L170,165 C170,175 160,180 150,180 L50,180 C40,180 30,175 30,165 Z"
+        android:fillColor="#986252" />
+
+    <!-- Top Cap / Accent Header -->
+    <path
+        android:pathData="M35,45 C35,35 45,30 100,30 C155,30 165,35 165,45 L165,65 L35,65 Z"
+        android:fillColor="#7A4B3C" />
+
+    <!-- Cream Front Panel -->
+    <path
+        android:pathData="M45,70 C45,67 47,65 50,65 L150,65 C153,65 155,67 155,70 L155,145 C155,148 153,150 150,150 L50,150 C47,150 45,148 45,145 Z"
+        android:fillColor="#FDFBF7" />
+
+    <!-- Pressure Gauge Outer Circle -->
+    <path
+        android:pathData="M100,75 A15,15 0 1,0 100,105 A15,15 0 1,0 100,75 Z"
+        android:fillColor="#D4A373" />
+
+    <!-- Pressure Gauge Inner Circle -->
+    <path
+        android:pathData="M100,78 A12,12 0 1,0 100,102 A12,12 0 1,0 100,78 Z"
+        android:fillColor="#FDFBF7" />
+
+    <!-- Pressure Gauge Needle -->
+    <path
+        android:pathData="M100,90 L107,83"
+        android:strokeColor="#2C1A11"
+        android:strokeWidth="3"
+        android:strokeLineCap="round" />
+
+    <!-- Portafilter Base Mount -->
+    <path
+        android:pathData="M80,108 L120,108 L115,120 L85,120 Z"
+        android:fillColor="#2C1A11" />
+
+    <!-- Portafilter Handle -->
+    <path
+        android:pathData="M115,114 L155,122 C158,123 160,126 159,129 C158,132 155,134 152,133 L115,120 Z"
+        android:fillColor="#2C1A11" />
+
+    <!-- Espresso Spout Drops -->
+    <path
+        android:pathData="M95,120 C95,125 93,127 93,129 C93,130 94,131 95,131 C96,131 97,130 97,129 C97,127 95,125 95,120 Z"
+        android:fillColor="#D4A373" />
+    <path
+        android:pathData="M105,120 C105,125 103,127 103,129 C103,130 104,131 105,131 C106,131 107,130 107,129 C107,127 105,125 105,120 Z"
+        android:fillColor="#D4A373" />
+
+    <!-- Drip Tray Grid -->
+    <path
+        android:pathData="M45,155 L155,155 L150,172 C149,175 145,175 140,175 L60,175 C55,175 51,175 50,172 Z"
+        android:fillColor="#2C1A11" />
+    <path
+        android:pathData="M60,160 L140,160 M60,165 L140,165 M60,170 L140,170"
+        android:strokeColor="#D4A373"
+        android:strokeWidth="2"
+        android:strokeLineCap="round" />
+
+    <!-- Cute Ceramic Espresso Cup on Drip Tray -->
+    <path
+        android:pathData="M85,135 L115,135 C115,135 113,153 100,153 C87,153 85,135 85,135 Z"
+        android:fillColor="#FDFBF7"
+        android:strokeColor="#D4A373"
+        android:strokeWidth="2" />
+
+    <!-- Cup Handle -->
+    <path
+        android:pathData="M114,138 C120,138 120,147 114,148"
+        android:strokeColor="#D4A373"
+        android:strokeWidth="2"
+        android:fillColor="#00000000" />
+
+    <!-- Steam Swirls -->
+    <path
+        android:pathData="M93,115 C91,110 97,105 95,100"
+        android:strokeColor="#D4A373"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000" />
+    <path
+        android:pathData="M107,115 C105,110 111,105 109,100"
+        android:strokeColor="#D4A373"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000" />
+
+</vector>

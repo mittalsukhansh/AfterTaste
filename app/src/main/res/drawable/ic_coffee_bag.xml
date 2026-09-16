@@ -1,0 +1,69 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="200dp"
+    android:viewportWidth="200"
+    android:viewportHeight="200">
+
+    <!-- Coffee Bag Base Shape -->
+    <path
+        android:pathData="M55,60 C55,55 60,50 68,50 L132,50 C140,50 145,55 145,60 L155,170 C155,176 148,180 140,180 L60,180 C52,180 45,176 45,170 Z"
+        android:fillColor="#986252" />
+
+    <!-- Folded Top Seal -->
+    <path
+        android:pathData="M50,45 L150,45 C154,45 155,48 153,52 L147,62 C145,65 140,65 135,65 L65,65 C60,65 55,65 53,62 L47,52 C45,48 46,45 50,45 Z"
+        android:fillColor="#7A4B3C" />
+
+    <!-- Bag Seal Clamp / Clip -->
+    <path
+        android:pathData="M70,40 L130,40 C133,40 135,42 135,45 L135,48 C135,51 133,53 130,53 L70,53 C67,53 65,51 65,48 L65,45 C65,42 67,40 70,40 Z"
+        android:fillColor="#D4A373" />
+
+    <!-- Cream Label Frame -->
+    <path
+        android:pathData="M65,85 C65,80 70,75 75,75 L125,75 C130,75 135,80 135,85 L135,150 C135,155 130,160 125,160 L75,160 C70,160 65,155 65,150 Z"
+        android:fillColor="#FDFBF7" />
+
+    <!-- Label Coffee Bean Icon (Outer Circle) -->
+    <path
+        android:pathData="M100,95 A15,15 0 1,0 100,125 A15,15 0 1,0 100,95 Z"
+        android:fillColor="#D4A373" />
+
+    <!-- Bean Groove on Label -->
+    <path
+        android:pathData="M100,98 C94,104 106,116 100,122"
+        android:strokeColor="#2C1A11"
+        android:strokeWidth="3"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000" />
+
+    <!-- Label Lines (Representation of origin notes, roast level) -->
+    <path
+        android:pathData="M80,135 L120,135 M85,143 L115,143 M90,150 L110,150"
+        android:strokeColor="#2C1A11"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round" />
+
+    <!-- Scattered Coffee Bean 1 (Left side) -->
+    <path
+        android:pathData="M32,150 C24,142 22,162 30,168 C38,174 42,158 32,150 Z"
+        android:fillColor="#7A4B3C" />
+    <path
+        android:pathData="M27,153 C32,157 28,163 33,166"
+        android:strokeColor="#2C1A11"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000" />
+
+    <!-- Scattered Coffee Bean 2 (Right side) -->
+    <path
+        android:pathData="M168,145 C160,137 158,157 166,163 C174,169 178,153 168,145 Z"
+        android:fillColor="#D4A373" />
+    <path
+        android:pathData="M163,148 C168,152 164,158 169,161"
+        android:strokeColor="#2C1A11"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000" />
+
+</vector>

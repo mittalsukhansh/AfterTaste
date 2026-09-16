@@ -26,7 +26,6 @@ import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.LocationOff
 import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.Map
 import androidx.compose.material.icons.filled.NearMe
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Button
@@ -42,8 +41,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -63,7 +60,6 @@ import androidx.compose.ui.unit.sp
 import com.aftertaste.BuildConfig
 import com.aftertaste.ui.components.CoffeeBeanIcon
 import com.aftertaste.ui.components.CoffeeCupIcon
-import com.aftertaste.ui.theme.AfterTasteTitleStyle
 import com.aftertaste.ui.theme.CoffeeClay
 import com.aftertaste.ui.theme.EspressoText
 import com.aftertaste.ui.theme.ParchmentCream
@@ -72,14 +68,15 @@ import com.aftertaste.ui.viewmodel.CafeViewModel
 import com.aftertaste.util.GeofenceManager
 import com.aftertaste.util.LocationHelper
 import com.aftertaste.util.NearbyCafeSpot
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.Marker
-import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
+import com.google.maps.android.compose.rememberMarkerState
 import kotlinx.coroutines.launch
 import java.util.Locale
 
@@ -158,13 +155,17 @@ fun MapViewScreen(
         }
     }
 
-    val cameraPositionState = rememberCameraPositionState()
+    val defaultLatLng = remember { LatLng(37.7749, -122.4194) }
+    val cameraPositionState = rememberCameraPositionState {
+        position = CameraPosition.fromLatLngZoom(defaultLatLng, 14f)
+    }
 
     LaunchedEffect(userLocation) {
         userLocation?.let { loc ->
-            cameraPositionState.position = CameraPosition.fromLatLngZoom(
-                LatLng(loc.latitude, loc.longitude),
-                14.5f
+            val targetLatLng = LatLng(loc.latitude, loc.longitude)
+            cameraPositionState.animate(
+                CameraUpdateFactory.newLatLngZoom(targetLatLng, 14.5f),
+                1000
             )
         }
     }
@@ -194,8 +195,8 @@ fun MapViewScreen(
         if (selectedFilter == MapFilter.VISITED) {
             for (c in cafes) {
                 if (c.visitCount > 0) {
-                    val userLat = userLocation?.latitude ?: 0.0
-                    val userLng = userLocation?.longitude ?: 0.0
+                    val userLat = userLocation?.latitude ?: 37.7749
+                    val userLng = userLocation?.longitude ?: -122.4194
                     pins.add(
                         MapPinItem(
                             id = "cafe_${c.cafeName}",
@@ -215,8 +216,8 @@ fun MapViewScreen(
 
         if (selectedFilter == MapFilter.WISHLIST) {
             for (w in wishlistCafes) {
-                val userLat = userLocation?.latitude ?: 0.0
-                val userLng = userLocation?.longitude ?: 0.0
+                val userLat = userLocation?.latitude ?: 37.7749
+                val userLng = userLocation?.longitude ?: -122.4194
                 pins.add(
                     MapPinItem(
                         id = "wish_${w.id}_${w.cafeName}",
@@ -238,24 +239,6 @@ fun MapViewScreen(
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
-        topBar = {
-            TopAppBar(
-                title = {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(Icons.Default.Map, contentDescription = null, tint = TerracottaAccent)
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = "aftertaste map",
-                            style = AfterTasteTitleStyle,
-                            fontSize = 30.sp
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = CoffeeClay
-                )
-            )
-        },
         containerColor = CoffeeClay
     ) { innerPadding ->
         Column(
@@ -263,7 +246,7 @@ fun MapViewScreen(
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            // Filter Bar
+            // Filter Chips Bar
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -308,281 +291,188 @@ fun MapViewScreen(
                 )
             }
 
-            // Map Container / States
+            // Map Container
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f)
             ) {
-                when {
-                    !hasPermission -> {
-                        // State 1: Permission Required
-                        Box(
+                if (!hasPermission) {
+                    // State 1: Permission Required
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(ParchmentCream),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Card(
                             modifier = Modifier
-                                .fillMaxSize()
-                                .background(ParchmentCream),
-                            contentAlignment = Alignment.Center
+                                .fillMaxWidth()
+                                .padding(24.dp),
+                            shape = RoundedCornerShape(24.dp),
+                            colors = CardDefaults.cardColors(containerColor = CoffeeClay),
+                            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
                         ) {
-                            Card(
+                            Column(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(24.dp),
-                                shape = RoundedCornerShape(24.dp),
-                                colors = CardDefaults.cardColors(containerColor = CoffeeClay),
-                                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
-                            ) {
-                                Column(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(24.dp),
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                                ) {
-                                    Icon(
-                                        Icons.Default.LocationOff,
-                                        contentDescription = null,
-                                        tint = TerracottaAccent,
-                                        modifier = Modifier.size(52.dp)
-                                    )
-                                    Text(
-                                        text = "Location Permission Needed",
-                                        style = MaterialTheme.typography.titleMedium,
-                                        fontWeight = FontWeight.Bold,
-                                        color = ParchmentCream,
-                                        textAlign = TextAlign.Center
-                                    )
-                                    Text(
-                                        text = "Grant location permission to discover real nearby cafes on Google Maps.",
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        color = ParchmentCream.copy(alpha = 0.8f),
-                                        textAlign = TextAlign.Center
-                                    )
-                                    Button(
-                                        onClick = {
-                                            permissionLauncher.launch(
-                                                arrayOf(
-                                                    Manifest.permission.ACCESS_FINE_LOCATION,
-                                                    Manifest.permission.ACCESS_COARSE_LOCATION
-                                                )
-                                            )
-                                        },
-                                        colors = ButtonDefaults.buttonColors(
-                                            containerColor = TerracottaAccent,
-                                            contentColor = EspressoText
-                                        ),
-                                        shape = RoundedCornerShape(14.dp)
-                                    ) {
-                                        Text("Grant Location Permission", fontWeight = FontWeight.Bold)
-                                    }
-
-                                    Button(
-                                        onClick = {
-                                            val intent = Intent(
-                                                Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                                                Uri.fromParts("package", context.packageName, null)
-                                            )
-                                            context.startActivity(intent)
-                                        },
-                                        colors = ButtonDefaults.buttonColors(
-                                            containerColor = ParchmentCream.copy(alpha = 0.2f),
-                                            contentColor = ParchmentCream
-                                        ),
-                                        shape = RoundedCornerShape(14.dp)
-                                    ) {
-                                        Text("Open App Settings", fontWeight = FontWeight.Bold)
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    isLoadingLocation || isLoadingPlaces -> {
-                        // State 2: Loading State
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(CoffeeClay),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Column(
                                 horizontalAlignment = Alignment.CenterHorizontally,
                                 verticalArrangement = Arrangement.spacedBy(12.dp)
                             ) {
-                                CircularProgressIndicator(color = TerracottaAccent)
-                                Text(
-                                    text = if (isLoadingLocation) "Getting your location..." else "Searching nearby cafes...",
-                                    style = MaterialTheme.typography.titleMedium,
-                                    color = ParchmentCream,
-                                    fontWeight = FontWeight.Bold
+                                Icon(
+                                    Icons.Default.LocationOff,
+                                    contentDescription = null,
+                                    tint = TerracottaAccent,
+                                    modifier = Modifier.size(52.dp)
                                 )
+                                Text(
+                                    text = "Location Permission Needed",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = ParchmentCream,
+                                    textAlign = TextAlign.Center
+                                )
+                                Text(
+                                    text = "Grant location permission to discover real nearby cafes on Google Maps.",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = ParchmentCream.copy(alpha = 0.8f),
+                                    textAlign = TextAlign.Center
+                                )
+                                Button(
+                                    onClick = {
+                                        permissionLauncher.launch(
+                                            arrayOf(
+                                                Manifest.permission.ACCESS_FINE_LOCATION,
+                                                Manifest.permission.ACCESS_COARSE_LOCATION
+                                            )
+                                        )
+                                    },
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = TerracottaAccent,
+                                        contentColor = EspressoText
+                                    ),
+                                    shape = RoundedCornerShape(14.dp)
+                                ) {
+                                    Text("Grant Location Permission", fontWeight = FontWeight.Bold)
+                                }
+
+                                Button(
+                                    onClick = {
+                                        val intent = Intent(
+                                            Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                                            Uri.fromParts("package", context.packageName, null)
+                                        )
+                                        context.startActivity(intent)
+                                    },
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = ParchmentCream.copy(alpha = 0.2f),
+                                        contentColor = ParchmentCream
+                                    ),
+                                    shape = RoundedCornerShape(14.dp)
+                                ) {
+                                    Text("Open App Settings", fontWeight = FontWeight.Bold)
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    // Active Google Map Render
+                    GoogleMap(
+                        modifier = Modifier.fillMaxSize(),
+                        cameraPositionState = cameraPositionState,
+                        properties = MapProperties(
+                            isMyLocationEnabled = hasPermission
+                        ),
+                        uiSettings = MapUiSettings(
+                            zoomControlsEnabled = true,
+                            myLocationButtonEnabled = true
+                        )
+                    ) {
+                        mapPins.forEach { pin ->
+                            val markerState = rememberMarkerState(key = pin.id, position = pin.latLng)
+                            Marker(
+                                state = markerState,
+                                title = pin.name,
+                                snippet = "${pin.location} • ${String.format(Locale.getDefault(), "%.1f km", pin.distanceKm)}",
+                                onClick = {
+                                    selectedPin = pin
+                                    true
+                                }
+                            )
+                        }
+                    }
+
+                    // Floating Location / GPS Status Pill Overlay
+                    Box(
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .align(Alignment.TopStart)
+                    ) {
+                        Surface(
+                            shape = RoundedCornerShape(14.dp),
+                            color = CoffeeClay.copy(alpha = 0.9f)
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                if (isLoadingLocation || isLoadingPlaces) {
+                                    CircularProgressIndicator(
+                                        color = TerracottaAccent,
+                                        modifier = Modifier.size(16.dp),
+                                        strokeWidth = 2.dp
+                                    )
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Text(
+                                        text = if (isLoadingLocation) "Detecting Location..." else "Searching Nearby Cafes...",
+                                        style = MaterialTheme.typography.labelMedium,
+                                        color = ParchmentCream,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                } else if (userLocation != null) {
+                                    Icon(Icons.Default.NearMe, contentDescription = null, tint = TerracottaAccent, modifier = Modifier.size(16.dp))
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Text(
+                                        text = "GPS: (${String.format(Locale.getDefault(), "%.3f", userLocation?.latitude)}, ${String.format(Locale.getDefault(), "%.3f", userLocation?.longitude)})",
+                                        style = MaterialTheme.typography.labelMedium,
+                                        color = ParchmentCream,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                } else {
+                                    Icon(Icons.Default.Refresh, contentDescription = null, tint = TerracottaAccent, modifier = Modifier.size(16.dp))
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Text(
+                                        text = "Tap to Refresh GPS Location",
+                                        style = MaterialTheme.typography.labelMedium,
+                                        color = ParchmentCream,
+                                        fontWeight = FontWeight.Bold,
+                                        modifier = Modifier.clickable { loadLocationAndPlaces() }
+                                    )
+                                }
                             }
                         }
                     }
 
-                    userLocation == null -> {
-                        // State 3: Location Unavailable
+                    // Floating Preview Card when pin is selected
+                    selectedPin?.let { pin ->
                         Box(
                             modifier = Modifier
-                                .fillMaxSize()
-                                .background(CoffeeClay),
-                            contentAlignment = Alignment.Center
+                                .fillMaxWidth()
+                                .padding(16.dp)
+                                .align(Alignment.BottomCenter)
                         ) {
-                            Card(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(24.dp),
-                                shape = RoundedCornerShape(24.dp),
-                                colors = CardDefaults.cardColors(containerColor = ParchmentCream)
-                            ) {
-                                Column(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(24.dp),
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                                ) {
-                                    CoffeeCupIcon(modifier = Modifier.size(48.dp))
-                                    Text(
-                                        text = "Location Unavailable",
-                                        style = MaterialTheme.typography.titleMedium,
-                                        fontWeight = FontWeight.Bold,
-                                        color = EspressoText
-                                    )
-                                    Text(
-                                        text = "Ensure location/GPS is enabled on your device.",
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        color = EspressoText.copy(alpha = 0.7f),
-                                        textAlign = TextAlign.Center
-                                    )
-                                    Button(
-                                        onClick = { loadLocationAndPlaces() },
-                                        colors = ButtonDefaults.buttonColors(
-                                            containerColor = TerracottaAccent,
-                                            contentColor = EspressoText
-                                        ),
-                                        shape = RoundedCornerShape(14.dp)
-                                    ) {
-                                        Icon(Icons.Default.Refresh, contentDescription = null)
-                                        Spacer(modifier = Modifier.width(6.dp))
-                                        Text("Retry", fontWeight = FontWeight.Bold)
+                            FloatingCafeMapCard(
+                                pin = pin,
+                                onClose = { selectedPin = null },
+                                onNavigateToCafeDetail = {
+                                    if (pin.isNearbySpot || pin.isWishlist) {
+                                        onConvertToVisit(pin.name, pin.location)
+                                    } else {
+                                        onNavigateToCafeDetail(pin.name)
                                     }
                                 }
-                            }
-                        }
-                    }
-
-                    else -> {
-                        // State 4: Real Google Map
-                        Box(modifier = Modifier.fillMaxSize()) {
-                            GoogleMap(
-                                modifier = Modifier.fillMaxSize(),
-                                cameraPositionState = cameraPositionState,
-                                properties = MapProperties(
-                                    isMyLocationEnabled = true
-                                ),
-                                uiSettings = MapUiSettings(
-                                    zoomControlsEnabled = true,
-                                    myLocationButtonEnabled = true
-                                )
-                            ) {
-                                mapPins.forEach { pin ->
-                                    Marker(
-                                        state = MarkerState(position = pin.latLng),
-                                        title = pin.name,
-                                        snippet = "${pin.location} • ${String.format(Locale.getDefault(), "%.1f km", pin.distanceKm)}",
-                                        onClick = {
-                                            selectedPin = pin
-                                            true
-                                        }
-                                    )
-                                }
-                            }
-
-                            // Current Location Overlay Badge
-                            Box(
-                                modifier = Modifier
-                                    .padding(16.dp)
-                                    .align(Alignment.TopStart)
-                            ) {
-                                Surface(
-                                    shape = RoundedCornerShape(14.dp),
-                                    color = CoffeeClay.copy(alpha = 0.9f)
-                                ) {
-                                    Row(
-                                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        Icon(Icons.Default.NearMe, contentDescription = null, tint = TerracottaAccent, modifier = Modifier.size(16.dp))
-                                        Spacer(modifier = Modifier.width(6.dp))
-                                        Text(
-                                            text = "GPS: (${String.format(Locale.getDefault(), "%.3f", userLocation?.latitude)}, ${String.format(Locale.getDefault(), "%.3f", userLocation?.longitude)})",
-                                            style = MaterialTheme.typography.labelMedium,
-                                            color = ParchmentCream,
-                                            fontWeight = FontWeight.Bold
-                                        )
-                                    }
-                                }
-                            }
-
-                            // Empty State Overlay if no cafes found
-                            if (mapPins.isEmpty()) {
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(20.dp)
-                                        .align(Alignment.Center)
-                                ) {
-                                    Surface(
-                                        shape = RoundedCornerShape(18.dp),
-                                        color = ParchmentCream.copy(alpha = 0.95f),
-                                        shadowElevation = 8.dp
-                                    ) {
-                                        Column(
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .padding(20.dp),
-                                            horizontalAlignment = Alignment.CenterHorizontally,
-                                            verticalArrangement = Arrangement.spacedBy(8.dp)
-                                        ) {
-                                            CoffeeCupIcon(modifier = Modifier.size(42.dp))
-                                            Text(
-                                                text = "No cafes found nearby.",
-                                                style = MaterialTheme.typography.titleMedium,
-                                                fontWeight = FontWeight.Bold,
-                                                color = EspressoText
-                                            )
-                                            Text(
-                                                text = "Places API returned 0 results around your location.",
-                                                style = MaterialTheme.typography.bodySmall,
-                                                color = EspressoText.copy(alpha = 0.7f),
-                                                textAlign = TextAlign.Center
-                                            )
-                                        }
-                                    }
-                                }
-                            }
-
-                            // Floating Preview Card when pin is selected
-                            selectedPin?.let { pin ->
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(16.dp)
-                                        .align(Alignment.BottomCenter)
-                                ) {
-                                    FloatingCafeMapCard(
-                                        pin = pin,
-                                        onClose = { selectedPin = null },
-                                        onNavigateToCafeDetail = {
-                                            if (pin.isNearbySpot || pin.isWishlist) {
-                                                onConvertToVisit(pin.name, pin.location)
-                                            } else {
-                                                onNavigateToCafeDetail(pin.name)
-                                            }
-                                        }
-                                    )
-                                }
-                            }
+                            )
                         }
                     }
                 }

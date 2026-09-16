@@ -138,32 +138,6 @@ fun SearchFilterScreen(
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
-        topBar = {
-            TopAppBar(
-                title = {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(Icons.Default.Search, contentDescription = null, tint = TerracottaAccent)
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = "aftertaste search",
-                            style = AfterTasteTitleStyle
-                        )
-                    }
-                },
-                actions = {
-                    IconButton(onClick = { showFiltersPanel = !showFiltersPanel }) {
-                        Icon(
-                            imageVector = Icons.Default.FilterList,
-                            contentDescription = "Toggle Filters",
-                            tint = if (showFiltersPanel) TerracottaAccent else ParchmentCream
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = CoffeeClay
-                )
-            )
-        },
         containerColor = CoffeeClay
     ) { innerPadding ->
         LazyColumn(

@@ -96,31 +96,6 @@ fun DashboardScreen(
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
-        topBar = {
-            TopAppBar(
-                title = {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        CoffeeCupIcon(modifier = Modifier.size(28.dp))
-                        Spacer(modifier = Modifier.width(10.dp))
-                        Column {
-                            Text(
-                                text = "aftertaste",
-                                style = AfterTasteTitleStyle,
-                                fontSize = 34.sp
-                            )
-                            Text(
-                                text = "Coffee Passport & Journal",
-                                style = MaterialTheme.typography.labelMedium,
-                                color = TerracottaAccent
-                            )
-                        }
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = CoffeeClay
-                )
-            )
-        },
         containerColor = CoffeeClay
     ) { innerPadding ->
         Column(

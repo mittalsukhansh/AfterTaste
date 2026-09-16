@@ -132,24 +132,6 @@ fun SettingsScreen(
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
-        topBar = {
-            TopAppBar(
-                title = {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(Icons.Default.Settings, contentDescription = null, tint = TerracottaAccent)
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = "aftertaste settings",
-                            style = AfterTasteTitleStyle,
-                            fontSize = 28.sp
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = CoffeeClay
-                )
-            )
-        },
         containerColor = CoffeeClay
     ) { innerPadding ->
         Column(

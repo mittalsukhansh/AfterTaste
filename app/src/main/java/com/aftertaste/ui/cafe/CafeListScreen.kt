@@ -113,24 +113,6 @@ fun CafeListScreen(
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
-        topBar = {
-            TopAppBar(
-                title = {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        CoffeeCupIcon(modifier = Modifier.size(26.dp))
-                        Spacer(modifier = Modifier.width(10.dp))
-                        Text(
-                            text = "aftertaste",
-                            style = AfterTasteTitleStyle,
-                            fontSize = 32.sp
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = CoffeeClay
-                )
-            )
-        },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = onAddVisitClicked,

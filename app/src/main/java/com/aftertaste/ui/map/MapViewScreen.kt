@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -30,10 +31,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.LocationOff
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.NearMe
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -43,7 +46,10 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -63,10 +69,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.aftertaste.ui.components.CoffeeBeanIcon
 import com.aftertaste.ui.components.CoffeeCupIcon
 import com.aftertaste.ui.theme.CoffeeClay
+import com.aftertaste.ui.theme.CoffeeOutline
 import com.aftertaste.ui.theme.EspressoText
 import com.aftertaste.ui.theme.ParchmentCream
 import com.aftertaste.ui.theme.TerracottaAccent
@@ -122,6 +130,7 @@ fun MapViewScreen(
     var selectedFilter by remember { mutableStateOf(MapFilter.NEARBY) }
     var selectedPin by remember { mutableStateOf<MapPinItem?>(null) }
 
+    var searchCoordinateQuery by remember { mutableStateOf("") }
     var hasPermission by remember { mutableStateOf(LocationHelper.hasLocationPermission(context)) }
     var isLoadingLocation by remember { mutableStateOf(false) }
     var isLoadingPlaces by remember { mutableStateOf(false) }
@@ -151,6 +160,36 @@ fun MapViewScreen(
 
                     GeofenceManager.registerCafeGeofences(context, spots)
                 }
+            }
+        }
+    }
+
+    // Helper to jump to custom coordinates input e.g. "34.155, 62.391" or "62391 34155"
+    val jumpToCustomCoordinates = { inputStr: String ->
+        coroutineScope.launch {
+            val numbers = Regex("[-+]?\\d*\\.?\\d+").findAll(inputStr).map { it.value.toDoubleOrNull() }.filterNotNull().toList()
+            if (numbers.size >= 2) {
+                var lat = numbers[0]
+                var lng = numbers[1]
+
+                // Handle integer digits like 34155 -> 34.155, 62391 -> 62.391
+                if (lat > 90 || lat < -90) {
+                    lat = lat / 1000.0
+                }
+                if (lng > 180 || lng < -180) {
+                    lng = lng / 1000.0
+                }
+
+                val customLoc = android.location.Location("custom").apply {
+                    latitude = lat
+                    longitude = lng
+                }
+                userLocation = customLoc
+
+                isLoadingPlaces = true
+                val spots = LocationHelper.fetchNearbyCafes(lat, lng)
+                nearbySpots = spots
+                isLoadingPlaces = false
             }
         }
     }
@@ -186,8 +225,8 @@ fun MapViewScreen(
         if (selectedFilter == MapFilter.VISITED) {
             for (c in cafes) {
                 if (c.visitCount > 0) {
-                    val userLat = userLocation?.latitude ?: 37.7749
-                    val userLng = userLocation?.longitude ?: -122.4194
+                    val userLat = userLocation?.latitude ?: 34.155
+                    val userLng = userLocation?.longitude ?: 62.391
                     pins.add(
                         MapPinItem(
                             id = "cafe_${c.cafeName}",
@@ -207,8 +246,8 @@ fun MapViewScreen(
 
         if (selectedFilter == MapFilter.WISHLIST) {
             for (w in wishlistCafes) {
-                val userLat = userLocation?.latitude ?: 37.7749
-                val userLng = userLocation?.longitude ?: -122.4194
+                val userLat = userLocation?.latitude ?: 34.155
+                val userLng = userLocation?.longitude ?: 62.391
                 pins.add(
                     MapPinItem(
                         id = "wish_${w.id}_${w.cafeName}",
@@ -237,11 +276,51 @@ fun MapViewScreen(
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
+            // Coordinate / Location Search Field Bar
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 6.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                OutlinedTextField(
+                    value = searchCoordinateQuery,
+                    onValueChange = {
+                        searchCoordinateQuery = it
+                        if (it.length >= 5) {
+                            jumpToCustomCoordinates(it)
+                        }
+                    },
+                    placeholder = { Text("Jump to coords e.g. 34.155, 62.391", fontSize = 13.sp) },
+                    leadingIcon = {
+                        Icon(Icons.Default.Search, contentDescription = null, tint = TerracottaAccent)
+                    },
+                    trailingIcon = {
+                        if (searchCoordinateQuery.isNotEmpty()) {
+                            IconButton(onClick = { searchCoordinateQuery = "" }) {
+                                Icon(Icons.Default.Clear, contentDescription = "Clear", tint = CoffeeClay)
+                            }
+                        }
+                    },
+                    singleLine = true,
+                    modifier = Modifier.weight(1f),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = TerracottaAccent,
+                        unfocusedBorderColor = CoffeeOutline,
+                        focusedContainerColor = ParchmentCream,
+                        unfocusedContainerColor = ParchmentCream,
+                        focusedTextColor = EspressoText,
+                        unfocusedTextColor = EspressoText
+                    )
+                )
+            }
+
             // Filter Chips Bar
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                    .padding(horizontal = 16.dp, vertical = 4.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -380,19 +459,18 @@ fun MapViewScreen(
                         update = { mapView ->
                             mapView.overlays.clear()
 
-                            userLocation?.let { loc ->
-                                val userGeoPoint = GeoPoint(loc.latitude, loc.longitude)
-                                mapView.controller.setCenter(userGeoPoint)
+                            val loc = userLocation
+                            val centerGeoPoint = if (loc != null) GeoPoint(loc.latitude, loc.longitude) else GeoPoint(34.155, 62.391)
+                            mapView.controller.animateTo(centerGeoPoint)
 
-                                // User position marker
-                                val userMarker = Marker(mapView).apply {
-                                    position = userGeoPoint
-                                    title = "You Are Here 📍"
-                                    snippet = "Current GPS Position"
-                                    icon = createCoffeeMarkerDrawable(context, "#C05A3E", "📍")
-                                }
-                                mapView.overlays.add(userMarker)
+                            // User position marker
+                            val userMarker = Marker(mapView).apply {
+                                position = centerGeoPoint
+                                title = "Target Location 📍"
+                                snippet = "(${String.format(Locale.getDefault(), "%.3f", centerGeoPoint.latitude)}, ${String.format(Locale.getDefault(), "%.3f", centerGeoPoint.longitude)})"
+                                icon = createCoffeeMarkerDrawable(context, "#C05A3E", "📍")
                             }
+                            mapView.overlays.add(userMarker)
 
                             mapPins.forEach { pin ->
                                 val cafeMarker = Marker(mapView).apply {
@@ -448,7 +526,7 @@ fun MapViewScreen(
                                     Icon(Icons.Default.NearMe, contentDescription = null, tint = TerracottaAccent, modifier = Modifier.size(16.dp))
                                     Spacer(modifier = Modifier.width(6.dp))
                                     Text(
-                                        text = "GPS: (${String.format(Locale.getDefault(), "%.3f", userLocation?.latitude)}, ${String.format(Locale.getDefault(), "%.3f", userLocation?.longitude)})",
+                                        text = "Coords: (${String.format(Locale.getDefault(), "%.3f", userLocation?.latitude)}, ${String.format(Locale.getDefault(), "%.3f", userLocation?.longitude)})",
                                         style = MaterialTheme.typography.labelMedium,
                                         color = ParchmentCream,
                                         fontWeight = FontWeight.Bold

@@ -1,7 +1,19 @@
 package com.aftertaste.util
 
+import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
+import android.content.pm.PackageManager
 import android.location.Location
+import androidx.core.content.ContextCompat
+import com.google.android.gms.location.LocationServices
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.withContext
+import org.json.JSONObject
+import java.net.HttpURLConnection
+import java.net.URL
+import kotlin.coroutines.resume
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
@@ -17,66 +29,126 @@ data class NearbyCafeSpot(
     val lat: Double,
     val lng: Double,
     val isOpenNow: Boolean = true,
-    val tags: List<String> = listOf("Artisan", "Espresso", "WiFi")
+    val tags: List<String> = emptyList()
 )
 
 object LocationHelper {
 
-    // Default reference center location (or detected position)
-    const val DEFAULT_LAT = 37.7749
-    const val DEFAULT_LNG = -122.4194
+    fun hasLocationPermission(context: Context): Boolean {
+        val fineLocation = ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
 
-    // Dynamic nearby cafe templates generated dynamically around user's location
-    private val CAFE_NAME_TEMPLATES = listOf(
-        Pair("Artisan Roasters", "124 Main St"),
-        Pair("Velvet Espresso Bar", "45 Coffee Way"),
-        Pair("The Grind & Leaf", "88 Park Ave"),
-        Pair("Cafe Arabica", "310 Station Square"),
-        Pair("Blue Bottle Corner", "204 Market St"),
-        Pair("Morning Brew Lounge", "15 High St"),
-        Pair("Matcha & Mocha", "51 Urban Alley"),
-        Pair("Craft Coffee Lab", "92 Boulevard"),
-        Pair("Crema & Sugar", "118 Pine St"),
-        Pair("Espresso Symphony", "77 Elm St")
-    )
+        val coarseLocation = ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
 
-    fun fetchNearbyCafes(userLat: Double = DEFAULT_LAT, userLng: Double = DEFAULT_LNG): List<NearbyCafeSpot> {
-        return CAFE_NAME_TEMPLATES.mapIndexed { index, (name, address) ->
-            // Distribute cafes dynamically around user's position
-            val angle = (index * 36) * (Math.PI / 180.0)
-            val radiusKm = 0.2 + (index * 0.25)
-
-            // Convert distance offset to lat/lng degrees approx
-            val latOffset = (radiusKm / 111.0) * cos(angle)
-            val lngOffset = (radiusKm / (111.0 * cos(Math.toRadians(userLat)))) * sin(angle)
-
-            val cafeLat = userLat + latOffset
-            val cafeLng = userLng + lngOffset
-
-            val dist = calculateDistanceKm(userLat, userLng, cafeLat, cafeLng)
-
-            NearbyCafeSpot(
-                id = "nearby_${index}_${name.lowercase().replace(" ", "_")}",
-                name = name,
-                address = address,
-                distanceKm = dist,
-                rating = 4.2f + ((index % 8) * 0.1f),
-                reviewCount = 35 + (index * 22),
-                lat = cafeLat,
-                lng = cafeLng,
-                isOpenNow = index % 5 != 4,
-                tags = when (index % 4) {
-                    0 -> listOf("Pour Over", "Single Origin", "Cozy")
-                    1 -> listOf("Espresso Bar", "Outdoor Seating", "WiFi")
-                    2 -> listOf("Pastries", "Matcha", "Quiet Work")
-                    else -> listOf("Specialty Beans", "Cold Brew", "Pet Friendly")
-                }
-            )
-        }.sortedBy { it.distanceKm }
+        return fineLocation || coarseLocation
     }
 
+    @SuppressLint("MissingPermission")
+    suspend fun getUserLocation(context: Context): Location? {
+        if (!hasLocationPermission(context)) return null
+
+        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
+
+        return suspendCancellableCoroutine { continuation ->
+            fusedLocationClient.lastLocation
+                .addOnSuccessListener { location ->
+                    continuation.resume(location)
+                }
+                .addOnFailureListener {
+                    continuation.resume(null)
+                }
+        }
+    }
+
+    suspend fun fetchNearbyCafes(lat: Double, lng: Double, apiKey: String): List<NearbyCafeSpot> =
+        withContext(Dispatchers.IO) {
+            if (apiKey.isBlank() || apiKey == "AIzaSy_YOUR_MAPS_API_KEY_HERE") {
+                return@withContext emptyList()
+            }
+
+            try {
+                val urlString =
+                    "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=$lat,$lng&radius=2000&type=cafe&key=$apiKey"
+                val url = URL(urlString)
+                val connection = url.openConnection() as HttpURLConnection
+                connection.requestMethod = "GET"
+                connection.connectTimeout = 10000
+                connection.readTimeout = 10000
+
+                val responseCode = connection.responseCode
+                if (responseCode != HttpURLConnection.HTTP_OK) {
+                    return@withContext emptyList()
+                }
+
+                val jsonText = connection.inputStream.bufferedReader().use { it.readText() }
+                val jsonObject = JSONObject(jsonText)
+                val status = jsonObject.optString("status")
+
+                if (status != "OK" && status != "ZERO_RESULTS") {
+                    return@withContext emptyList()
+                }
+
+                val resultsArray = jsonObject.optJSONArray("results") ?: return@withContext emptyList()
+                val spots = mutableListOf<NearbyCafeSpot>()
+
+                for (i in 0 until resultsArray.length()) {
+                    val placeObj = resultsArray.getJSONObject(i)
+                    val placeId = placeObj.optString("place_id", "place_$i")
+                    val name = placeObj.optString("name", "Cafe")
+                    val address = placeObj.optString("vicinity", "Nearby")
+                    val rating = placeObj.optDouble("rating", 0.0).toFloat()
+                    val userRatingsTotal = placeObj.optInt("user_ratings_total", 0)
+
+                    val geometryObj = placeObj.optJSONObject("geometry")
+                    val locationObj = geometryObj?.optJSONObject("location")
+                    val cafeLat = locationObj?.optDouble("lat") ?: continue
+                    val cafeLng = locationObj?.optDouble("lng") ?: continue
+
+                    val openingHoursObj = placeObj.optJSONObject("opening_hours")
+                    val openNow = openingHoursObj?.optBoolean("open_now", true) ?: true
+
+                    val dist = calculateDistanceKm(lat, lng, cafeLat, cafeLng)
+
+                    val typesArray = placeObj.optJSONArray("types")
+                    val tagsList = mutableListOf<String>()
+                    if (typesArray != null) {
+                        for (j in 0 until typesArray.length()) {
+                            val type = typesArray.getString(j)
+                            if (type != "cafe" && type != "establishment" && type != "food" && type != "point_of_interest") {
+                                tagsList.add(type.replace("_", " ").capitalizeWords())
+                            }
+                        }
+                    }
+
+                    spots.add(
+                        NearbyCafeSpot(
+                            id = placeId,
+                            name = name,
+                            address = address,
+                            distanceKm = dist,
+                            rating = rating,
+                            reviewCount = userRatingsTotal,
+                            lat = cafeLat,
+                            lng = cafeLng,
+                            isOpenNow = openNow,
+                            tags = tagsList.take(3)
+                        )
+                    )
+                }
+
+                spots.sortedBy { it.distanceKm }
+            } catch (e: Exception) {
+                emptyList()
+            }
+        }
+
     private fun calculateDistanceKm(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {
-        val r = 6371.0 // Radius of Earth in Km
+        val r = 6371.0
         val dLat = Math.toRadians(lat2 - lat1)
         val dLon = Math.toRadians(lon2 - lon1)
         val a = sin(dLat / 2) * sin(dLat / 2) +
@@ -85,4 +157,9 @@ object LocationHelper {
         val c = 2 * atan2(sqrt(a), sqrt(1 - a))
         return r * c
     }
+
+    private fun String.capitalizeWords(): String =
+        split(" ").joinToString(" ") { word ->
+            word.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
+        }
 }

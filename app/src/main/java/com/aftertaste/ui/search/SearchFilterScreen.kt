@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -42,8 +43,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -61,8 +60,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.aftertaste.data.local.entity.CafeVisitWithDetails
-import com.aftertaste.ui.components.CoffeeBeanIcon
 import com.aftertaste.ui.components.CoffeeBeanRatingBar
+import com.aftertaste.ui.theme.AfterTasteTitleStyle
 import com.aftertaste.ui.theme.CoffeeClay
 import com.aftertaste.ui.theme.CoffeeOutline
 import com.aftertaste.ui.theme.EspressoText
@@ -112,7 +111,7 @@ fun SearchFilterScreen(
             // Power outlets check
             if (filterPowerOutlets && v.powerOutlets != true) return@filter false
 
-            // Good wifi check (wifiRating >= 4.0 or powerOutlets == true)
+            // Good wifi check (wifiRating >= 4.0)
             if (filterGoodWifi && (v.wifiRating ?: 0f) < 4.0f) return@filter false
 
             // Would return check
@@ -146,10 +145,8 @@ fun SearchFilterScreen(
                         Icon(Icons.Default.Search, contentDescription = null, tint = TerracottaAccent)
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "Search & Filter Logs",
-                            style = MaterialTheme.typography.titleLarge,
-                            color = ParchmentCream,
-                            fontWeight = FontWeight.Bold
+                            text = "aftertaste search",
+                            style = AfterTasteTitleStyle
                         )
                     }
                 },
@@ -169,187 +166,160 @@ fun SearchFilterScreen(
         },
         containerColor = CoffeeClay
     ) { innerPadding ->
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
-                .padding(16.dp),
+                .padding(innerPadding),
+            contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
-            // Search Text Field
-            OutlinedTextField(
-                value = searchQuery,
-                onValueChange = { viewModel.setSearchQuery(it) },
-                placeholder = { Text("Search cafes, items, notes, tags...") },
-                leadingIcon = {
-                    Icon(Icons.Default.Search, contentDescription = null, tint = TerracottaAccent)
-                },
-                trailingIcon = {
-                    if (searchQuery.isNotEmpty()) {
-                        IconButton(onClick = { viewModel.setSearchQuery("") }) {
-                            Icon(Icons.Default.Clear, contentDescription = "Clear", tint = CoffeeClay)
-                        }
-                    }
-                },
-                singleLine = true,
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = TerracottaAccent,
-                    unfocusedBorderColor = CoffeeOutline,
-                    focusedContainerColor = ParchmentCream,
-                    unfocusedContainerColor = ParchmentCream,
-                    focusedTextColor = EspressoText,
-                    unfocusedTextColor = EspressoText
-                )
-            )
-
-            // Collapsible Filters Panel Card
-            AnimatedVisibility(visible = showFiltersPanel) {
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(20.dp),
-                    colors = CardDefaults.cardColors(containerColor = ParchmentCream),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        Text(
-                            text = "Refine & Filter",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = EspressoText
-                        )
-
-                        // Rating Threshold Slider
-                        Column {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(
-                                    text = "Minimum Rating",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = EspressoText
-                                )
-                                Text(
-                                    text = if (minRatingThreshold > 0f) String.format(Locale.getDefault(), ">= %.1f ★", minRatingThreshold) else "Any Rating",
-                                    style = MaterialTheme.typography.labelLarge,
-                                    fontWeight = FontWeight.Bold,
-                                    color = TerracottaAccent
-                                )
+            // Item 1: Search Text Field
+            item {
+                OutlinedTextField(
+                    value = searchQuery,
+                    onValueChange = { viewModel.setSearchQuery(it) },
+                    placeholder = { Text("Search cafes, items, notes, tags...") },
+                    leadingIcon = {
+                        Icon(Icons.Default.Search, contentDescription = null, tint = TerracottaAccent)
+                    },
+                    trailingIcon = {
+                        if (searchQuery.isNotEmpty()) {
+                            IconButton(onClick = { viewModel.setSearchQuery("") }) {
+                                Icon(Icons.Default.Clear, contentDescription = "Clear", tint = CoffeeClay)
                             }
-                            Slider(
-                                value = minRatingThreshold,
-                                onValueChange = { minRatingThreshold = it },
-                                valueRange = 0f..5f,
-                                steps = 9, // 0.5 steps
-                                colors = SliderDefaults.colors(
-                                    thumbColor = TerracottaAccent,
-                                    activeTrackColor = TerracottaAccent,
-                                    inactiveTrackColor = CoffeeOutline
-                                )
-                            )
                         }
+                    },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = TerracottaAccent,
+                        unfocusedBorderColor = CoffeeOutline,
+                        focusedContainerColor = ParchmentCream,
+                        unfocusedContainerColor = ParchmentCream,
+                        focusedTextColor = EspressoText,
+                        unfocusedTextColor = EspressoText
+                    )
+                )
+            }
 
-                        // Feature Toggle Chips & Switches
-                        FlowRow(
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            verticalArrangement = Arrangement.spacedBy(6.dp)
+            // Item 2: Collapsible Filters Panel Card
+            item {
+                AnimatedVisibility(visible = showFiltersPanel) {
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(20.dp),
+                        colors = CardDefaults.cardColors(containerColor = ParchmentCream),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
-                            FilterChip(
-                                selected = filterPowerOutlets,
-                                onClick = { filterPowerOutlets = !filterPowerOutlets },
-                                label = { Text("Power Outlets") },
-                                leadingIcon = {
-                                    Icon(Icons.Default.Power, contentDescription = null, modifier = Modifier.size(16.dp))
-                                },
-                                colors = FilterChipDefaults.filterChipColors(
-                                    selectedContainerColor = TerracottaAccent,
-                                    selectedLabelColor = EspressoText
-                                )
-                            )
-
-                            FilterChip(
-                                selected = filterGoodWifi,
-                                onClick = { filterGoodWifi = !filterGoodWifi },
-                                label = { Text("Good Wifi (4.0+)") },
-                                leadingIcon = {
-                                    Icon(Icons.Default.Wifi, contentDescription = null, modifier = Modifier.size(16.dp))
-                                },
-                                colors = FilterChipDefaults.filterChipColors(
-                                    selectedContainerColor = TerracottaAccent,
-                                    selectedLabelColor = EspressoText
-                                )
-                            )
-
-                            FilterChip(
-                                selected = filterWouldReturnOnly,
-                                onClick = { filterWouldReturnOnly = !filterWouldReturnOnly },
-                                label = { Text("Would Return Only") },
-                                leadingIcon = {
-                                    Icon(Icons.Default.Star, contentDescription = null, modifier = Modifier.size(16.dp))
-                                },
-                                colors = FilterChipDefaults.filterChipColors(
-                                    selectedContainerColor = TerracottaAccent,
-                                    selectedLabelColor = EspressoText
-                                )
-                            )
-                        }
-
-                        // Noise Level Filter
-                        Column {
                             Text(
-                                text = "Noise Level",
-                                style = MaterialTheme.typography.bodySmall,
-                                fontWeight = FontWeight.SemiBold,
-                                color = EspressoText.copy(alpha = 0.7f)
+                                text = "Refine & Filter",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = EspressoText
                             )
-                            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                listOf("Low", "Medium", "High").forEach { level ->
-                                    val isSelected = selectedNoiseLevels.contains(level)
-                                    FilterChip(
-                                        selected = isSelected,
-                                        onClick = {
-                                            if (isSelected) selectedNoiseLevels.remove(level) else selectedNoiseLevels.add(level)
-                                        },
-                                        label = { Text(level) },
-                                        colors = FilterChipDefaults.filterChipColors(
-                                            selectedContainerColor = TerracottaAccent,
-                                            selectedLabelColor = EspressoText
-                                        )
+
+                            // Rating Threshold Slider
+                            Column {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Text(
+                                        text = "Minimum Rating",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = EspressoText
+                                    )
+                                    Text(
+                                        text = if (minRatingThreshold > 0f) String.format(Locale.getDefault(), ">= %.1f ★", minRatingThreshold) else "Any Rating",
+                                        style = MaterialTheme.typography.labelLarge,
+                                        fontWeight = FontWeight.Bold,
+                                        color = TerracottaAccent
                                     )
                                 }
+                                Slider(
+                                    value = minRatingThreshold,
+                                    onValueChange = { minRatingThreshold = it },
+                                    valueRange = 0f..5f,
+                                    steps = 9,
+                                    colors = SliderDefaults.colors(
+                                        thumbColor = TerracottaAccent,
+                                        activeTrackColor = TerracottaAccent,
+                                        inactiveTrackColor = CoffeeOutline
+                                    )
+                                )
                             }
-                        }
 
-                        // Vibe Tags Filter
-                        if (availableTags.isNotEmpty()) {
+                            // Feature Toggle Chips
+                            FlowRow(
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                verticalArrangement = Arrangement.spacedBy(6.dp)
+                            ) {
+                                FilterChip(
+                                    selected = filterPowerOutlets,
+                                    onClick = { filterPowerOutlets = !filterPowerOutlets },
+                                    label = { Text("Power Outlets") },
+                                    leadingIcon = {
+                                        Icon(Icons.Default.Power, contentDescription = null, modifier = Modifier.size(16.dp))
+                                    },
+                                    colors = FilterChipDefaults.filterChipColors(
+                                        selectedContainerColor = TerracottaAccent,
+                                        selectedLabelColor = EspressoText
+                                    )
+                                )
+
+                                FilterChip(
+                                    selected = filterGoodWifi,
+                                    onClick = { filterGoodWifi = !filterGoodWifi },
+                                    label = { Text("Good Wifi (4.0+)") },
+                                    leadingIcon = {
+                                        Icon(Icons.Default.Wifi, contentDescription = null, modifier = Modifier.size(16.dp))
+                                    },
+                                    colors = FilterChipDefaults.filterChipColors(
+                                        selectedContainerColor = TerracottaAccent,
+                                        selectedLabelColor = EspressoText
+                                    )
+                                )
+
+                                FilterChip(
+                                    selected = filterWouldReturnOnly,
+                                    onClick = { filterWouldReturnOnly = !filterWouldReturnOnly },
+                                    label = { Text("Would Return Only") },
+                                    leadingIcon = {
+                                        Icon(Icons.Default.Star, contentDescription = null, modifier = Modifier.size(16.dp))
+                                    },
+                                    colors = FilterChipDefaults.filterChipColors(
+                                        selectedContainerColor = TerracottaAccent,
+                                        selectedLabelColor = EspressoText
+                                    )
+                                )
+                            }
+
+                            // Noise Level Filter
                             Column {
                                 Text(
-                                    text = "Vibe Tags Multi-select",
+                                    text = "Noise Level",
                                     style = MaterialTheme.typography.bodySmall,
                                     fontWeight = FontWeight.SemiBold,
                                     color = EspressoText.copy(alpha = 0.7f)
                                 )
-                                FlowRow(
-                                    horizontalArrangement = Arrangement.spacedBy(6.dp),
-                                    verticalArrangement = Arrangement.spacedBy(4.dp)
-                                ) {
-                                    availableTags.forEach { tag ->
-                                        val isSelected = selectedVibeTags.contains(tag)
+                                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                    listOf("Low", "Medium", "High").forEach { level ->
+                                        val isSelected = selectedNoiseLevels.contains(level)
                                         FilterChip(
                                             selected = isSelected,
                                             onClick = {
-                                                if (isSelected) selectedVibeTags.remove(tag) else selectedVibeTags.add(tag)
+                                                if (isSelected) selectedNoiseLevels.remove(level) else selectedNoiseLevels.add(level)
                                             },
-                                            label = { Text("#$tag") },
+                                            label = { Text(level) },
                                             colors = FilterChipDefaults.filterChipColors(
                                                 selectedContainerColor = TerracottaAccent,
                                                 selectedLabelColor = EspressoText
@@ -358,46 +328,74 @@ fun SearchFilterScreen(
                                     }
                                 }
                             }
+
+                            // Vibe Tags Filter
+                            if (availableTags.isNotEmpty()) {
+                                Column {
+                                    Text(
+                                        text = "Vibe Tags Multi-select",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = EspressoText.copy(alpha = 0.7f)
+                                    )
+                                    FlowRow(
+                                        horizontalArrangement = Arrangement.spacedBy(6.dp),
+                                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                                    ) {
+                                        availableTags.forEach { tag ->
+                                            val isSelected = selectedVibeTags.contains(tag)
+                                            FilterChip(
+                                                selected = isSelected,
+                                                onClick = {
+                                                    if (isSelected) selectedVibeTags.remove(tag) else selectedVibeTags.add(tag)
+                                                },
+                                                label = { Text("#$tag") },
+                                                colors = FilterChipDefaults.filterChipColors(
+                                                    selectedContainerColor = TerracottaAccent,
+                                                    selectedLabelColor = EspressoText
+                                                )
+                                            )
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
             }
 
-            // Results Counter Bar
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "Search Results",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = ParchmentCream,
-                    fontWeight = FontWeight.Bold
-                )
-
-                Surface(
-                    shape = CircleShape,
-                    color = TerracottaAccent
+            // Item 3: Results Counter Bar
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "${filteredVisits.size} Matches Found",
-                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
-                        style = MaterialTheme.typography.labelSmall,
-                        fontWeight = FontWeight.Bold,
-                        color = EspressoText
+                        text = "Search Results",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = ParchmentCream,
+                        fontWeight = FontWeight.Bold
                     )
+
+                    Surface(
+                        shape = CircleShape,
+                        color = TerracottaAccent
+                    ) {
+                        Text(
+                            text = "${filteredVisits.size} Matches Found",
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+                            style = MaterialTheme.typography.labelSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = EspressoText
+                        )
+                    }
                 }
             }
 
-            // Search Results List
+            // Item 4: Empty State or Results List
             if (filteredVisits.isEmpty()) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f),
-                    contentAlignment = Alignment.Center
-                ) {
+                item {
                     Card(
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(20.dp),
@@ -432,17 +430,17 @@ fun SearchFilterScreen(
                     }
                 }
             } else {
-                LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(10.dp),
-                    modifier = Modifier.weight(1f)
-                ) {
-                    items(filteredVisits, key = { it.visit.id }) { visitDetails ->
-                        SearchResultVisitCard(
-                            visitDetails = visitDetails,
-                            onClick = { onNavigateToVisitDetail(visitDetails.visit.id) }
-                        )
-                    }
+                items(filteredVisits, key = { it.visit.id }) { visitDetails ->
+                    SearchResultVisitCard(
+                        visitDetails = visitDetails,
+                        onClick = { onNavigateToVisitDetail(visitDetails.visit.id) }
+                    )
                 }
+            }
+
+            // Bottom Spacing Item for Navigation Bar Clearance
+            item {
+                Spacer(modifier = Modifier.height(72.dp))
             }
         }
     }

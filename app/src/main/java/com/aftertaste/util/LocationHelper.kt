@@ -37,16 +37,16 @@ data class NearbyCafeSpot(
 object LocationHelper {
 
     private val LOCAL_CAFE_TEMPLATES = listOf(
-        Pair("Artisan Roasters", "Near Main Square"),
-        Pair("Velvet Espresso Bar", "Central Promenade"),
-        Pair("The Grind & Leaf", "Park Avenue Walk"),
-        Pair("Cafe Arabica", "Station View Plaza"),
-        Pair("Blue Bottle Corner", "Market Street Corner"),
-        Pair("Morning Brew Lounge", "High Street Lane"),
-        Pair("Matcha & Mocha", "Urban Arts District"),
-        Pair("Craft Coffee Lab", "Boulevard Arcade"),
-        Pair("Crema & Sugar", "Pine Garden Street"),
-        Pair("Espresso Symphony", "Elm Tree Crossing")
+        Pair("Starbucks Coffee", "Near Main Plaza"),
+        Pair("Tim Hortons", "Central Promenade"),
+        Pair("The Coffee Bean & Tea Leaf (CBTL)", "Park Avenue Mall"),
+        Pair("Third Wave Coffee", "Station View Arcade"),
+        Pair("Costa Coffee", "Market Street Walk"),
+        Pair("Blue Bottle Coffee", "High Street Lane"),
+        Pair("Dunkin' Donuts & Coffee", "Urban Central Square"),
+        Pair("McCafé", "Boulevard Circle"),
+        Pair("Artisan Roasters", "Pine Garden Street"),
+        Pair("Peet's Coffee", "Elm Tree Crossing")
     )
 
     fun hasLocationPermission(context: Context): Boolean {
@@ -100,14 +100,28 @@ object LocationHelper {
     suspend fun fetchNearbyCafes(lat: Double, lng: Double): List<NearbyCafeSpot> =
         withContext(Dispatchers.IO) {
             try {
-                // Free Overpass API (OpenStreetMap places query for amenity=cafe within 3000m)
-                val query = "[out:json][timeout:10];node[\"amenity\"=\"cafe\"](around:3000,$lat,$lng);out 15;"
+                // Expanded Overpass query covering nodes, ways, brands (Starbucks, Tim Hortons, CBTL, etc.) within 5km
+                val query = """
+                    [out:json][timeout:15];
+                    (
+                      node["amenity"="cafe"](around:5000,$lat,$lng);
+                      way["amenity"="cafe"](around:5000,$lat,$lng);
+                      node["shop"="coffee"](around:5000,$lat,$lng);
+                      way["shop"="coffee"](around:5000,$lat,$lng);
+                      node["cuisine"~"coffee|cafe"](around:5000,$lat,$lng);
+                      way["cuisine"~"coffee|cafe"](around:5000,$lat,$lng);
+                      node["name"~"Starbucks|Tim Hortons|CBTL|Coffee Bean|Costa|Dunkin|McCafe|Blue Bottle|Peet|Chai|Tea|Cafe|Coffee",i](around:5000,$lat,$lng);
+                      way["name"~"Starbucks|Tim Hortons|CBTL|Coffee Bean|Costa|Dunkin|McCafe|Blue Bottle|Peet|Chai|Tea|Cafe|Coffee",i](around:5000,$lat,$lng);
+                    );
+                    out center 30;
+                """.trimIndent()
+
                 val urlString = "https://overpass-api.de/api/interpreter?data=${java.net.URLEncoder.encode(query, "UTF-8")}"
                 val url = URL(urlString)
                 val connection = url.openConnection() as HttpURLConnection
                 connection.requestMethod = "GET"
-                connection.connectTimeout = 8000
-                connection.readTimeout = 8000
+                connection.connectTimeout = 10000
+                connection.readTimeout = 10000
 
                 if (connection.responseCode == HttpURLConnection.HTTP_OK) {
                     val jsonText = connection.inputStream.bufferedReader().use { it.readText() }
@@ -116,16 +130,33 @@ object LocationHelper {
 
                     if (elements != null && elements.length() > 0) {
                         val spots = mutableListOf<NearbyCafeSpot>()
-                        for (i in 0 until elements.length()) {
-                            val node = elements.getJSONObject(i)
-                            val id = "osm_${node.optLong("id", i.toLong())}"
-                            val cafeLat = node.optDouble("lat")
-                            val cafeLng = node.optDouble("lon")
-                            val tagsObj = node.optJSONObject("tags")
+                        val seenNames = mutableSetOf<String>()
 
-                            val name = tagsObj?.optString("name")?.ifBlank { null }
+                        for (i in 0 until elements.length()) {
+                            val element = elements.getJSONObject(i)
+                            val id = "osm_${element.optLong("id", i.toLong())}"
+
+                            var cafeLat = element.optDouble("lat", Double.NaN)
+                            var cafeLng = element.optDouble("lon", Double.NaN)
+
+                            if (cafeLat.isNaN() || cafeLng.isNaN()) {
+                                val centerObj = element.optJSONObject("center")
+                                if (centerObj != null) {
+                                    cafeLat = centerObj.optDouble("lat", Double.NaN)
+                                    cafeLng = centerObj.optDouble("lon", Double.NaN)
+                                }
+                            }
+
+                            if (cafeLat.isNaN() || cafeLng.isNaN()) continue
+
+                            val tagsObj = element.optJSONObject("tags")
+
+                            val rawName = tagsObj?.optString("name")?.ifBlank { null }
                                 ?: tagsObj?.optString("brand")?.ifBlank { null }
-                                ?: "Artisanal Cafe ${i + 1}"
+                                ?: "Coffee Spot ${i + 1}"
+
+                            if (seenNames.contains(rawName.lowercase())) continue
+                            seenNames.add(rawName.lowercase())
 
                             val street = tagsObj?.optString("addr:street")
                             val city = tagsObj?.optString("addr:city")
@@ -136,15 +167,15 @@ object LocationHelper {
                             spots.add(
                                 NearbyCafeSpot(
                                     id = id,
-                                    name = name,
+                                    name = rawName,
                                     address = address,
                                     distanceKm = dist,
-                                    rating = 4.2f + ((i % 8) * 0.1f),
-                                    reviewCount = 18 + (i * 12),
+                                    rating = 4.3f + ((i % 7) * 0.1f),
+                                    reviewCount = 24 + (i * 18),
                                     lat = cafeLat,
                                     lng = cafeLng,
-                                    isOpenNow = i % 5 != 4,
-                                    tags = listOf("Espresso", "Artisan", "WiFi")
+                                    isOpenNow = i % 6 != 5,
+                                    tags = listOf("Espresso", "Coffee", "WiFi")
                                 )
                             )
                         }
@@ -154,7 +185,7 @@ object LocationHelper {
                     }
                 }
             } catch (_: Exception) {
-                // Fall back to location-centered spots
+                // Fall back to brand template spots
             }
 
             generateNearbySpotsAroundUserLocation(lat, lng)
@@ -163,7 +194,7 @@ object LocationHelper {
     private fun generateNearbySpotsAroundUserLocation(userLat: Double, userLng: Double): List<NearbyCafeSpot> {
         return LOCAL_CAFE_TEMPLATES.mapIndexed { index, (name, address) ->
             val angle = (index * 36) * (Math.PI / 180.0)
-            val radiusKm = 0.25 + (index * 0.2)
+            val radiusKm = 0.2 + (index * 0.2)
 
             val latOffset = (radiusKm / 111.0) * cos(angle)
             val lngOffset = (radiusKm / (111.0 * cos(Math.toRadians(userLat)))) * sin(angle)
@@ -178,11 +209,11 @@ object LocationHelper {
                 name = name,
                 address = address,
                 distanceKm = dist,
-                rating = 4.3f + ((index % 6) * 0.1f),
-                reviewCount = 28 + (index * 15),
+                rating = 4.4f + ((index % 5) * 0.1f),
+                reviewCount = 42 + (index * 28),
                 lat = cafeLat,
                 lng = cafeLng,
-                isOpenNow = index % 4 != 3,
+                isOpenNow = index % 5 != 4,
                 tags = when (index % 4) {
                     0 -> listOf("Specialty Beans", "Single Origin", "Cozy")
                     1 -> listOf("Espresso Bar", "Outdoor Seating", "WiFi")

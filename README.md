@@ -1,4 +1,4 @@
-# AfterTaste ☕
+# AfterTaste
 
 [![Android](https://img.shields.io/badge/Platform-Android-green.svg)](https://developer.android.com)
 [![Release](https://img.shields.io/badge/Release-v1.0.0-orange.svg)](https://github.com/mittalsukhansh/AfterTaste/releases/tag/v1.0.0)
@@ -10,46 +10,46 @@
 
 ---
 
-## 📱 Download & Releases
+## Download & Releases
 
 | Version | Release Date | Download APK | Release Notes |
 |:---|:---|:---|:---|
-| **v1.0.0** (Latest) | October 2026 | [📥 Download AfterTaste-v1.0.0.apk](https://github.com/mittalsukhansh/AfterTaste/releases/download/v1.0.0/AfterTaste-v1.0.0.apk) | [Changelog](https://github.com/mittalsukhansh/AfterTaste/releases/tag/v1.0.0) |
+| **v1.0.0** (Latest) | October 2026 | [Download AfterTaste-v1.0.0.apk](https://github.com/mittalsukhansh/AfterTaste/releases/download/v1.0.0/AfterTaste-v1.0.0.apk) | [Changelog](https://github.com/mittalsukhansh/AfterTaste/releases/tag/v1.0.0) |
 
 > **Direct APK Installation**: Download `AfterTaste-v1.0.0.apk` directly on your Android device (Android 7.0+ / API 24+) and install. Ensure "Install unknown apps" permission is enabled in your device settings.
 
 ---
 
-## ✨ Features
+## Features
 
-### 🎨 Pinterest-Style Staggered Grid UI
+### Pinterest-Style Staggered Grid UI
 - **Masonry Layout**: Displays cafes, visit logs, and photos in a `LazyVerticalStaggeredGrid`.
 - **Fluid Animations**: Scale press micro-interactions (`graphicsLayer`), spring entrance animations, and adaptive aspect ratio cards.
 - **Warm Coffee Theme**: Signature parchment cream background (`#F4ECE1`), deep espresso typography (`#2A1810`), and terracotta highlights (`#C05A3E`).
 
-### 🖋️ Brand Identity & Custom Typography
+### Brand Identity & Custom Typography
 - **Custom Title Font**: Stylized brush script typography matching the AfterTaste brand logo across headers, top bars, and onboarding.
 - **Adaptive Launcher Icon**: Custom vector and high-density PNG adaptive launcher icons for squircle, round, and legacy home screens.
 
-### 📍 Dynamic Nearby Cafe Map
+### Dynamic Nearby Cafe Map
 - **Live Location Detection**: Dynamically calculates nearby artisanal coffee spots relative to the user's real GPS position.
-- **Interactive Pins & Callouts**: Distance metrics (*e.g., "0.3 km away"*), filter chips (*"Nearby Cafes 📍"*, *"Visited ☕"*, *"Wishlist ♡"*), and quick action callout cards.
+- **Interactive Pins & Callouts**: Distance metrics (*e.g., "0.3 km away"*), filter chips (*"Nearby Cafes"*, *"Visited"*, *"Wishlist"*), and quick action callout cards.
 
-### 👤 Google Account & Cloud Sync
+### Google Account & Cloud Sync
 - **Google Sign-In**: Integrated profile card displaying user avatar, name, and email in Settings & Dashboard.
 - **Cloud Backup State**: Automatic timestamped sync indicator for backing up coffee visits and wishlist items safely.
 
-### 📊 Passport Stamps & Analytics
+### Passport Stamps & Analytics
 - **Achievement Stamps**: Unlock digital passport badges (*"Espresso Explorer"*, *"Cozy Regular"*, *"WiFi Nomad"*) based on visit milestones.
 - **Coffee Journal Analytics**: Track total spend, monthly visits, favorite cafe stats, and active weekly streaks.
 
-### 💾 Data Export & Restore
+### Data Export & Restore
 - **CSV & JSON Export**: Export your complete coffee journal to spreadsheet CSV or full JSON backup files.
 - **Restore & Backup**: Restore data seamlessly from JSON backups or share exported data via Android share sheet.
 
 ---
 
-## 🛠 Tech Stack & Architecture
+## Tech Stack & Architecture
 
 - **Language**: [Kotlin](https://kotlinlang.org/) (2.2.10)
 - **UI Framework**: [Jetpack Compose](https://developer.android.com/jetpack/compose) with Material 3
@@ -61,7 +61,7 @@
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 - Android Studio Ladybug or newer
@@ -90,7 +90,7 @@
 
 ---
 
-## 📄 License
+## License
 
 ```text
 Copyright 2026 AfterTaste App. All rights reserved.

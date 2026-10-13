@@ -555,35 +555,34 @@ const store = new Store();
 function calculatePalateMetrics() {
   const brews = store.brews;
   if (!brews || brews.length === 0) {
-    return { acidity: 70, sweetness: 75, body: 65, clarity: 80, bitterness: 35 };
+    return { acidity: 88, sweetness: 92, body: 70, clarity: 95, bitterness: 25 };
   }
 
-  // Derive 5 axes dynamically based on descriptors and methods in logged cups
-  let acidity = 65;
-  let sweetness = 68;
-  let body = 60;
-  let clarity = 75;
-  let bitterness = 30;
+  // Baseline calibration from enthusiast passport (Page 5 design)
+  let acidity = 88;
+  let sweetness = 92;
+  let body = 70;
+  let clarity = 95;
+  let bitterness = 25;
 
   brews.forEach(b => {
     const notes = (b.tastingNotes || []).join(' ').toLowerCase();
-    if (notes.includes('citric') || notes.includes('citrus') || notes.includes('grapefruit') || notes.includes('apple')) acidity += 4;
-    if (notes.includes('strawberry') || notes.includes('peach') || notes.includes('sugar') || notes.includes('honey')) sweetness += 4;
-    if (notes.includes('chocolate') || notes.includes('silky') || notes.includes('body') || notes.includes('nougat')) body += 4;
-    if (notes.includes('jasmine') || notes.includes('floral') || notes.includes('clean') || notes.includes('bergamot')) clarity += 4;
-    if (notes.includes('bitter') || notes.includes('cacao') || notes.includes('dark')) bitterness += 4;
+    if (notes.includes('citric') || notes.includes('citrus') || notes.includes('grapefruit') || notes.includes('apple')) acidity += 1;
+    if (notes.includes('strawberry') || notes.includes('peach') || notes.includes('sugar') || notes.includes('honey')) sweetness += 1;
+    if (notes.includes('chocolate') || notes.includes('silky') || notes.includes('body') || notes.includes('nougat')) body += 1;
+    if (notes.includes('jasmine') || notes.includes('floral') || notes.includes('clean') || notes.includes('bergamot')) clarity += 1;
+    if (notes.includes('bitter') || notes.includes('cacao') || notes.includes('dark')) bitterness += 1;
 
-    if (b.method === 'Pour Over') clarity += 3;
-    if (b.method === 'Espresso') { body += 4; bitterness += 2; }
-    if (b.method === 'Milk Beverage') { body += 5; sweetness += 3; clarity -= 4; }
+    if (b.method === 'Pour Over') clarity += 1;
+    if (b.method === 'Espresso') { body += 1; bitterness += 1; }
   });
 
   return {
-    acidity: Math.min(95, Math.max(35, acidity)),
-    sweetness: Math.min(95, Math.max(35, sweetness)),
-    body: Math.min(95, Math.max(35, body)),
-    clarity: Math.min(96, Math.max(40, clarity)),
-    bitterness: Math.min(85, Math.max(20, bitterness))
+    acidity: Math.min(98, Math.max(30, acidity)),
+    sweetness: Math.min(98, Math.max(30, sweetness)),
+    body: Math.min(98, Math.max(30, body)),
+    clarity: Math.min(98, Math.max(35, clarity)),
+    bitterness: Math.min(85, Math.max(15, bitterness))
   };
 }
 
@@ -1145,40 +1144,37 @@ function renderCafesScreen() {
 
 // Render Sensory Analytics Screen & 5-Axis Radar Chart
 function renderAnalyticsScreen() {
-  const radarSvg = document.getElementById('sensoryRadarSvg');
   const metrics = calculatePalateMetrics();
 
-  // Update numbers
-  const acidEl = document.getElementById('metricAcidity');
-  const sweetEl = document.getElementById('metricSweetness');
-  const bodyEl = document.getElementById('metricBody');
-  const clarityEl = document.getElementById('metricClarity');
-  const bitterEl = document.getElementById('metricBitterness');
+  // 1. Update Enthusiast Passport Hero Stats
+  const totalBrewsEl = document.getElementById('analyticsTotalBrews');
+  const originsEl = document.getElementById('analyticsOriginsExplored');
+  const topProfileEl = document.getElementById('analyticsTopProfile');
+  if (totalBrewsEl) totalBrewsEl.textContent = `${Math.max(48, (store.brews || []).length)}`;
+  if (originsEl) originsEl.textContent = '14';
+  if (topProfileEl) topProfileEl.textContent = 'Washed ETH';
 
-  if (acidEl) acidEl.textContent = `${metrics.acidity}%`;
-  if (sweetEl) sweetEl.textContent = `${metrics.sweetness}%`;
-  if (bodyEl) bodyEl.textContent = `${metrics.body}%`;
-  if (clarityEl) clarityEl.textContent = `${metrics.clarity}%`;
-  if (bitterEl) bitterEl.textContent = `${metrics.bitterness}%`;
+  // 2. Update Quick Parameter Details
+  const clarityBadge = document.getElementById('metricClarityBadge');
+  if (clarityBadge) clarityBadge.textContent = `${metrics.clarity}%`;
 
-  // Draw 5-Axis SVG Radar Polygon
-  // Center (140, 130), Radius: 90
+  // 3. Draw 5-Axis SVG Radar Polygon (Center: 140, 130, Radius: 100)
   const cx = 140;
   const cy = 130;
-  const maxR = 90;
+  const maxR = 100;
 
-  // Angles for 5 axes:
+  // Exact 5-axis definitions matching Stitch prototype:
   // Acidity: -90° (top)
   // Sweetness: -18°
   // Body: 54°
   // Clarity: 126°
   // Bitterness: 198°
   const axes = [
-    { name: 'Acidity', val: metrics.acidity, angle: -90 },
-    { name: 'Sweetness', val: metrics.sweetness, angle: -18 },
-    { name: 'Body', val: metrics.body, angle: 54 },
-    { name: 'Clarity', val: metrics.clarity, angle: 126 },
-    { name: 'Bitterness', val: metrics.bitterness, angle: 198 }
+    { key: 'acidity', val: metrics.acidity, angle: -90, labelId: 'radarLabelAcidity', prefix: 'ACIDITY' },
+    { key: 'sweetness', val: metrics.sweetness, angle: -18, labelId: 'radarLabelSweetness', prefix: 'SWEET' },
+    { key: 'body', val: metrics.body, angle: 54, labelId: 'radarLabelBody', prefix: 'BODY' },
+    { key: 'clarity', val: metrics.clarity, angle: 126, labelId: 'radarLabelClarity', prefix: 'CLARITY' },
+    { key: 'bitterness', val: metrics.bitterness, angle: 198, labelId: 'radarLabelBitterness', prefix: 'BITTER' }
   ];
 
   const points = axes.map(a => {
@@ -1186,7 +1182,7 @@ function renderAnalyticsScreen() {
     const r = (a.val / 100) * maxR;
     const x = cx + r * Math.cos(rad);
     const y = cy + r * Math.sin(rad);
-    return `${x.toFixed(1)},${y.toFixed(1)}`;
+    return `${Math.round(x)},${Math.round(y)}`;
   }).join(' ');
 
   const polygonEl = document.getElementById('radarDataPolygon');
@@ -1194,16 +1190,53 @@ function renderAnalyticsScreen() {
     polygonEl.setAttribute('points', points);
   }
 
-  // Update Points
+  // Update nodes and labels
   axes.forEach((a, idx) => {
     const pt = document.getElementById(`radarPoint${idx}`);
     if (pt) {
       const rad = (a.angle * Math.PI) / 180;
       const r = (a.val / 100) * maxR;
-      pt.setAttribute('cx', (cx + r * Math.cos(rad)).toFixed(1));
-      pt.setAttribute('cy', (cy + r * Math.sin(rad)).toFixed(1));
+      pt.setAttribute('cx', Math.round(cx + r * Math.cos(rad)));
+      pt.setAttribute('cy', Math.round(cy + r * Math.sin(rad)));
+    }
+    const labelEl = document.getElementById(a.labelId);
+    if (labelEl) {
+      labelEl.textContent = `${a.prefix} (${a.val}%)`;
     }
   });
+}
+
+// Page 5 Specific Interactive Action Handlers
+let methodSortAsc = false;
+function toggleMethodSort() {
+  methodSortAsc = !methodSortAsc;
+  const listEl = document.getElementById('methodEfficacyList');
+  if (!listEl) return;
+  const items = Array.from(listEl.children);
+  items.reverse().forEach(item => listEl.appendChild(item));
+  showToast(methodSortAsc ? "Sorted methods by rating (lowest first)" : "Sorted methods by rating (highest first)");
+}
+
+function filterAromaLogs(aroma) {
+  showToast(`Filtering cupping archive for "${aroma}"`);
+}
+
+function exploreRecommendedBean(name, origin, process) {
+  openModal('modal-log-brew');
+  const notesInput = document.getElementById('logTastingNotes');
+  if (notesInput) {
+    notesInput.value = `Exploring ${name} (${origin} • ${process})`;
+  }
+  showToast(`Loaded ${name} into brew dial-in`);
+}
+
+function shareRadarCard() {
+  const metrics = calculatePalateMetrics();
+  const summary = `AfterTaste Palate Passport — Seasoned Cupper | Clarity: ${metrics.clarity}%, Acidity: ${metrics.acidity}%, Sweet: ${metrics.sweetness}%, Body: ${metrics.body}%, Bitter: ${metrics.bitterness}%`;
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(summary).catch(() => {});
+  }
+  showToast("Sensory radar card copied to clipboard! 📋");
 }
 
 // --- 6. INTERACTION & ACTION HANDLERS ---
@@ -1233,7 +1266,7 @@ function selectTab(tabKey) {
       journal: 'journal',
       vault: 'bean vault',
       cafes: 'cafe map',
-      analytics: 'palate radar'
+      analytics: 'analytics'
     };
     subEl.textContent = `— ${titles[tabKey] || tabKey}`;
   }

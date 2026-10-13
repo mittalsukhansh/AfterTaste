@@ -38,7 +38,13 @@
             'on-surface': 'var(--on-surface)',
             'on-surface-variant': 'var(--on-surface-variant)',
             outline: 'var(--outline)',
-            'outline-variant': 'var(--outline-variant)'
+            'outline-variant': 'var(--outline-variant)',
+            'primary-fixed-dim': '#e3bfb2',
+            'secondary-fixed': '#ffdbc9',
+            'on-secondary-fixed': '#321200',
+            'tertiary-fixed': '#cbebc3',
+            'tertiary-fixed-dim': '#b0cfa8',
+            'on-tertiary-container': '#708d6a'
           },
           fontFamily: {
             serif: ['Playfair Display', 'Georgia', 'serif'],
@@ -611,224 +617,405 @@
       <!-- ========================================== -->
       <section id="screen-analytics" class="hidden flex flex-col gap-4">
 
-        <!-- Enthusiast Coffee Passport Card -->
-        <div class="relative overflow-hidden rounded-2xl bg-primary-container text-white p-4 shadow-xl border border-secondary/20">
-          <div class="absolute -right-10 -top-10 w-40 h-40 rounded-full bg-secondary/20 blur-2xl pointer-events-none"></div>
+        <!-- 1. ENTHUSIAST COFFEE PASSPORT HERO CARD -->
+        <div class="relative overflow-hidden rounded-xl bg-primary-container text-white p-4 shadow-xl border border-secondary/20">
+          <div class="absolute -right-12 -top-12 w-44 h-44 rounded-full bg-secondary/15 blur-2xl pointer-events-none"></div>
+          <div class="absolute -left-8 -bottom-8 w-36 h-36 rounded-full bg-emerald-500/10 blur-xl pointer-events-none"></div>
           <div class="relative z-10 flex flex-col gap-3">
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-1.5">
-                <span class="material-symbols-outlined text-[18px] text-secondary-container fill-1">verified</span>
-                <span class="text-[11px] uppercase tracking-wider font-bold text-secondary-container">Enthusiast Coffee Passport</span>
+                <span class="material-symbols-outlined text-[20px] text-secondary-container" style="font-variation-settings: 'FILL' 1;">verified</span>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-primary-fixed-dim">Enthusiast Coffee Passport</span>
               </div>
-              <span class="text-[10px] px-2 py-0.5 rounded-full bg-white/10 text-white font-mono">N° 0842-DK</span>
+              <span class="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-white/10 text-white border border-white/10">N° 0842-DK</span>
             </div>
-
             <div class="flex flex-col">
-              <span class="text-[10px] uppercase tracking-wider text-white/60">Palate Level</span>
-              <h2 class="font-serif text-2xl font-bold text-white tracking-tight">Seasoned Cupper</h2>
+              <span class="text-[10px] uppercase tracking-wider text-outline-variant font-medium">Palate Level</span>
+              <h2 id="analyticsPalateLevel" class="font-serif text-2xl font-bold text-white tracking-tight mt-0.5">Seasoned Cupper</h2>
             </div>
-
-            <div class="grid grid-cols-3 gap-2 pt-1 border-t border-white/10 text-center">
-              <div class="bg-white/10 p-2 rounded-xl backdrop-blur-sm">
-                <span class="font-serif text-lg font-bold text-white leading-tight">48</span>
-                <p class="text-[10px] text-white/70 mt-0.5">Total Brews</p>
+            <div class="grid grid-cols-3 gap-2 pt-1 text-left">
+              <div class="flex flex-col bg-white/10 rounded-lg p-2.5 backdrop-blur-sm border border-white/5">
+                <span id="analyticsTotalBrews" class="font-serif text-xl font-bold text-white leading-tight">48</span>
+                <span class="text-[10px] text-primary-fixed-dim mt-0.5">Total Brews</span>
               </div>
-              <div class="bg-white/10 p-2 rounded-xl backdrop-blur-sm">
-                <span class="font-serif text-lg font-bold text-white leading-tight">14</span>
-                <p class="text-[10px] text-white/70 mt-0.5">Origins Explored</p>
+              <div class="flex flex-col bg-white/10 rounded-lg p-2.5 backdrop-blur-sm border border-white/5">
+                <span id="analyticsOriginsExplored" class="font-serif text-xl font-bold text-white leading-tight">14</span>
+                <span class="text-[10px] text-primary-fixed-dim mt-0.5">Origins Explored</span>
               </div>
-              <div class="bg-white/10 p-2 rounded-xl backdrop-blur-sm">
-                <span class="font-serif text-base font-bold text-secondary-container leading-tight">Washed ETH</span>
-                <p class="text-[10px] text-white/70 mt-0.5">Top Profile</p>
+              <div class="flex flex-col bg-white/10 rounded-lg p-2.5 backdrop-blur-sm border border-white/5 col-span-1">
+                <span id="analyticsTopProfile" class="font-serif text-sm font-bold text-[#ffdbc9] leading-tight truncate">Washed ETH</span>
+                <span class="text-[10px] text-primary-fixed-dim mt-0.5">Top Profile</span>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- 5-Axis Flavor Equilibrium Radar Polygon -->
-        <div class="card-nordic p-4 flex flex-col gap-3">
+        <!-- 2. SENSORY ARCHITECTURE - FLAVOR EQUILIBRIUM -->
+        <div class="flex flex-col rounded-xl bg-surface-container-low p-4 shadow-sm border border-outline-variant/30 gap-3">
           <div class="flex items-center justify-between">
-            <div>
-              <span class="text-[10px] uppercase tracking-wider text-secondary font-bold">Palate Architecture</span>
+            <div class="flex flex-col">
+              <span class="text-[10px] text-secondary uppercase font-bold tracking-wider">Sensory Architecture</span>
               <h3 class="font-serif text-lg font-bold text-primary">Flavor Equilibrium</h3>
             </div>
-            <span class="text-[11px] bg-surface-container px-2.5 py-1 rounded-full text-on-surface-variant font-medium">Last 30 Days</span>
+            <div class="flex items-center gap-1 bg-surface-container-high px-2.5 py-1 rounded-full text-on-surface-variant text-[11px] font-medium border border-outline-variant/20">
+              <span class="material-symbols-outlined text-[15px]">balance</span>
+              <span>Last 30 Days</span>
+            </div>
           </div>
 
-          <!-- Dynamic SVG Radar Chart -->
-          <div class="relative flex items-center justify-center py-2">
-            <svg id="sensoryRadarSvg" class="w-full max-w-[280px] h-[250px] overflow-visible" viewBox="0 0 280 250">
-              <!-- Concentric Guide Polygons (20%, 40%, 60%, 80%, 100%) -->
-              <polygon points="140,40 225.6,102.2 192.9,202.8 87.1,202.8 54.4,102.2" class="radar-grid" />
-              <polygon points="140,58 208.5,107.8 182.3,188.2 97.7,188.2 71.5,107.8" class="radar-grid" />
-              <polygon points="140,76 191.4,113.3 171.7,173.7 108.3,173.7 88.6,113.3" class="radar-grid" />
-              <polygon points="140,94 174.2,118.9 161.1,159.1 118.9,159.1 105.8,118.9" class="radar-grid" />
-              <polygon points="140,112 157.1,124.4 150.6,144.6 129.4,144.6 122.9,124.4" class="radar-grid" />
-
-              <!-- Axis Rays from Center (140, 130) -->
-              <line x1="140" y1="130" x2="140" y2="40" class="radar-axis" />
-              <line x1="140" y1="130" x2="225.6" y2="102.2" class="radar-axis" />
-              <line x1="140" y1="130" x2="192.9" y2="202.8" class="radar-axis" />
-              <line x1="140" y1="130" x2="87.1" y2="202.8" class="radar-axis" />
-              <line x1="140" y1="130" x2="54.4" y2="102.2" class="radar-axis" />
-
-              <!-- Data Filled Polygon -->
-              <polygon id="radarDataPolygon" points="140,56 210,105 180,185 92,185 70,110" class="radar-polygon" />
-
-              <!-- Vertex Highlight Nodes -->
-              <circle id="radarPoint0" cx="140" cy="56" r="4.5" class="radar-point" />
-              <circle id="radarPoint1" cx="210" cy="105" r="4.5" class="radar-point" />
-              <circle id="radarPoint2" cx="180" cy="185" r="4.5" class="radar-point" />
-              <circle id="radarPoint3" cx="92" cy="185" r="4.5" class="radar-point" />
-              <circle id="radarPoint4" cx="70" cy="110" r="4.5" class="radar-point" />
-
+          <!-- Interactive / Visual Radar SVG -->
+          <div class="relative flex items-center justify-center py-1">
+            <svg id="sensoryRadarSvg" aria-label="Sensory Radar Chart" class="w-full max-w-[280px] h-auto overflow-visible" viewBox="0 0 280 260">
+              <!-- Concentric Guideline Polygons (25%, 50%, 75%, 100%) -->
+              <polygon class="text-outline-variant/40" fill="none" points="140,30 235,99 199,211 81,211 45,99" stroke="currentColor" stroke-dasharray="3,3" stroke-width="1"></polygon>
+              <polygon class="text-outline-variant/35" fill="none" points="140,55 211,107 184,191 96,191 69,107" stroke="currentColor" stroke-width="1"></polygon>
+              <polygon class="text-outline-variant/25" fill="none" points="140,80 188,115 170,171 110,171 93,115" stroke="currentColor" stroke-width="1"></polygon>
+              <polygon class="text-outline-variant/15" fill="none" points="140,105 164,122 155,150 125,150 116,122" stroke="currentColor" stroke-width="1"></polygon>
+              
+              <!-- Axis Lines -->
+              <line class="text-outline-variant/40" stroke="currentColor" stroke-width="1" x1="140" x2="140" y1="130" y2="30"></line>
+              <line class="text-outline-variant/40" stroke="currentColor" stroke-width="1" x1="140" x2="235" y1="130" y2="99"></line>
+              <line class="text-outline-variant/40" stroke="currentColor" stroke-width="1" x1="140" x2="199" y1="130" y2="211"></line>
+              <line class="text-outline-variant/40" stroke="currentColor" stroke-width="1" x1="140" x2="81" y1="130" y2="211"></line>
+              <line class="text-outline-variant/40" stroke="currentColor" stroke-width="1" x1="140" x2="45" y1="130" y2="99"></line>
+              
+              <!-- Data Radar Polygon (Acidity: 88%, Sweetness: 92%, Body: 70%, Clarity: 95%, Bitterness: 25%) -->
+              <polygon id="radarDataPolygon" points="140,42 227,101 181,187 84,207 116,122" class="radar-polygon" fill="rgba(200, 109, 59, 0.28)" stroke="#c86d3b" stroke-width="2.5"></polygon>
+              
+              <!-- Sensory Nodes -->
+              <circle id="radarPoint0" cx="140" cy="42" fill="#c86d3b" r="4.5" stroke="var(--surface-container-low)" stroke-width="2"></circle>
+              <circle id="radarPoint1" cx="227" cy="101" fill="#c86d3b" r="4.5" stroke="var(--surface-container-low)" stroke-width="2"></circle>
+              <circle id="radarPoint2" cx="181" cy="187" fill="#c86d3b" r="4.5" stroke="var(--surface-container-low)" stroke-width="2"></circle>
+              <circle id="radarPoint3" cx="84" cy="207" fill="#c86d3b" r="4.5" stroke="var(--surface-container-low)" stroke-width="2"></circle>
+              <circle id="radarPoint4" cx="116" cy="122" fill="#c86d3b" r="4.5" stroke="var(--surface-container-low)" stroke-width="2"></circle>
+              
               <!-- Axis Labels -->
-              <text x="140" y="28" text-anchor="middle" class="text-[11px] font-bold fill-primary font-sans">Acidity</text>
-              <text x="242" y="105" text-anchor="start" class="text-[11px] font-bold fill-primary font-sans">Sweetness</text>
-              <text x="205" y="218" text-anchor="middle" class="text-[11px] font-bold fill-primary font-sans">Body</text>
-              <text x="75" y="218" text-anchor="middle" class="text-[11px] font-bold fill-primary font-sans">Clarity</text>
-              <text x="38" y="105" text-anchor="end" class="text-[11px] font-bold fill-primary font-sans">Bitterness</text>
+              <text id="radarLabelAcidity" class="fill-primary font-sans text-[10px] font-bold" font-size="10" font-weight="700" text-anchor="middle" x="140" y="20">ACIDITY (88%)</text>
+              <text id="radarLabelSweetness" class="fill-primary font-sans text-[10px] font-bold" font-size="10" font-weight="700" text-anchor="start" x="244" y="98">SWEET (92%)</text>
+              <text id="radarLabelBody" class="fill-primary font-sans text-[10px] font-bold" font-size="10" font-weight="700" text-anchor="start" x="202" y="226">BODY (70%)</text>
+              <text id="radarLabelClarity" class="fill-primary font-sans text-[10px] font-bold" font-size="10" font-weight="700" text-anchor="end" x="76" y="226">CLARITY (95%)</text>
+              <text id="radarLabelBitterness" class="fill-primary font-sans text-[10px] font-bold" font-size="10" font-weight="700" text-anchor="end" x="34" y="98">BITTER (25%)</text>
             </svg>
           </div>
 
-          <!-- 5-Metric Value Strip -->
-          <div class="grid grid-cols-5 gap-1.5 text-center bg-surface-container-low p-2 rounded-xl border border-outline-variant/30 text-xs">
-            <div>
-              <span class="text-[10px] text-on-surface-variant block">Acidity</span>
-              <span id="metricAcidity" class="font-bold text-primary">82%</span>
+          <!-- Quick Slider Parameter Details -->
+          <div class="grid grid-cols-2 gap-2 pt-1">
+            <div class="flex items-center justify-between p-2.5 rounded-lg bg-surface border border-outline-variant/20 shadow-sm">
+              <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-secondary"></span>
+                <span class="text-xs text-on-surface font-medium">Clarity Peak</span>
+              </div>
+              <span id="metricClarityBadge" class="text-xs text-secondary font-bold">95%</span>
             </div>
-            <div>
-              <span class="text-[10px] text-on-surface-variant block">Sweet</span>
-              <span id="metricSweetness" class="font-bold text-primary">76%</span>
-            </div>
-            <div>
-              <span class="text-[10px] text-on-surface-variant block">Body</span>
-              <span id="metricBody" class="font-bold text-primary">65%</span>
-            </div>
-            <div>
-              <span class="text-[10px] text-on-surface-variant block">Clarity</span>
-              <span id="metricClarity" class="font-bold text-primary">88%</span>
-            </div>
-            <div>
-              <span class="text-[10px] text-on-surface-variant block">Bitter</span>
-              <span id="metricBitterness" class="font-bold text-primary">32%</span>
+            <div class="flex items-center justify-between p-2.5 rounded-lg bg-surface border border-outline-variant/20 shadow-sm">
+              <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-600"></span>
+                <span class="text-xs text-on-surface font-medium">Clean Finish</span>
+              </div>
+              <span id="metricFinishBadge" class="text-xs text-on-surface-variant font-bold">Subtle</span>
             </div>
           </div>
         </div>
 
-        <!-- Dominant Aroma Frequency Breakdown -->
-        <div class="card-nordic p-4 flex flex-col gap-3">
+        <!-- 3. DOMINANT AROMA NOTES FREQUENCY CLOUD -->
+        <div class="flex flex-col rounded-xl bg-surface-container-low p-4 shadow-sm border border-outline-variant/30 gap-3">
           <div class="flex items-center justify-between">
-            <h3 class="font-serif text-lg font-bold text-primary">Dominant Aroma Frequency</h3>
-            <span class="text-xs text-secondary font-semibold">Tasting Wheel Affinity</span>
+            <div class="flex flex-col">
+              <span class="text-[10px] text-secondary uppercase font-bold tracking-wider">Descriptive Lexicon</span>
+              <h3 class="font-serif text-lg font-bold text-primary">Dominant Aroma Notes</h3>
+            </div>
+            <span class="material-symbols-outlined text-[20px] text-on-surface-variant">local_florist</span>
           </div>
 
-          <div class="flex flex-col gap-2.5">
-            <!-- Aroma 1 -->
+          <!-- Progress Stacks -->
+          <div id="aromaFrequencyList" class="flex flex-col gap-2.5">
+            <!-- Aroma 1: Citrus & Bergamot -->
             <div class="flex flex-col gap-1">
-              <div class="flex items-center justify-between text-xs">
-                <span class="font-medium text-primary">Citrus & Bergamot (Floral / Fruity)</span>
-                <span class="font-bold text-secondary">52%</span>
+              <div class="flex justify-between items-center text-xs">
+                <span class="text-on-surface font-semibold flex items-center gap-1.5">
+                  <span class="material-symbols-outlined text-[15px] text-secondary">drive_file_rename</span>
+                  Citrus & Bergamot
+                </span>
+                <span class="text-on-surface-variant font-medium">24 logs (50%)</span>
               </div>
-              <div class="w-full h-2 rounded-full bg-surface-container overflow-hidden">
-                <div class="h-full rounded-full bg-secondary" style="width: 52%;"></div>
+              <div class="h-2 w-full bg-surface-container rounded-full overflow-hidden">
+                <div class="h-full bg-secondary rounded-full" style="width: 50%;"></div>
               </div>
             </div>
-            <!-- Aroma 2 -->
+            <!-- Aroma 2: Jasmine & White Flowers -->
             <div class="flex flex-col gap-1">
-              <div class="flex items-center justify-between text-xs">
-                <span class="font-medium text-primary">Jasmine & White Flowers (Floral)</span>
-                <span class="font-bold text-secondary">44%</span>
+              <div class="flex justify-between items-center text-xs">
+                <span class="text-on-surface font-semibold flex items-center gap-1.5">
+                  <span class="material-symbols-outlined text-[15px] text-emerald-600">spa</span>
+                  Jasmine & White Flowers
+                </span>
+                <span class="text-on-surface-variant font-medium">18 logs (37%)</span>
               </div>
-              <div class="w-full h-2 rounded-full bg-surface-container overflow-hidden">
-                <div class="h-full rounded-full bg-secondary" style="width: 44%;"></div>
+              <div class="h-2 w-full bg-surface-container rounded-full overflow-hidden">
+                <div class="h-full bg-emerald-600 rounded-full" style="width: 37%;"></div>
               </div>
             </div>
-            <!-- Aroma 3 -->
+            <!-- Aroma 3: Dark Chocolate Ganache -->
             <div class="flex flex-col gap-1">
-              <div class="flex items-center justify-between text-xs">
-                <span class="font-medium text-primary">Stone Fruit & Peach (Fruity)</span>
-                <span class="font-bold text-secondary">38%</span>
+              <div class="flex justify-between items-center text-xs">
+                <span class="text-on-surface font-semibold flex items-center gap-1.5">
+                  <span class="material-symbols-outlined text-[15px] text-espresso dark:text-[#ffdbc9]">cookie</span>
+                  Dark Chocolate Ganache
+                </span>
+                <span class="text-on-surface-variant font-medium">15 logs (31%)</span>
               </div>
-              <div class="w-full h-2 rounded-full bg-surface-container overflow-hidden">
-                <div class="h-full rounded-full bg-secondary" style="width: 38%;"></div>
+              <div class="h-2 w-full bg-surface-container rounded-full overflow-hidden">
+                <div class="h-full bg-espresso dark:bg-[#e3bfb2] rounded-full" style="width: 31%;"></div>
               </div>
             </div>
-            <!-- Aroma 4 -->
+            <!-- Aroma 4: White Peach & Apricot -->
             <div class="flex flex-col gap-1">
-              <div class="flex items-center justify-between text-xs">
-                <span class="font-medium text-primary">Dark Chocolate & Cacao (Roasted)</span>
-                <span class="font-bold text-secondary">30%</span>
+              <div class="flex justify-between items-center text-xs">
+                <span class="text-on-surface font-semibold flex items-center gap-1.5">
+                  <span class="material-symbols-outlined text-[15px] text-[#fc934f]">eco</span>
+                  White Peach & Apricot
+                </span>
+                <span class="text-on-surface-variant font-medium">12 logs (25%)</span>
               </div>
-              <div class="w-full h-2 rounded-full bg-surface-container overflow-hidden">
-                <div class="h-full rounded-full bg-secondary" style="width: 30%;"></div>
+              <div class="h-2 w-full bg-surface-container rounded-full overflow-hidden">
+                <div class="h-full bg-[#fc934f] rounded-full" style="width: 25%;"></div>
               </div>
             </div>
+          </div>
+
+          <!-- Interactive Filter Badges -->
+          <div class="flex flex-wrap gap-1.5 pt-1">
+            <button onclick="filterAromaLogs('Meyer Lemon')" class="px-2.5 py-1 rounded-full bg-surface text-on-surface text-xs font-semibold shadow-sm border border-outline-variant/30 flex items-center gap-1 hover:border-secondary transition-all">
+              <span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Meyer Lemon
+            </button>
+            <button onclick="filterAromaLogs('Earl Grey')" class="px-2.5 py-1 rounded-full bg-surface text-on-surface text-xs font-semibold shadow-sm border border-outline-variant/30 flex items-center gap-1 hover:border-secondary transition-all">
+              <span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Earl Grey
+            </button>
+            <button onclick="filterAromaLogs('Honeycomb')" class="px-2.5 py-1 rounded-full bg-surface text-on-surface text-xs font-semibold shadow-sm border border-outline-variant/30 flex items-center gap-1 hover:border-secondary transition-all">
+              <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Honeycomb
+            </button>
+            <button onclick="filterAromaLogs('Blackcurrant')" class="px-2.5 py-1 rounded-full bg-surface text-on-surface text-xs font-semibold shadow-sm border border-outline-variant/30 flex items-center gap-1 hover:border-secondary transition-all">
+              <span class="w-1.5 h-1.5 rounded-full bg-outline"></span> Blackcurrant
+            </button>
           </div>
         </div>
 
-        <!-- Terroir Archive & Origin Map -->
-        <div class="card-nordic p-4 flex flex-col gap-3">
+        <!-- 4. EXTRACTION MECHANICS - METHOD EFFICACY -->
+        <div class="flex flex-col rounded-xl bg-surface-container-low p-4 shadow-sm border border-outline-variant/30 gap-3">
           <div class="flex items-center justify-between">
-            <h3 class="font-serif text-lg font-bold text-primary">Terroir Exploration Archive</h3>
-            <span class="text-xs text-on-surface-variant">4 Top Regions</span>
+            <div class="flex flex-col">
+              <span class="text-[10px] text-secondary uppercase font-bold tracking-wider">Extraction Mechanics</span>
+              <h3 class="font-serif text-lg font-bold text-primary">Method Efficacy</h3>
+            </div>
+            <button onclick="toggleMethodSort()" title="Sort Methods" class="w-8 h-8 rounded-full bg-surface border border-outline-variant/30 flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors">
+              <span class="material-symbols-outlined text-[18px]">swap_vert</span>
+            </button>
           </div>
 
-          <div class="grid grid-cols-2 gap-2.5">
-            <div class="bg-surface-container p-3 rounded-xl border border-outline-variant/30 flex flex-col gap-1">
+          <div id="methodEfficacyList" class="flex flex-col gap-2.5">
+            <!-- Method 1: Hario V60 Filter -->
+            <div class="flex flex-col p-3 rounded-xl bg-surface shadow-sm border border-outline-variant/20 gap-2">
               <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                  <div class="w-9 h-9 rounded-lg bg-surface-container-high flex items-center justify-center text-primary">
+                    <span class="material-symbols-outlined text-[20px]">filter_vintage</span>
+                  </div>
+                  <div class="flex flex-col">
+                    <span class="text-sm font-bold text-on-surface">Hario V60 Filter</span>
+                    <span class="text-xs text-on-surface-variant">32 Brews logged</span>
+                  </div>
+                </div>
+                <div class="flex items-center gap-1 bg-surface-container-high/60 px-2 py-1 rounded-lg">
+                  <span class="material-symbols-outlined text-[15px] text-secondary" style="font-variation-settings: 'FILL' 1;">star</span>
+                  <span class="text-xs text-on-surface font-bold">4.8</span>
+                </div>
+              </div>
+              <div class="flex items-center justify-between bg-surface-container-low/80 px-2.5 py-1.5 rounded-lg text-xs">
+                <span class="text-on-surface-variant">Optimal Ratio</span>
+                <span class="text-primary font-bold">1:16.5 (15.0g → 248g)</span>
+              </div>
+            </div>
+
+            <!-- Method 2: 9-Bar Espresso -->
+            <div class="flex flex-col p-3 rounded-xl bg-surface shadow-sm border border-outline-variant/20 gap-2">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                  <div class="w-9 h-9 rounded-lg bg-surface-container-high flex items-center justify-center text-primary">
+                    <span class="material-symbols-outlined text-[20px]">coffee_maker</span>
+                  </div>
+                  <div class="flex flex-col">
+                    <span class="text-sm font-bold text-on-surface">9-Bar Espresso</span>
+                    <span class="text-xs text-on-surface-variant">12 Brews logged</span>
+                  </div>
+                </div>
+                <div class="flex items-center gap-1 bg-surface-container-high/60 px-2 py-1 rounded-lg">
+                  <span class="material-symbols-outlined text-[15px] text-secondary" style="font-variation-settings: 'FILL' 1;">star</span>
+                  <span class="text-xs text-on-surface font-bold">4.6</span>
+                </div>
+              </div>
+              <div class="flex items-center justify-between bg-surface-container-low/80 px-2.5 py-1.5 rounded-lg text-xs">
+                <span class="text-on-surface-variant">Optimal Ratio</span>
+                <span class="text-primary font-bold">1:2.1 (18.5g → 39g)</span>
+              </div>
+            </div>
+
+            <!-- Method 3: AeroPress Inverted -->
+            <div class="flex flex-col p-3 rounded-xl bg-surface shadow-sm border border-outline-variant/20 gap-2">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                  <div class="w-9 h-9 rounded-lg bg-surface-container-high flex items-center justify-center text-primary">
+                    <span class="material-symbols-outlined text-[20px]">science</span>
+                  </div>
+                  <div class="flex flex-col">
+                    <span class="text-sm font-bold text-on-surface">AeroPress Inverted</span>
+                    <span class="text-xs text-on-surface-variant">4 Brews logged</span>
+                  </div>
+                </div>
+                <div class="flex items-center gap-1 bg-surface-container-high/60 px-2 py-1 rounded-lg">
+                  <span class="material-symbols-outlined text-[15px] text-secondary" style="font-variation-settings: 'FILL' 1;">star</span>
+                  <span class="text-xs text-on-surface font-bold">4.4</span>
+                </div>
+              </div>
+              <div class="flex items-center justify-between bg-surface-container-low/80 px-2.5 py-1.5 rounded-lg text-xs">
+                <span class="text-on-surface-variant">Optimal Ratio</span>
+                <span class="text-primary font-bold">1:14.0 (14.0g → 196g)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. TERROIR ARCHIVE - ORIGINS EXPLORED -->
+        <div class="flex flex-col rounded-xl bg-surface-container-low p-4 shadow-sm border border-outline-variant/30 gap-3">
+          <div class="flex items-center justify-between">
+            <div class="flex flex-col">
+              <span class="text-[10px] text-secondary uppercase font-bold tracking-wider">Terroir Archive</span>
+              <h3 class="font-serif text-lg font-bold text-primary">Origins Explored</h3>
+            </div>
+            <span class="text-xs px-2.5 py-0.5 rounded-full bg-[#ffdbc9] dark:bg-[#753400] text-[#321200] dark:text-[#ffdbc9] font-bold">48 Cups</span>
+          </div>
+
+          <!-- Sensory Terroir Photo Hero Card -->
+          <div class="relative w-full h-36 rounded-xl overflow-hidden shadow-sm flex items-end p-3 border border-outline-variant/20">
+            <img class="absolute inset-0 w-full h-full object-cover" alt="Ethiopian coffee plantation at high elevation" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD2ulgyJiNoD2LI-7lViDdo_xakWxzWKrI2o-T5GXwwbFttFKiQHEaM2E9b8Cru4Cg41tdi27XDVKlWpe_C4FDY5UsarsnchjAEhiJG7qPGtrYxm5Fx-Us3B_9U_HkJxzspILh78iAztzMBoEZZjLumyQc-NqCnazcQNtse3PpS44H4vFDqTo5NEp-Y80breKT4X6iixJVmhWxBMiEMadKvbfWLIzQi9hpWqcdfQQDBk9NAhftT6pCP">
+            <div class="absolute inset-0 bg-gradient-to-t from-espresso/85 via-espresso/40 to-transparent"></div>
+            <div class="relative z-10 flex items-center justify-between w-full">
+              <div class="flex flex-col">
+                <span class="text-[10px] text-[#ffdbc9] uppercase font-bold tracking-wider">Top Elevation Origin</span>
+                <span class="text-sm font-serif font-bold text-white">Yirgacheffe & Sidama, Ethiopia</span>
+              </div>
+              <span class="text-xs px-2 py-0.5 rounded bg-white/20 text-white backdrop-blur-md font-medium">2,150 MASL</span>
+            </div>
+          </div>
+
+          <!-- Country Badges Grid -->
+          <div class="grid grid-cols-2 gap-2">
+            <div class="flex items-center justify-between p-2.5 rounded-lg bg-surface shadow-sm border border-outline-variant/20">
+              <div class="flex items-center gap-2">
                 <span class="text-lg">🇪🇹</span>
-                <span class="text-xs font-bold text-secondary">18 Lots</span>
+                <div class="flex flex-col">
+                  <span class="text-xs font-bold text-on-surface">Ethiopia</span>
+                  <span class="text-[10px] text-on-surface-variant">Heirloom / Washed</span>
+                </div>
               </div>
-              <h5 class="font-serif text-sm font-bold text-primary">Ethiopia</h5>
-              <span class="text-[10px] text-on-surface-variant">1,900m – 2,200m • Washed & Natural</span>
+              <span class="text-xs px-2 py-0.5 rounded bg-surface-container text-secondary font-bold">22</span>
             </div>
-            <div class="bg-surface-container p-3 rounded-xl border border-outline-variant/30 flex flex-col gap-1">
-              <div class="flex items-center justify-between">
+
+            <div class="flex items-center justify-between p-2.5 rounded-lg bg-surface shadow-sm border border-outline-variant/20">
+              <div class="flex items-center gap-2">
                 <span class="text-lg">🇨🇴</span>
-                <span class="text-xs font-bold text-secondary">14 Lots</span>
+                <div class="flex flex-col">
+                  <span class="text-xs font-bold text-on-surface">Colombia</span>
+                  <span class="text-[10px] text-on-surface-variant">Caturra / Castillo</span>
+                </div>
               </div>
-              <h5 class="font-serif text-sm font-bold text-primary">Colombia</h5>
-              <span class="text-[10px] text-on-surface-variant">1,750m – 2,050m • Thermal Shock</span>
+              <span class="text-xs px-2 py-0.5 rounded bg-surface-container text-secondary font-bold">16</span>
             </div>
-            <div class="bg-surface-container p-3 rounded-xl border border-outline-variant/30 flex flex-col gap-1">
-              <div class="flex items-center justify-between">
+
+            <div class="flex items-center justify-between p-2.5 rounded-lg bg-surface shadow-sm border border-outline-variant/20">
+              <div class="flex items-center gap-2">
                 <span class="text-lg">🇰🇪</span>
-                <span class="text-xs font-bold text-secondary">9 Lots</span>
+                <div class="flex flex-col">
+                  <span class="text-xs font-bold text-on-surface">Kenya</span>
+                  <span class="text-[10px] text-on-surface-variant">SL28 & SL34</span>
+                </div>
               </div>
-              <h5 class="font-serif text-sm font-bold text-primary">Kenya</h5>
-              <span class="text-[10px] text-on-surface-variant">1,800m – 2,100m • SL28/SL34</span>
+              <span class="text-xs px-2 py-0.5 rounded bg-surface-container text-secondary font-bold">6</span>
             </div>
-            <div class="bg-surface-container p-3 rounded-xl border border-outline-variant/30 flex flex-col gap-1">
-              <div class="flex items-center justify-between">
-                <span class="text-lg">🇭🇳</span>
-                <span class="text-xs font-bold text-secondary">7 Lots</span>
+
+            <div class="flex items-center justify-between p-2.5 rounded-lg bg-surface shadow-sm border border-outline-variant/20">
+              <div class="flex items-center gap-2">
+                <span class="text-lg">🇬🇹</span>
+                <div class="flex flex-col">
+                  <span class="text-xs font-bold text-on-surface">Guatemala</span>
+                  <span class="text-[10px] text-on-surface-variant">Bourbon / Huehue</span>
+                </div>
               </div>
-              <h5 class="font-serif text-sm font-bold text-primary">Honduras</h5>
-              <span class="text-[10px] text-on-surface-variant">1,500m – 1,700m • Geisha Honey</span>
+              <span class="text-xs px-2 py-0.5 rounded bg-surface-container text-secondary font-bold">4</span>
             </div>
           </div>
         </div>
 
-        <!-- Smart Roast Recommendations -->
-        <div class="card-nordic p-4 flex flex-col gap-3">
-          <div class="flex items-center justify-between">
-            <h3 class="font-serif text-lg font-bold text-primary">Smart Roast Recommendations</h3>
-            <span class="text-xs text-secondary font-semibold">98% Palate Affinity</span>
+        <!-- 6. CUPPER'S PREDICTIVE RECOMMENDATIONS (CURATOR INSIGHTS) -->
+        <div class="relative overflow-hidden rounded-xl bg-surface-container-high p-4 shadow-sm border border-outline-variant/30 gap-3 flex flex-col">
+          <div class="flex items-start gap-3">
+            <div class="w-10 h-10 rounded-full bg-[#ffdbc9] dark:bg-[#753400] flex items-center justify-center text-[#321200] dark:text-[#ffdbc9] shrink-0">
+              <span class="material-symbols-outlined text-[22px]">auto_awesome</span>
+            </div>
+            <div class="flex flex-col gap-0.5">
+              <span class="text-[10px] uppercase font-bold tracking-wider text-secondary">Curator Insights</span>
+              <h4 class="font-serif text-base font-bold text-on-surface">Recommended Explorations</h4>
+              <p class="text-xs text-on-surface-variant leading-relaxed mt-1">
+                Based on your affinity for high acidity (88%) and jasmine notes, your next calibration should feature coffees from <span class="text-primary font-bold">Gesha Village</span> or anaerobic <span class="text-primary font-bold">Huila Pink Bourbon</span>.
+              </p>
+            </div>
           </div>
 
-          <div class="flex flex-col gap-2">
-            <div class="flex items-center justify-between p-2.5 rounded-xl bg-surface-container border border-outline-variant/30">
-              <div class="flex-1 min-w-0 pr-2">
-                <span class="text-[10px] text-secondary font-bold uppercase tracking-wider">Tim Wendelboe</span>
-                <h5 class="font-serif text-sm font-bold text-primary truncate">Caballero Geisha (Washed)</h5>
-                <p class="text-[11px] text-on-surface-variant">Matches high affinity for Jasmine & Peach clarity</p>
+          <!-- Suggested Beans Quick Preview -->
+          <div class="grid grid-cols-1 gap-2 pt-1">
+            <!-- Bean 1 -->
+            <div class="flex items-center justify-between p-3 rounded-lg bg-surface shadow-sm border border-outline-variant/20">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg overflow-hidden shrink-0 border border-outline-variant/20">
+                  <img class="w-full h-full object-cover" alt="Gesha Village coffee packaging" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAkR-JoXe7FzUcsgHqqXACHRupV200IWSpbGSLDcyIZrLHMaGCvg2cVMNVwJaS0nm24S9WqYmJRpVY5jTIaJmOdmjI1we3Kb3TWhhoOVDLWRtP2eInoYVeupPC0nQ-1cwYM_K8AvXVFaNZT1-FVPmUjqVoRrPqw2JNUTVlC2yEKmgOBJbtRq-dftmnuEIBl50ccA4anxLyVI8GHgdfsmTGf-OR8ZsWtJWfjEnWRm2miJtgVoFH9ggSU">
+                </div>
+                <div class="flex flex-col">
+                  <span class="text-xs font-bold text-on-surface">Gesha Village Lot 71</span>
+                  <span class="text-[11px] text-on-surface-variant">Illubabor Forest • Washed</span>
+                </div>
               </div>
-              <button onclick="openModal('modal-log-brew')" class="px-3 py-1.5 rounded-lg bg-secondary text-white text-xs font-semibold">
-                Brew
+              <button onclick="exploreRecommendedBean('Gesha Village Lot 71', 'Ethiopia', 'Washed')" class="px-3 py-1.5 rounded-lg bg-primary text-on-primary text-xs font-bold hover:bg-secondary transition-colors shadow-sm">
+                Explore
+              </button>
+            </div>
+
+            <!-- Bean 2 -->
+            <div class="flex items-center justify-between p-3 rounded-lg bg-surface shadow-sm border border-outline-variant/20">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg overflow-hidden shrink-0 border border-outline-variant/20">
+                  <img class="w-full h-full object-cover" alt="Cup of light amber filter coffee" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAKoJOhsuBVlgmyGHpZmR0Osgl2L2DeEHSj7owiLt5D1ZR4J8wvkqV7flWdzu9ayrIocZCW3bXfGt-m5dsST9P9HwmD8mp02wsYdZlvXMBIsNL5iQBElKSPvOdqd_OD97dBsMqcxA2-mMdxdtnoE81oidt7qB4HM3j26Z37zAdboB6NU0E_kNvzbSkVzGKGhvm_famRSSH6IORcVuYwak8y8jHmwv6QOjxBPRq1su-dHN2EaDGjU5j2">
+                </div>
+                <div class="flex flex-col">
+                  <span class="text-xs font-bold text-on-surface">Finca El Paraiso</span>
+                  <span class="text-[11px] text-on-surface-variant">Pink Bourbon • Thermal Shock</span>
+                </div>
+              </div>
+              <button onclick="exploreRecommendedBean('Finca El Paraiso', 'Colombia', 'Thermal Shock')" class="px-3 py-1.5 rounded-lg bg-primary text-on-primary text-xs font-bold hover:bg-secondary transition-colors shadow-sm">
+                Explore
               </button>
             </div>
           </div>
+        </div>
+
+        <!-- 7. INTERACTIVE EXPORT & QUICK ACTION BUTTONS -->
+        <div class="flex items-center justify-between gap-3 pt-1 pb-2">
+          <button onclick="shareRadarCard()" class="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-surface-container text-on-surface text-xs font-bold shadow-sm border border-outline-variant/30 hover:bg-surface-container-high active:scale-95 transition-all">
+            <span class="material-symbols-outlined text-[18px]">ios_share</span>
+            <span>Share Radar Card</span>
+          </button>
+          <button onclick="openModal('modal-log-brew')" class="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-primary text-on-primary text-xs font-bold shadow-sm hover:bg-secondary active:scale-95 transition-all">
+            <span class="material-symbols-outlined text-[18px]">add_circle</span>
+            <span>Log Sensory Cup</span>
+          </button>
         </div>
 
       </section>

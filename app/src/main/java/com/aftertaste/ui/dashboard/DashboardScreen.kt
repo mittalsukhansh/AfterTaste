@@ -122,8 +122,40 @@ fun DashboardScreen(
                 .padding(innerPadding)
                 .verticalScroll(rememberScrollState())
                 .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp)
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+            // Morning Dial-in Status & Ritual Pulse
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(10.dp)
+                            .clip(CircleShape)
+                            .background(androidx.compose.ui.graphics.Color(0xFF10B981))
+                    )
+                    Text(
+                        text = "MORNING DIAL-IN",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = ParchmentCream.copy(alpha = 0.9f),
+                        fontWeight = FontWeight.Bold,
+                        letterSpacing = 1.sp
+                    )
+                }
+                Text(
+                    text = "Active Ritual",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = TerracottaAccent,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+
             // 1. Quick Action Bar
             QuickActionBar(
                 onNavigateToAddVisit = onNavigateToAddVisit,

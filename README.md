@@ -1,12 +1,13 @@
 # AfterTaste
 
 [![Android](https://img.shields.io/badge/Platform-Android-green.svg)](https://developer.android.com)
-[![Release](https://img.shields.io/badge/Release-v1.0.1-orange.svg)](https://github.com/mittalsukhansh/AfterTaste/releases/tag/v1.0.1)
+[![Release](https://img.shields.io/badge/Release-v2.0.0-orange.svg)](https://github.com/mittalsukhansh/AfterTaste/releases/tag/v2.0.0)
 [![Kotlin](https://img.shields.io/badge/Language-Kotlin%202.2-blue.svg)](https://kotlinlang.org)
 [![Compose](https://img.shields.io/badge/UI-Jetpack%20Compose%20M3-brightgreen.svg)](https://developer.android.com/jetpack/compose)
 [![Room](https://img.shields.io/badge/Database-Room%20KSP-orange.svg)](https://developer.android.com/training/data-storage/room)
+[![Map](https://img.shields.io/badge/Maps-OpenStreetMap%20%2F%20OSMDroid-success.svg)](https://www.openstreetmap.org)
 
-**AfterTaste** is an artisanal coffee passport, journal, and location-based discovery app built natively for Android using Jetpack Compose. Track every cafe visit, rate coffee beans & ambience, discover nearby roasters on an interactive map, and build your digital coffee passport.
+**AfterTaste** is an artisanal coffee passport, journal, and location-based discovery app built natively for Android using Jetpack Compose with an interactive web companion. Track every cafe visit, rate coffee beans & ambience, discover nearby roasters on an open-source map, and build your digital coffee passport.
 
 ---
 
@@ -14,10 +15,11 @@
 
 | Version | Release Date | Download APK | Release Notes |
 |:---|:---|:---|:---|
-| **v1.0.1** (Latest) | October 2026 | [Download AfterTaste-v1.0.1.apk](https://github.com/mittalsukhansh/AfterTaste/releases/download/v1.0.1/AfterTaste-v1.0.1.apk) | [Changelog](https://github.com/mittalsukhansh/AfterTaste/releases/tag/v1.0.1) |
+| **v2.0.0** (Latest) | October 2026 | [Download AfterTaste-v2.0.0.apk](https://github.com/mittalsukhansh/AfterTaste/releases/download/v2.0.0/AfterTaste-v2.0.0.apk) | [Changelog](https://github.com/mittalsukhansh/AfterTaste/releases/tag/v2.0.0) |
+| **v1.0.1** | October 2026 | [Download AfterTaste-v1.0.1.apk](https://github.com/mittalsukhansh/AfterTaste/releases/download/v1.0.1/AfterTaste-v1.0.1.apk) | [Changelog](https://github.com/mittalsukhansh/AfterTaste/releases/tag/v1.0.1) |
 | **v1.0.0** | October 2026 | [Download AfterTaste-v1.0.0.apk](https://github.com/mittalsukhansh/AfterTaste/releases/download/v1.0.0/AfterTaste-v1.0.0.apk) | [Changelog](https://github.com/mittalsukhansh/AfterTaste/releases/tag/v1.0.0) |
 
-> **Direct APK Installation**: Download `AfterTaste-v1.0.1.apk` directly on your Android device (Android 7.0+ / API 24+) and install. Ensure "Install unknown apps" permission is enabled in your device settings.
+> **Direct APK Installation**: Download `AfterTaste-v2.0.0.apk` directly on your Android device (Android 7.0+ / API 24+) and install. Ensure "Install unknown apps" permission is enabled in your device settings.
 
 ---
 
@@ -32,17 +34,33 @@
 - **Custom Title Font**: Stylized brush script typography matching the AfterTaste brand logo across headers, top bars, and onboarding.
 - **Adaptive Launcher Icon**: Custom vector and high-density PNG adaptive launcher icons for squircle, round, and legacy home screens.
 
-### Dynamic Nearby Cafe Map
-- **Live Location Detection**: Dynamically calculates nearby artisanal coffee spots relative to the user's real GPS position.
-- **Interactive Pins & Callouts**: Distance metrics (*e.g., "0.3 km away"*), filter chips (*"Nearby Cafes"*, *"Visited"*, *"Wishlist"*), and quick action callout cards.
+### 100% Free Open-Source Map Engine
+- **Zero Proprietary API Keys**: Built entirely on **OpenStreetMap (OSM)**, **osmdroid**, and **Leaflet.js** without Google Cloud billing dependencies.
+- **Overpass API Discovery**: Queries real-time specialty cafes within 5 km of GPS coordinates.
+- **Auto-Centering & GPS Pin**: Smooth fly-to centering on user location with pulsating radar marker.
+
+### Interactive Barista Brew Guide & Timer
+- **Multi-Method Extraction**: Dedicated stage timers for V60 Pour Over, AeroPress, French Press, and Moka Pot.
+- **Smart Ratio Calculator**: Automatically computes water yield in grams and ideal brew temperature.
+- **One-Tap Extraction Transfer**: Saves extraction time and water ratio straight to the coffee cupping log.
+
+### Shareable Cupping Story Card Generator
+- **Aesthetic 9:16 Story Cards**: Generates high-res Polaroid story cards for Instagram & WhatsApp.
+- **HTML5 Canvas PNG Download**: Exports 1080×1920 PNG cards with flavor chips, ratings, and custom watermark.
+
+### Coffee Spend Analytics & Monthly Budget Tracker (₹ INR)
+- **Rupee Budget Tracker**: Tracks monthly spend in ₹ with visual budget progress.
+- **Cost-Per-Cup Metrics**: Compares cafe visits against home brewing with calculated savings.
+
+### Coffee Bag Label Scanner (Neural OCR)
+- **Instant Label Import**: Camera/file upload with automated extraction of roaster, origin lot, process, and tasting notes.
 
 ### Google Account & Cloud Sync
-- **Google Sign-In**: Integrated profile card displaying user avatar, name, and email in Settings & Dashboard.
-- **Cloud Backup State**: Automatic timestamped sync indicator for backing up coffee visits and wishlist items safely.
+- **Google Sign-In**: Profile management with timestamped cloud backup state.
 
-### Passport Stamps & Analytics
-- **Achievement Stamps**: Unlock digital passport badges (*"Espresso Explorer"*, *"Cozy Regular"*, *"WiFi Nomad"*) based on visit milestones.
-- **Coffee Journal Analytics**: Track total spend, monthly visits, favorite cafe stats, and active weekly streaks.
+### Passport Milestones & Streaks
+- **Gamified Achievements**: Unlock Origin Explorer, Anaerobic Master, and Roastery Nomad tiers.
+- **Hopping Streaks**: Track consecutive weekend cafe cupping streaks.
 
 ### Data Export & Restore
 - **CSV & JSON Export**: Export your complete coffee journal to spreadsheet CSV or full JSON backup files.

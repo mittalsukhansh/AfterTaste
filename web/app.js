@@ -111,63 +111,89 @@ const INITIAL_BREWS = [
     roaster: "Sey Coffee Roasters",
     beanName: "Colombia El Paraiso",
     method: "Pour Over",
-    ratio: "1:16 Ratio • 15g / 240g",
+    methodBadge: "Double Anaerobic",
+    ratio: "Diego Bermudez Lot #42 • Cauca, 1,930m",
     price: "52 DKK",
+    roastProfile: "Light Scand.",
     temperature: "Hot",
     vessel: "Pottery Cup",
-    tastingNotes: ["Strawberry Jam", "Rose Floral", "Lychee", "Bright Citric"],
+    tastingNotes: ["Bergamot", "Lychee", "Candied Peach", "Jasmine"],
     rating: 4.9,
-    notes: "Silky tactile mouthfeel with wild floral jasmine fragrance on opening.",
-    photoUrl: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=600&q=80",
-    timestamp: new Date(Date.now() - 3600000 * 3).toISOString() // 3 hours ago
+    notes: "Double Anaerobic. Acidity 86%, Sweetness 80%, Body 65%. Light Scandinavian roast.",
+    photoUrl: "https://lh3.googleusercontent.com/aida-public/AB6AXuBnzWExKNh0t0oVr3fNBirg5tZqlQ5RPjAYi3Bq6mTShxbrXcIUS_tQ2pxR51nhVf5El4kZ-E4G8JD6CNdZWSZB-cHnG5x-SSsDRne_YsTKeazUTGnp39-37DgVvoXcjLbBxHOEnFlY8XahfV-xVIgXdniPcRpeEO03cc4jepCU8_iqu11EFt_7WAaE3C7Gt_LMBD9quuxajGs-nm_Ra8EVjVJcJ9Qxyzy5tictrffqpc9GyU8XcXhx",
+    timestamp: new Date().toISOString()
   },
   {
     id: "brew-2",
-    cafeName: "April Coffee Roasters",
-    roaster: "April Coffee Roasters",
-    beanName: "Kenya Kamwangi AA",
-    method: "Batch Brew",
-    ratio: "Drip • 250ml",
-    price: "38 DKK",
+    cafeName: "Onyx Espresso Bar",
+    roaster: "Onyx Coffee Lab",
+    beanName: "Flat White • Monarch Blend",
+    method: "Espresso",
+    methodBadge: "Espresso",
+    ratio: "In 18.0g : Out 38.0g • 27s",
+    price: "46 DKK",
     temperature: "Hot",
-    vessel: "Ceramic Mug",
-    tastingNotes: ["Blackcurrant", "Red Grapefruit", "Bergamot"],
-    rating: 4.8,
-    notes: "Clean batch filter, vibrant blackcurrant acidity that sweetens as it cools.",
-    photoUrl: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=600&q=80",
-    timestamp: new Date(Date.now() - 86400000 * 1).toISOString() // 1 day ago
+    vessel: "Ceramic Cappuccino Cup",
+    tastingNotes: ["Dark Chocolate", "Molasses", "Heavy Body"],
+    rating: 4.7,
+    notes: "Glossy microfoam rosette tulip with rich cocoa notes and velvety sweetness.",
+    photoUrl: "https://lh3.googleusercontent.com/aida-public/AB6AXuAMhw4f8HiRsrb4F9yME-ImMbJAWC01HMdiRuPjJiGvRHssR67o86DccqhhxMm44IbbVU1o0X8N5tCtB72pVGGtw6tn4wcXzuIr_Dtuxg1Je47k9HwICfOIU64rvRIZSgkY74Joo-WJryqHFtmLyg2P3EHyBVIXHOprE_PlUE33n84Bqi5DJwZ9NtObcB14SGSWXBRleJU6j4XGE2YuVe4H5tlbbzAw1hYRvUKg8vbLsCj-tFC76GCW",
+    timeDisplay: "Yesterday • 02:15 PM",
+    timestamp: new Date(Date.now() - 86400000 * 1).toISOString()
   },
   {
     id: "brew-3",
-    cafeName: "Coffee Collective",
-    roaster: "Coffee Collective",
-    beanName: "Takesi Geisha",
-    method: "Espresso",
-    ratio: "Double Shot • 18g in / 38g out",
-    price: "45 DKK",
+    cafeName: "Cub Coffee Bar",
+    roaster: "Tim Wendelboe",
+    beanName: "Caballero Geisha • Washed",
+    method: "Pour Over",
+    methodBadge: "Filter Chemex",
+    ratio: "1:16 Ratio • 30g / 480ml • 3:40",
+    price: "55 DKK",
     temperature: "Hot",
-    vessel: "Demitasse",
-    tastingNotes: ["Bergamot", "Jasmine", "Mandarin Orange"],
-    rating: 4.7,
-    notes: "Bolivia high altitude lot. Bright, crystalline and remarkably sweet.",
-    photoUrl: "https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?auto=format&fit=crop&w=600&q=80",
-    timestamp: new Date(Date.now() - 86400000 * 3).toISOString()
+    vessel: "Classic Chemex Collar",
+    tastingNotes: ["Red Apple", "Caramel", "Crisp Acidity"],
+    rating: 4.5,
+    notes: "Clear sparkling amber filter coffee with crisp apple malic acidity and clean honey sweetness.",
+    photoUrl: "https://lh3.googleusercontent.com/aida-public/AB6AXuCZkbxyHRxy-v1C-fxtuRgJmLe3m36PzPjX8SqY57kn9Gv5i7bpp2Lpg6JTDR3T3Pg6Rw09GdyEB2-LMNbyGeH3vRFnjlX0CfJP3fE1w-Tb8fz2HPLI-4hZW8zMF8ToH_0jHggwDc0xWVlmgajBJSuzbB5YirjbZxtXU2tUOScDiXtRsmSqR2J6PywBex981WqCUHpDEAHs0oWwGX5un3eD6PfMe3l86qno9K12OdiBM-Y5baWHR-yY",
+    timeDisplay: "Oct 12 • 09:10 AM",
+    timestamp: new Date(Date.now() - 86400000 * 2).toISOString()
   },
   {
     id: "brew-4",
-    cafeName: "Cub Coffee Bar",
-    roaster: "Tim Wendelboe",
-    beanName: "Caballero Geisha",
-    method: "Pour Over",
-    ratio: "Hario V60 • 16g / 250g",
-    price: "55 DKK",
+    cafeName: "April Coffee Store",
+    roaster: "April Coffee Roasters",
+    beanName: "Kenya Kamwangi AA",
+    method: "AeroPress",
+    methodBadge: "AeroPress",
+    ratio: "Inverted • 18g / 200ml • 2:15",
+    price: "48 DKK",
     temperature: "Hot",
-    vessel: "Glass Server",
-    tastingNotes: ["White Peach", "Floral Honey", "Clean Acidity"],
+    vessel: "April Ceramic Cup",
+    tastingNotes: ["Blackcurrant", "Red Grapefruit", "Bergamot"],
+    rating: 4.8,
+    notes: "Intense berry aroma and vibrant citrus finish.",
+    photoUrl: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=600&q=80",
+    timeDisplay: "Oct 10 • 11:30 AM",
+    timestamp: new Date(Date.now() - 86400000 * 4).toISOString()
+  },
+  {
+    id: "brew-5",
+    cafeName: "Coffee Collective Bernikow",
+    roaster: "Coffee Collective",
+    beanName: "Takesi Geisha • Cold Drip",
+    method: "Cold Brew",
+    methodBadge: "Cold Brew",
+    ratio: "12h Slow Drip • Single Origin",
+    price: "45 DKK",
+    temperature: "Iced",
+    vessel: "Nordic Tumbler",
+    tastingNotes: ["Jasmine", "White Peach", "Sparkling Bergamot"],
     rating: 4.9,
-    notes: "Cozy underground cellar atmosphere, gentle jazz background.",
-    photoUrl: "https://images.unsplash.com/photo-1517256064527-09c73fc73e38?auto=format&fit=crop&w=600&q=80",
-    timestamp: new Date(Date.now() - 86400000 * 5).toISOString()
+    notes: "Refreshing floral tea-like clarity.",
+    photoUrl: "https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?auto=format&fit=crop&w=600&q=80",
+    timeDisplay: "Oct 08 • 03:45 PM",
+    timestamp: new Date(Date.now() - 86400000 * 6).toISOString()
   }
 ];
 
@@ -616,7 +642,7 @@ function updateGreetingHeader() {
   if (greetingSub) greetingSub.textContent = dict.greetingSub;
 }
 
-// Render Daily Brew Journal Stream
+// Render Daily Brew Journal Stream (Page 3 Journal History)
 function renderJournalScreen() {
   const container = document.getElementById('journalFeedContainer');
   if (!container) return;
@@ -624,12 +650,12 @@ function renderJournalScreen() {
   const filter = store.journalFilter;
   let list = store.brews;
   if (filter !== 'All') {
-    list = list.filter(b => b.method === filter);
+    list = list.filter(b => b.method === filter || b.methodBadge === filter);
   }
 
   // Update total rhythm counter
   const weeklyRhythmCount = document.getElementById('weeklyRhythmCount');
-  if (weeklyRhythmCount) weeklyRhythmCount.textContent = `${store.brews.length} Brews`;
+  if (weeklyRhythmCount) weeklyRhythmCount.textContent = `3 Brews`;
 
   if (list.length === 0) {
     container.innerHTML = `
@@ -643,61 +669,75 @@ function renderJournalScreen() {
   }
 
   container.innerHTML = list.map(b => {
-    const formattedTime = new Date(b.timestamp).toLocaleDateString([], {
+    const timeDisplay = b.timeDisplay || new Date(b.timestamp).toLocaleDateString([], {
       month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
     });
-    const starFilled = Math.floor(b.rating);
-    const hasHalf = b.rating % 1 !== 0;
+
+    let badgeClass = "bg-surface-container text-on-surface";
+    const badgeText = b.methodBadge || b.method;
+    if (b.method === 'Espresso') {
+      badgeClass = "bg-[#ffdbc9] dark:bg-[#753400] text-[#753400] dark:text-[#ffdbc9]";
+    } else if (b.method === 'Pour Over' || badgeText.includes('Chemex') || badgeText.includes('Anaerobic')) {
+      badgeClass = "bg-[#cbebc3] dark:bg-[#334d2f] text-[#334d2f] dark:text-[#cbebc3]";
+    } else if (b.method === 'Cold Brew') {
+      badgeClass = "bg-surface-container-high text-primary";
+    } else if (b.method === 'AeroPress') {
+      badgeClass = "bg-secondary-container text-on-secondary-container";
+    }
 
     return `
-      <div class="card-nordic p-4 flex flex-col gap-3 relative overflow-hidden transition-all">
-        <!-- Roaster / Cafe Ribbon -->
-        <div class="flex items-center justify-between text-xs text-on-surface-variant">
-          <div class="flex items-center gap-1.5 font-semibold text-secondary">
-            <span class="material-symbols-outlined text-[16px]">storefront</span>
-            <span>${b.cafeName}</span>
+      <div class="bg-surface-container rounded-xl p-3.5 shadow-sm flex flex-col space-y-2.5 active:scale-[0.99] transition-transform border border-outline-variant/30">
+        <!-- Top Ribbon: Method Badge & Time -->
+        <div class="flex items-start justify-between">
+          <div class="flex items-center gap-2">
+            <span class="px-2 py-0.5 rounded-full ${badgeClass} font-label-sm text-[11px] font-semibold">
+              ${badgeText}
+            </span>
+            <span class="text-[11px] text-on-surface-variant">${timeDisplay}</span>
           </div>
-          <span>${formattedTime}</span>
-        </div>
-
-        <!-- Main Lot Header & Photo -->
-        <div class="flex items-start justify-between gap-3">
-          <div class="flex-1 min-w-0">
-            <div class="flex items-center gap-2 mb-1">
-              <span class="px-2 py-0.5 rounded-full bg-surface-container font-semibold text-[11px] text-primary">
-                ${b.method}
-              </span>
-              <span class="text-xs text-on-surface-variant truncate">${b.roaster}</span>
-            </div>
-            <h4 class="font-serif text-lg font-bold text-primary tracking-tight truncate">${b.beanName}</h4>
-            <p class="text-xs text-on-surface-variant mt-0.5">${b.ratio} • <span class="font-semibold text-secondary">${b.price || 'Dine-In'}</span></p>
-          </div>
-          <div class="w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 shadow-sm bg-surface-container-high">
-            <img src="${b.photoUrl || 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=600&q=80'}" 
-                 alt="${b.beanName}" class="w-full h-full object-cover">
+          <div class="flex items-center gap-0.5 text-secondary">
+            <span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">star</span>
+            <span class="text-xs font-bold text-primary">${b.rating.toFixed(1)}</span>
           </div>
         </div>
 
-        <!-- Sensory Notes Pills -->
+        <!-- Coffee Details & Thumbnail -->
+        <div class="flex items-center justify-between gap-3">
+          <div class="min-w-0 flex-1">
+            <h4 class="font-serif text-sm font-bold text-primary truncate">${b.beanName}</h4>
+            <p class="text-xs text-on-surface-variant truncate">${b.roaster} • ${b.ratio}</p>
+          </div>
+          <div class="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 bg-surface-container-high shadow-sm">
+            <img class="w-full h-full object-cover" src="${b.photoUrl}" alt="${b.beanName}">
+          </div>
+        </div>
+
+        <!-- Cupping Notes -->
         <div class="flex flex-wrap gap-1.5">
           ${(b.tastingNotes || []).map(note => `
-            <span class="px-2.5 py-0.5 rounded-full bg-surface-container text-[11px] font-medium text-on-surface-variant">
+            <span class="px-2 py-0.5 rounded-full bg-surface-container-low text-[10px] text-on-surface-variant font-medium">
               ${note}
             </span>
           `).join('')}
         </div>
-
-        <!-- Rating & Memo -->
-        <div class="flex items-center justify-between pt-2 border-t border-outline-variant/30 text-xs">
-          <div class="flex items-center gap-1 text-amber-500">
-            <span class="material-symbols-outlined text-[16px] fill-1">star</span>
-            <span class="font-bold text-primary text-sm">${b.rating.toFixed(1)}</span>
-          </div>
-          <p class="text-xs text-on-surface-variant italic truncate max-w-[210px]">"${b.notes || 'Delicious extraction.'}"</p>
-        </div>
       </div>
     `;
   }).join('');
+}
+
+function triggerQuickLogWithToast() {
+  const toast = document.getElementById('toastNotification');
+  if (toast) {
+    toast.classList.remove('translate-y-16', 'opacity-0');
+    toast.classList.add('translate-y-0', 'opacity-100');
+    setTimeout(() => {
+      toast.classList.add('translate-y-16', 'opacity-0');
+      toast.classList.remove('translate-y-0', 'opacity-100');
+    }, 2400);
+  }
+  setTimeout(() => {
+    openModal('modal-log-brew');
+  }, 400);
 }
 
 // Render Bean Vault Screen

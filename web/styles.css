@@ -391,3 +391,51 @@ body {
     box-shadow: 0 0 0 0 rgba(200, 109, 59, 0);
   }
 }
+
+/* Feature 1: Brew Timer Circle & Accents */
+.timer-dial {
+  background: radial-gradient(circle, var(--surface-container-low) 60%, var(--surface-container) 100%);
+  box-shadow: inset 0 2px 8px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04);
+}
+
+/* Feature 2: Story Card Styling */
+.story-card-preview {
+  background: linear-gradient(145deg, #1f140e 0%, #120a06 100%);
+  border: 1px solid rgba(200, 109, 59, 0.25);
+  box-shadow: 0 16px 36px -8px rgba(0,0,0,0.6);
+}
+
+/* Feature 5: Proximity Radar Ping */
+.radar-ring {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #10b981;
+  position: relative;
+}
+.radar-ring::after {
+  content: '';
+  position: absolute;
+  top: -5px;
+  left: -5px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid #10b981;
+  animation: radarPing 2s infinite ease-out;
+}
+@keyframes radarPing {
+  0% { transform: scale(0.5); opacity: 1; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+
+/* Feature 6: Gamification Badges */
+.badge-connoisseur {
+  background: linear-gradient(135deg, rgba(200, 109, 59, 0.12), rgba(200, 109, 59, 0.04));
+  border: 1px solid rgba(200, 109, 59, 0.28);
+}
+.badge-unlocked {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(16, 185, 129, 0.04));
+  border: 1px solid rgba(16, 185, 129, 0.35);
+}
+

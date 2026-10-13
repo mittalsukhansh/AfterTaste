@@ -4,11 +4,19 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>AfterTaste — Specialty Coffee Journal & Cafe Hopping Companion</title>
+  <link rel="icon" type="image/png" href="assets/logo.png">
   
   <!-- Google Fonts: Playfair Display (Artisanal Display) & Plus Jakarta Sans (Modern UI) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet">
+  
+  <!-- Leaflet OpenStreetMap (100% Free Open Source Map - Zero API Keys Needed) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  
+  <!-- Google Identity Services (Sign In with Google Client) -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
   
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -68,7 +76,7 @@
       <div class="h-14 px-4 flex items-center justify-between">
         <!-- Minimal Brand Title -->
         <div class="flex items-center gap-2">
-          <img alt="AfterTaste Brand Monogram" class="h-7 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuChgOynEsBrq_nmwwLavI8KcBiZbmEbKGR6i2cJpgf9P8AWXy7ON6LK6VCz6QJsLBgIb6BVodqWeNUh0Go02QUpLqk2IF4kiK4SVqLBDYmB_Dz-WRwo2OAFxv7z1HLI5i4JRi68xYjhPuIuL25RuEPLzr8F9xwYGHQa4ewiyRfwgjCNXzHbNr4tM_ZVUDN-HguvnFTwzkArP1I7s_gOUXcRTY9RpIVyJFhJNz6UaXvimvePKUxxiMfg">
+          <img alt="AfterTaste Brand Monogram" class="h-7 w-7 rounded-lg object-contain shadow-sm" src="assets/logo.png">
           <div class="flex items-baseline gap-1.5">
             <span class="font-serif text-lg font-bold tracking-tight text-primary">AfterTaste</span>
             <span id="topBarSubtitle" class="text-xs text-secondary font-medium">— journal</span>
@@ -121,18 +129,31 @@
               <span class="text-[11px] text-on-surface-variant">Log cup in 20 seconds</span>
             </div>
           </div>
-          <button id="quickLogBtn" onclick="triggerQuickLogWithToast()" class="px-3.5 py-1.5 rounded-lg bg-primary text-on-primary text-xs font-bold hover:bg-secondary transition-colors">
-            + Log Cup
-          </button>
+          <div class="flex items-center gap-1.5">
+            <button onclick="openModal('modal-brew-timer')" class="px-3 py-1.5 rounded-lg bg-surface border border-card-border text-primary text-xs font-semibold hover:border-secondary transition-colors flex items-center gap-1 shadow-sm" title="Launch Brew Timer">
+              <span class="material-symbols-outlined text-[15px] text-secondary">timer</span>
+              <span>Brew Timer</span>
+            </button>
+            <button id="quickLogBtn" onclick="triggerQuickLogWithToast()" class="px-3.5 py-1.5 rounded-lg bg-primary text-on-primary text-xs font-bold hover:bg-secondary transition-colors shadow-sm">
+              + Log Cup
+            </button>
+          </div>
         </div>
 
         <!-- Featured Brew: Today's Extraction (Clean Minimal Editorial) -->
         <div class="flex flex-col gap-2">
           <div class="flex items-center justify-between">
             <span class="text-[11px] uppercase tracking-wider text-on-surface-variant font-bold">Today's Extraction</span>
-            <button onclick="openModal('modal-log-brew')" class="text-xs text-secondary hover:underline font-medium">
-              Edit recipe
-            </button>
+            <div class="flex items-center gap-2">
+              <button onclick="openStoryCardModal('brew-1')" class="text-xs text-secondary hover:underline font-semibold flex items-center gap-1">
+                <span class="material-symbols-outlined text-[14px]">ios_share</span>
+                <span>Story Card</span>
+              </button>
+              <span class="text-on-surface-variant text-[10px]">•</span>
+              <button onclick="openModal('modal-log-brew')" class="text-xs text-on-surface-variant hover:text-primary font-medium">
+                Edit
+              </button>
+            </div>
           </div>
 
           <!-- Refined Master Card -->
@@ -147,7 +168,7 @@
                   <span>•</span>
                   <span>Pour Over</span>
                   <span>•</span>
-                  <span>52 DKK</span>
+                  <span class="text-secondary font-semibold">₹340</span>
                   <span>•</span>
                   <span class="text-primary font-bold">★ 4.9</span>
                 </div>
@@ -164,6 +185,40 @@
               <span class="px-2.5 py-0.5 rounded-full bg-surface text-[11px] text-on-surface font-medium border border-outline-variant/20">Candied Peach</span>
               <span class="px-2.5 py-0.5 rounded-full bg-surface text-[11px] text-on-surface font-medium border border-outline-variant/20">Jasmine</span>
             </div>
+          </div>
+        </div>
+
+        <!-- Feature 6: Tasting Milestones & Hopping Streaks -->
+        <div class="card-minimal p-3.5 flex flex-col gap-2.5">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-secondary text-[18px]">military_tech</span>
+              <h4 class="font-serif text-xs font-bold text-primary uppercase tracking-wider">Passport Milestones & Streaks</h4>
+            </div>
+            <span class="text-[10px] text-secondary font-bold bg-secondary/10 px-2 py-0.5 rounded-full">🔥 3-Week Streak</span>
+          </div>
+
+          <div class="grid grid-cols-3 gap-2">
+            <!-- Badge 1: Origin Connoisseur -->
+            <button onclick="showBadgeDetails('origin')" class="badge-connoisseur p-2 rounded-xl flex flex-col items-center text-center transition-transform active:scale-95">
+              <span class="text-base mb-1">🌍</span>
+              <span class="text-[10px] font-bold text-primary leading-tight">Origin Explorer</span>
+              <span class="text-[9px] text-secondary mt-0.5 font-medium">4 / 5 Origins</span>
+            </button>
+
+            <!-- Badge 2: Fermentation Alchemist -->
+            <button onclick="showBadgeDetails('process')" class="badge-unlocked p-2 rounded-xl flex flex-col items-center text-center transition-transform active:scale-95">
+              <span class="text-base mb-1">🧪</span>
+              <span class="text-[10px] font-bold text-primary leading-tight">Anaerobic Master</span>
+              <span class="text-[9px] text-emerald-600 font-bold mt-0.5">Unlocked ★</span>
+            </button>
+
+            <!-- Badge 3: Roastery Nomad -->
+            <button onclick="showBadgeDetails('nomad')" class="badge-connoisseur p-2 rounded-xl flex flex-col items-center text-center transition-transform active:scale-95">
+              <span class="text-base mb-1">☕</span>
+              <span class="text-[10px] font-bold text-primary leading-tight">Roastery Nomad</span>
+              <span class="text-[9px] text-secondary mt-0.5 font-medium">7 / 10 Cafes</span>
+            </button>
           </div>
         </div>
 
@@ -343,48 +398,36 @@
           </div>
         </div>
 
-        <!-- Interactive Nordic Cartography Card -->
-        <div class="relative w-full h-64 rounded-2xl overflow-hidden shadow-sm bg-[#F4ECE6] dark:bg-[#1a120e] border border-card-border">
-          <!-- Vector Map Canvas (Artisanal Copenhagen Warm Tones) -->
-          <svg class="absolute inset-0 w-full h-full object-cover" fill="none" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
-            <!-- Land Mass & Warm Ground -->
-            <rect fill="#F4ECE6" height="300" width="400"></rect>
-            <!-- Canals and Waterways in muted soft slate slate-caramel -->
-            <path d="M-20 60 C80 90, 160 30, 240 70 C310 100, 370 60, 420 85 L420 120 C360 95, 290 140, 210 100 C150 70, 70 120, -20 90 Z" fill="#E2D4C8" opacity="0.6"></path>
-            <path d="M280 0 C300 70, 310 150, 290 300 L320 300 C340 150, 330 60, 310 0 Z" fill="#E2D4C8" opacity="0.5"></path>
-            <!-- Parks / Green Reserves in muted sage tint -->
-            <path d="M40 180 C60 170, 120 175, 130 210 C140 240, 90 270, 50 250 C20 230, 25 190, 40 180 Z" fill="#CBEBC3" fill-opacity="0.35"></path>
-            <path d="M240 200 C270 190, 340 195, 360 230 C340 260, 270 270, 240 240 Z" fill="#CBEBC3" fill-opacity="0.35"></path>
-            <!-- Urban Blocks & Secondary Roads -->
-            <path d="M-10 140 L410 150" stroke="#EDE2D8" stroke-linecap="round" stroke-width="14"></path>
-            <path d="M90 -10 L110 310" stroke="#EDE2D8" stroke-linecap="round" stroke-width="12"></path>
-            <path d="M190 -10 L180 310" stroke="#EDE2D8" stroke-linecap="round" stroke-width="16"></path>
-            <path d="M20 70 L390 260" stroke="#EDE2D8" stroke-linecap="round" stroke-width="10"></path>
-            <path d="M-10 240 L300 210" stroke="#EDE2D8" stroke-width="8"></path>
-            <!-- Primary Arterials (Espresso Warm Tint) -->
-            <path d="M10 145 C120 150, 210 170, 390 140" stroke="#74584E" stroke-dasharray="4 4" stroke-opacity="0.22" stroke-width="3"></path>
-            <path d="M185 0 C180 120, 195 210, 180 300" stroke="#74584E" stroke-opacity="0.25" stroke-width="3"></path>
-          </svg>
-
-          <!-- User Live Location Pulse Dot -->
-          <div class="absolute left-[38%] top-[55%] -translate-x-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-none">
-            <span class="w-6 h-6 rounded-full bg-secondary/20 animate-ping absolute"></span>
-            <span class="w-3.5 h-3.5 rounded-full bg-surface-container-lowest shadow-md flex items-center justify-center">
-              <span class="w-2 h-2 rounded-full bg-secondary"></span>
-            </span>
+        <!-- Feature 5: Wishlist Proximity Radar -->
+        <div class="card-minimal p-3 flex items-center justify-between gap-3 border border-emerald-500/20 bg-emerald-50/40 dark:bg-emerald-950/20">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <div class="radar-ring shrink-0"></div>
+            <div class="min-w-0">
+              <div class="flex items-center gap-1.5">
+                <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">Wishlist Proximity Radar</span>
+                <span class="text-[9px] px-1.5 py-0.2 rounded bg-emerald-100 dark:bg-emerald-900 text-emerald-800 dark:text-emerald-200 font-bold">Active</span>
+              </div>
+              <p id="proximityAlertText" class="text-[11px] text-on-surface-variant truncate mt-0.5">Scanning nearby coffee spots within 400m...</p>
+            </div>
           </div>
+          <button onclick="simulateWishlistProximityAlert()" class="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-bold shrink-0 transition-colors shadow-sm">
+            Simulate Ping 📍
+          </button>
+        </div>
 
-          <!-- Dynamic Interactive Map Pins Overlay -->
-          <div id="mapPinsContainer" class="absolute inset-0">
-            <!-- Dynamically populated by renderCafesScreen() -->
-          </div>
-
-          <!-- Floating Recenter Control -->
-          <div class="absolute top-2.5 right-2.5 z-20">
-            <button aria-label="Recenter Map" onclick="recenterMap()" class="w-8 h-8 rounded-lg bg-surface-container-lowest/90 backdrop-blur text-on-surface flex items-center justify-center shadow-sm hover:bg-surface transition-colors" title="Recenter Map">
+        <!-- Interactive OpenStreetMap (Leaflet.js - 100% Free & Open Source) -->
+        <div class="relative w-full h-72 rounded-2xl overflow-hidden shadow-sm bg-[#F4ECE6] dark:bg-[#1a120e] border border-card-border">
+          <div id="osmMap" class="w-full h-full z-10"></div>
+          
+          <!-- Recenter Floating Button -->
+          <div class="absolute top-2.5 right-2.5 z-[500]">
+            <button aria-label="Center on My Location" onclick="recenterMap()" class="w-8 h-8 rounded-lg bg-surface/90 backdrop-blur text-primary flex items-center justify-center shadow-md border border-card-border hover:bg-surface transition-colors" title="Center on My Location">
               <span class="material-symbols-outlined text-[16px]">my_location</span>
             </button>
           </div>
+          
+          <!-- Hidden fallback for legacy pin container -->
+          <div id="mapPinsContainer" class="hidden"></div>
         </div>
 
         <!-- Cafe Cards & Detailed Dining Dossiers -->
@@ -673,6 +716,64 @@
           </div>
         </div>
 
+        <!-- Feature 3: Coffee Spend Analytics & Monthly Budget Tracker (₹ INR) -->
+        <div class="card-minimal p-4 flex flex-col gap-3">
+          <div class="flex items-center justify-between">
+            <div>
+              <span class="text-[10px] text-secondary uppercase font-bold tracking-wider">Coffee Economy</span>
+              <h3 class="font-serif text-base font-bold text-primary">Monthly Spend & Budget (₹)</h3>
+            </div>
+            <span class="px-2 py-0.5 rounded-full bg-surface-container text-primary font-bold text-xs">October 2026</span>
+          </div>
+
+          <!-- Total Spent vs Budget Bar -->
+          <div class="flex flex-col gap-1.5 p-3 rounded-xl bg-surface-container/40 border border-card-border">
+            <div class="flex justify-between items-baseline">
+              <div>
+                <span class="text-xs text-on-surface-variant">Spent this month:</span>
+                <span id="spendTotalDisplay" class="font-serif text-lg font-bold text-primary ml-1">₹2,450</span>
+              </div>
+              <div class="text-right">
+                <span class="text-[11px] text-on-surface-variant">Budget: </span>
+                <span id="spendBudgetDisplay" class="text-xs font-bold text-secondary">₹3,500</span>
+              </div>
+            </div>
+            <!-- Progress Bar -->
+            <div class="h-2 w-full bg-surface-container-highest rounded-full overflow-hidden">
+              <div id="spendProgressBar" class="h-full bg-secondary rounded-full transition-all duration-500" style="width: 70%;"></div>
+            </div>
+            <div class="flex justify-between text-[10px] text-on-surface-variant pt-0.5">
+              <span>70% of budget used</span>
+              <span class="text-emerald-600 font-semibold">₹1,050 remaining</span>
+            </div>
+          </div>
+
+          <!-- Breakdown Grid -->
+          <div class="grid grid-cols-2 gap-2 text-xs">
+            <div class="p-2.5 rounded-xl bg-surface-container/30 border border-card-border flex flex-col gap-0.5">
+              <span class="text-[10px] uppercase font-semibold text-secondary">Cafe Hopping</span>
+              <span class="font-bold text-primary text-sm">₹1,850</span>
+              <span class="text-[10px] text-on-surface-variant">6 visits (avg ₹308/cup)</span>
+            </div>
+            <div class="p-2.5 rounded-xl bg-surface-container/30 border border-card-border flex flex-col gap-0.5">
+              <span class="text-[10px] uppercase font-semibold text-secondary">Home Brew Bags</span>
+              <span class="font-bold text-primary text-sm">₹600</span>
+              <span class="text-[10px] text-on-surface-variant">14 extractions (~₹43/cup)</span>
+            </div>
+          </div>
+
+          <!-- Savings Badge & Quick Budget Stepper -->
+          <div class="flex items-center justify-between pt-1 border-t border-card-border text-xs">
+            <div class="flex items-center gap-1.5 text-emerald-600 font-semibold text-[11px]">
+              <span class="material-symbols-outlined text-[15px]">savings</span>
+              <span>Saved ₹820 brewing at home</span>
+            </div>
+            <button onclick="adjustCoffeeBudgetPrompt()" class="text-secondary hover:underline text-[11px] font-bold">
+              Set Budget
+            </button>
+          </div>
+        </div>
+
         <!-- 7. INTERACTIVE EXPORT & QUICK ACTION BUTTONS -->
         <div class="flex items-center justify-between gap-2.5 pt-1 pb-2">
           <button onclick="shareRadarCard()" class="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-surface-container text-on-surface text-xs font-semibold hover:bg-surface-container-high active:scale-95 transition-all">
@@ -760,11 +861,24 @@
                 </span>
               </div>
               <h2 class="font-serif text-2xl font-bold text-primary tracking-tight">Log Cafe Experience</h2>
-              <div id="logCafeLocationPill" onclick="cycleSampleCafes()" class="mt-2 flex items-center gap-1.5 bg-surface-container-low px-3 py-1.5 rounded-lg border border-outline-variant/30 text-on-surface w-fit cursor-pointer hover:bg-surface-container transition-colors shadow-sm">
-                <span class="material-symbols-outlined text-[16px] text-secondary">location_on</span>
-                <span id="logSelectedCafeName" class="text-xs font-semibold text-primary">Prolog Coffee Bar</span>
-                <span id="logSelectedCafeCity" class="text-xs text-on-surface-variant">• Copenhagen</span>
-                <span class="material-symbols-outlined text-[14px] text-secondary ml-1">expand_more</span>
+              <div class="mt-2 flex items-center gap-2">
+                <div class="relative flex items-center bg-surface-container-low px-2.5 py-1.5 rounded-xl border border-card-border text-on-surface shadow-sm">
+                  <span class="material-symbols-outlined text-[16px] text-secondary mr-1.5">location_on</span>
+                  <select id="logCafeSelect" onchange="onCafeDropdownSelect(this.value)" class="bg-transparent text-xs font-semibold text-primary outline-none cursor-pointer pr-6 appearance-none max-w-[240px]">
+                    <option value="Prolog Coffee Bar">Prolog Coffee Bar • Copenhagen</option>
+                    <option value="April Coffee Store">April Coffee Store • Ryesgade</option>
+                    <option value="The Coffee Collective">The Coffee Collective • Jægersborggade</option>
+                    <option value="Democratic Coffee">Democratic Coffee • Central</option>
+                    <option value="Blue Tokai Coffee Roasters">Blue Tokai Coffee • Delhi / Mumbai</option>
+                    <option value="Subko Specialty Coffee">Subko Coffee • Bandra / Mumbai</option>
+                    <option value="Roastery Coffee House">Roastery Coffee House • Hyderabad</option>
+                    <option value="Araku Coffee">Araku Coffee • Indiranagar / Bengaluru</option>
+                  </select>
+                  <span class="material-symbols-outlined text-[16px] text-secondary pointer-events-none absolute right-2">expand_more</span>
+                </div>
+                <!-- Hidden elements for app.js references -->
+                <span id="logSelectedCafeName" class="hidden">Prolog Coffee Bar</span>
+                <span id="logSelectedCafeCity" class="hidden">• Copenhagen</span>
               </div>
             </div>
             <div class="w-11 h-11 rounded-full bg-surface-container-high flex items-center justify-center text-primary shadow-sm flex-shrink-0">
@@ -836,10 +950,17 @@
                 <span class="px-2 py-0.5 rounded-full bg-[#cbebc3] dark:bg-[#334d2f] text-[#334d2f] dark:text-[#cbebc3] text-[10px] font-semibold">
                   Light Roast • Floral
                 </span>
-                <span onclick="cycleSampleBeans()" class="ml-auto flex items-center text-secondary text-[10px] font-semibold cursor-pointer hover:underline">
-                  <span>Ask Barista / Switch</span>
-                  <span class="material-symbols-outlined text-[14px] ml-0.5">unfold_more</span>
-                </span>
+                <div class="relative ml-auto">
+                  <select id="logBeanSelect" onchange="onBeanDropdownSelect(this.value)" class="bg-surface-container/80 border border-card-border rounded-lg px-2 py-0.5 text-[10px] font-semibold text-secondary outline-none cursor-pointer pr-5 appearance-none">
+                    <option value="Ethiopia Gesha Village">Ethiopia Gesha Village</option>
+                    <option value="Sey Colombia El Paraiso">Sey Colombia El Paraiso</option>
+                    <option value="April Kenya AA Nyeri">April Kenya AA Nyeri</option>
+                    <option value="Tim Wendelboe Caballero">Tim Wendelboe Caballero</option>
+                    <option value="Blue Tokai Attikan Estate">Blue Tokai Attikan Estate</option>
+                    <option value="Subko Ratnagiri Estate">Subko Ratnagiri Estate</option>
+                  </select>
+                  <span class="material-symbols-outlined text-[14px] text-secondary pointer-events-none absolute right-1 top-1/2 -translate-y-1/2">expand_more</span>
+                </div>
               </div>
             </div>
           </section>
@@ -879,24 +1000,36 @@
               </div>
             </div>
 
-            <!-- Price & Milk Row -->
+            <!-- Price & Milk Row (Rupees ₹ & Dropdowns) -->
             <div class="grid grid-cols-2 gap-2.5">
-              <div class="bg-surface-container-low rounded-xl p-2.5 flex items-center gap-2.5 shadow-sm border border-outline-variant/30">
-                <div class="w-9 h-9 rounded-lg bg-surface-container-highest flex items-center justify-center text-secondary flex-shrink-0">
-                  <span class="material-symbols-outlined text-[18px]">payments</span>
+              <div class="bg-surface-container-low rounded-xl p-2.5 flex items-center gap-2.5 shadow-sm border border-card-border">
+                <div class="w-9 h-9 rounded-lg bg-surface-container flex items-center justify-center text-secondary font-bold text-sm shrink-0">
+                  ₹
                 </div>
-                <div class="flex flex-col min-w-0">
-                  <span class="text-[10px] text-on-surface-variant uppercase font-medium">Price Paid</span>
-                  <span id="logPriceDisplay" class="text-xs font-bold text-on-surface truncate">55 DKK <span class="text-on-surface-variant font-normal text-[10px]">(~$8)</span></span>
+                <div class="flex flex-col min-w-0 flex-1">
+                  <span class="text-[10px] text-on-surface-variant uppercase font-medium">Price (₹ INR)</span>
+                  <div class="flex items-center gap-0.5">
+                    <span class="text-xs font-bold text-primary">₹</span>
+                    <input id="logPriceInput" type="number" min="0" step="10" value="350" oninput="updatePriceDisplay(this.value)" class="w-16 bg-transparent text-xs font-bold text-primary outline-none py-0.5 border-b border-card-border focus:border-secondary">
+                  </div>
+                  <span id="logPriceDisplay" class="hidden">₹350</span>
                 </div>
               </div>
-              <div class="bg-surface-container-low rounded-xl p-2.5 flex items-center gap-2.5 shadow-sm border border-outline-variant/30">
-                <div class="w-9 h-9 rounded-lg bg-surface-container-highest flex items-center justify-center text-secondary flex-shrink-0">
+              <div class="bg-surface-container-low rounded-xl p-2.5 flex items-center gap-2.5 shadow-sm border border-card-border">
+                <div class="w-9 h-9 rounded-lg bg-surface-container flex items-center justify-center text-secondary shrink-0">
                   <span class="material-symbols-outlined text-[18px]">water_bottle</span>
                 </div>
-                <div class="flex flex-col min-w-0">
+                <div class="flex flex-col min-w-0 flex-1">
                   <span class="text-[10px] text-on-surface-variant uppercase font-medium">Milk Option</span>
-                  <span class="text-xs font-bold text-on-surface truncate">Oat (Oatly Barista)</span>
+                  <div class="relative">
+                    <select id="logMilkSelect" class="w-full bg-transparent text-xs font-semibold text-primary outline-none cursor-pointer appearance-none pr-4">
+                      <option value="Oat (Oatly Barista)">Oat Milk</option>
+                      <option value="Whole Dairy Milk">Whole Dairy</option>
+                      <option value="Almond Milk">Almond</option>
+                      <option value="None (Black / Filter)">None (Black)</option>
+                    </select>
+                    <span class="material-symbols-outlined text-[14px] text-secondary pointer-events-none absolute right-0 top-1/2 -translate-y-1/2">expand_more</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1144,12 +1277,39 @@
           </button>
         </div>
 
-        <div class="flex items-center gap-3 p-3 rounded-xl bg-surface-container">
-          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80" alt="Maya" class="w-14 h-14 rounded-full object-cover border-2 border-secondary">
-          <div>
-            <h4 class="font-serif text-base font-bold text-primary">Maya Lindqvist</h4>
-            <span class="text-xs text-secondary font-semibold">Copenhagen Cupper • N° 0842-DK</span>
-            <p class="text-[11px] text-on-surface-variant mt-0.5">maya.coffee@aftertaste.app</p>
+        <!-- Google Sign-In & Profile Card -->
+        <div id="googleAccountSection" class="p-3.5 rounded-xl bg-surface-container flex flex-col gap-3 border border-card-border">
+          <div id="googleSignedInCard" class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <img id="userGoogleAvatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80" alt="Google Profile" class="w-12 h-12 rounded-full object-cover border-2 border-secondary">
+              <div>
+                <div class="flex items-center gap-1.5">
+                  <h4 id="userGoogleName" class="font-serif text-sm font-bold text-primary">Maya Lindqvist</h4>
+                  <span class="text-[9px] px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 font-bold uppercase tracking-wider">Google</span>
+                </div>
+                <p id="userGoogleEmail" class="text-[11px] text-on-surface-variant">maya.coffee@gmail.com</p>
+                <div class="flex items-center gap-1 text-[10px] text-secondary font-medium mt-0.5">
+                  <span class="material-symbols-outlined text-[13px]">cloud_done</span>
+                  <span id="googleSyncStatus">Cloud Sync Active</span>
+                </div>
+              </div>
+            </div>
+            <button onclick="handleGoogleSignOut()" class="text-xs text-rose-500 hover:underline font-semibold px-2 py-1" title="Sign out">
+              Sign Out
+            </button>
+          </div>
+
+          <div id="googleSignedOutCard" class="hidden flex flex-col items-center gap-2.5 py-2">
+            <p class="text-xs text-on-surface-variant text-center">Sign in with Google to backup your cuppings, vault, and tasting passport across devices.</p>
+            <button onclick="handleGoogleSignIn()" class="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-surface border border-card-border text-on-surface text-xs font-semibold shadow-sm hover:bg-surface-container transition-all active:scale-95">
+              <svg class="w-4 h-4" viewBox="0 0 24 24">
+                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+              </svg>
+              <span>Sign in with Google</span>
+            </button>
           </div>
         </div>
 

@@ -466,7 +466,7 @@ fun MapViewScreen(
                             // User position marker
                             val userMarker = Marker(mapView).apply {
                                 position = centerGeoPoint
-                                title = "Target Location 📍"
+                                title = "Your Location 📍"
                                 snippet = "(${String.format(Locale.getDefault(), "%.3f", centerGeoPoint.latitude)}, ${String.format(Locale.getDefault(), "%.3f", centerGeoPoint.longitude)})"
                                 icon = createCoffeeMarkerDrawable(context, "#C05A3E", "📍")
                             }
@@ -707,16 +707,20 @@ fun FloatingCafeMapCard(
             ) {
                 androidx.compose.material3.OutlinedButton(
                     onClick = {
-                        val query = "${pin.name}, ${pin.location} near me"
-                        val searchUrl = "https://www.google.com/search?q=${Uri.encode(query)}"
-                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(searchUrl))
-                        context.startActivity(intent)
+                        val geoUri = Uri.parse("geo:${pin.geoPoint.latitude},${pin.geoPoint.longitude}?q=${Uri.encode(pin.name)}")
+                        val mapIntent = Intent(Intent.ACTION_VIEW, geoUri)
+                        try {
+                            context.startActivity(mapIntent)
+                        } catch (_: Exception) {
+                            val osmWebUrl = "https://www.openstreetmap.org/?mlat=${pin.geoPoint.latitude}&mlon=${pin.geoPoint.longitude}#map=17/${pin.geoPoint.latitude}/${pin.geoPoint.longitude}"
+                            context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(osmWebUrl)))
+                        }
                     },
                     shape = RoundedCornerShape(12.dp)
                 ) {
-                    Icon(Icons.Default.Search, contentDescription = null, modifier = Modifier.size(16.dp), tint = TerracottaAccent)
+                    Icon(Icons.Default.NearMe, contentDescription = null, modifier = Modifier.size(16.dp), tint = TerracottaAccent)
                     Spacer(modifier = Modifier.width(4.dp))
-                    Text("Google Search 🔍", fontWeight = FontWeight.Bold, fontSize = 12.sp, color = EspressoText)
+                    Text("OpenStreetMap", fontWeight = FontWeight.Bold, fontSize = 12.sp, color = EspressoText)
                 }
 
                 Button(

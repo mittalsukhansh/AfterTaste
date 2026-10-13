@@ -1,11 +1,22 @@
 # AfterTaste ☕
 
 [![Android](https://img.shields.io/badge/Platform-Android-green.svg)](https://developer.android.com)
+[![Release](https://img.shields.io/badge/Release-v1.0.0-orange.svg)](https://github.com/mittalsukhansh/AfterTaste/releases/tag/v1.0.0)
 [![Kotlin](https://img.shields.io/badge/Language-Kotlin%202.2-blue.svg)](https://kotlinlang.org)
 [![Compose](https://img.shields.io/badge/UI-Jetpack%20Compose%20M3-brightgreen.svg)](https://developer.android.com/jetpack/compose)
 [![Room](https://img.shields.io/badge/Database-Room%20KSP-orange.svg)](https://developer.android.com/training/data-storage/room)
 
 **AfterTaste** is an artisanal coffee passport, journal, and location-based discovery app built natively for Android using Jetpack Compose. Track every cafe visit, rate coffee beans & ambience, discover nearby roasters on an interactive map, and build your digital coffee passport.
+
+---
+
+## 📱 Download & Releases
+
+| Version | Release Date | Download APK | Release Notes |
+|:---|:---|:---|:---|
+| **v1.0.0** (Latest) | October 2026 | [📥 Download app-debug.apk](https://github.com/mittalsukhansh/AfterTaste/releases/download/v1.0.0/app-debug.apk) | [Changelog](https://github.com/mittalsukhansh/AfterTaste/releases/tag/v1.0.0) |
+
+> **Direct APK Installation**: Download `app-debug.apk` directly on your Android device (Android 7.0+ / API 24+) and install. Ensure "Install unknown apps" permission is enabled in your device settings.
 
 ---
 

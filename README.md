@@ -14,9 +14,9 @@
 
 | Version | Release Date | Download APK | Release Notes |
 |:---|:---|:---|:---|
-| **v1.0.0** (Latest) | October 2026 | [📥 Download app-debug.apk](https://github.com/mittalsukhansh/AfterTaste/releases/download/v1.0.0/app-debug.apk) | [Changelog](https://github.com/mittalsukhansh/AfterTaste/releases/tag/v1.0.0) |
+| **v1.0.0** (Latest) | October 2026 | [📥 Download AfterTaste-v1.0.0.apk](https://github.com/mittalsukhansh/AfterTaste/releases/download/v1.0.0/AfterTaste-v1.0.0.apk) | [Changelog](https://github.com/mittalsukhansh/AfterTaste/releases/tag/v1.0.0) |
 
-> **Direct APK Installation**: Download `app-debug.apk` directly on your Android device (Android 7.0+ / API 24+) and install. Ensure "Install unknown apps" permission is enabled in your device settings.
+> **Direct APK Installation**: Download `AfterTaste-v1.0.0.apk` directly on your Android device (Android 7.0+ / API 24+) and install. Ensure "Install unknown apps" permission is enabled in your device settings.
 
 ---
 

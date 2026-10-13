@@ -685,36 +685,29 @@ function renderJournalScreen() {
     }
 
     return `
-      <div class="bg-surface-container rounded-xl p-3.5 shadow-sm flex flex-col space-y-2.5 active:scale-[0.99] transition-transform border border-outline-variant/30">
-        <!-- Top Ribbon: Method Badge & Time -->
-        <div class="flex items-start justify-between">
-          <div class="flex items-center gap-2">
-            <span class="px-2 py-0.5 rounded-full ${badgeClass} font-label-sm text-[11px] font-semibold">
-              ${badgeText}
-            </span>
-            <span class="text-[11px] text-on-surface-variant">${timeDisplay}</span>
-          </div>
-          <div class="flex items-center gap-0.5 text-secondary">
-            <span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">star</span>
-            <span class="text-xs font-bold text-primary">${b.rating.toFixed(1)}</span>
-          </div>
-        </div>
-
-        <!-- Coffee Details & Thumbnail -->
-        <div class="flex items-center justify-between gap-3">
+      <div class="bg-surface-container-low rounded-xl p-3.5 shadow-sm flex flex-col gap-2.5 border border-black/[0.04] dark:border-white/[0.05] transition-all hover:bg-surface-container">
+        <!-- Top: Coffee Details & Rating -->
+        <div class="flex items-start justify-between gap-2">
           <div class="min-w-0 flex-1">
-            <h4 class="font-serif text-sm font-bold text-primary truncate">${b.beanName}</h4>
-            <p class="text-xs text-on-surface-variant truncate">${b.roaster} • ${b.ratio}</p>
+            <span class="text-[11px] font-semibold text-secondary uppercase tracking-wider block">${b.roaster}</span>
+            <h4 class="font-serif text-sm font-bold text-primary truncate mt-0.5">${b.beanName}</h4>
+            <p class="text-xs text-on-surface-variant mt-0.5">${badgeText} • ${b.ratio} • ${timeDisplay}</p>
           </div>
-          <div class="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 bg-surface-container-high shadow-sm">
-            <img class="w-full h-full object-cover" src="${b.photoUrl}" alt="${b.beanName}">
+          <div class="flex items-center gap-2 flex-shrink-0">
+            <div class="flex items-center gap-0.5 text-secondary">
+              <span class="material-symbols-outlined text-[13px] fill-1">star</span>
+              <span class="text-xs font-bold text-primary">${b.rating.toFixed(1)}</span>
+            </div>
+            <div class="w-11 h-11 rounded-lg overflow-hidden flex-shrink-0 bg-surface-container shadow-sm">
+              <img class="w-full h-full object-cover" src="${b.photoUrl}" alt="${b.beanName}">
+            </div>
           </div>
         </div>
 
         <!-- Cupping Notes -->
-        <div class="flex flex-wrap gap-1.5">
+        <div class="flex flex-wrap gap-1.5 pt-0.5">
           ${(b.tastingNotes || []).map(note => `
-            <span class="px-2 py-0.5 rounded-full bg-surface-container-low text-[10px] text-on-surface-variant font-medium">
+            <span class="px-2 py-0.5 rounded-full bg-surface text-[10px] text-on-surface-variant font-medium border border-outline-variant/15">
               ${note}
             </span>
           `).join('')}
@@ -789,77 +782,48 @@ function renderVaultScreen() {
     const isUnopened = percentRemaining === 100;
 
     return `
-      <article class="bg-surface-container-lowest rounded-2xl p-4 shadow-sm border border-outline-variant/30 transition-all hover:shadow-md flex flex-col gap-3">
-        <!-- Card Header: Image & Main Origin Specs -->
-        <div class="flex gap-3">
-          <div class="relative w-20 h-24 rounded-xl overflow-hidden flex-shrink-0 bg-surface-container-high shadow-inner">
+      <article class="bg-surface-container-low rounded-xl p-3.5 shadow-sm border border-black/[0.04] dark:border-white/[0.05] transition-all hover:bg-surface-container flex flex-col gap-2.5">
+        <!-- Top: Roaster, Bean & Thumbnail -->
+        <div class="flex items-start justify-between gap-3">
+          <div class="min-w-0 flex-1">
+            <div class="flex items-center gap-1.5 flex-wrap">
+              <span class="text-[11px] font-semibold text-secondary uppercase tracking-wider">${b.roaster}</span>
+              <span class="text-outline-variant">•</span>
+              <span class="text-[11px] text-on-surface-variant">${b.origin}</span>
+            </div>
+            <h3 class="font-serif text-base font-bold text-primary tracking-tight truncate mt-0.5">${b.name}</h3>
+            <p class="text-xs text-on-surface-variant mt-0.5">${b.process} • ${degassing.badgeText}</p>
+          </div>
+          <div class="w-13 h-15 rounded-lg overflow-hidden flex-shrink-0 bg-surface-container shadow-sm" style="width: 52px; height: 60px;">
             <img src="${b.photoUrl || 'https://images.unsplash.com/photo-1587734195503-904fca47e0e9?auto=format&fit=crop&w=400&q=80'}" 
                  alt="${b.name}" class="w-full h-full object-cover">
-            <div class="absolute top-1 left-1 bg-surface-container-lowest/90 backdrop-blur-sm rounded px-1.5 py-0.5">
-              <span class="text-[10px] font-bold text-on-surface">${countryCode}</span>
-            </div>
-          </div>
-          <div class="flex flex-col justify-between flex-1 min-w-0">
-            <div>
-              <div class="flex items-center justify-between gap-1">
-                <span class="text-xs font-semibold uppercase tracking-wider text-secondary truncate">${b.roaster}</span>
-                <span class="text-[11px] text-on-surface-variant flex-shrink-0">${b.roasterCity || b.origin}</span>
-              </div>
-              <h3 class="font-serif text-lg font-bold text-primary tracking-tight truncate mt-0.5">${b.name}</h3>
-              <div class="flex items-center gap-1.5 mt-1">
-                <span class="px-2 py-0.5 rounded-full bg-surface-container text-primary font-semibold text-[10px]">${b.process}</span>
-                <span class="text-xs text-on-surface-variant truncate">${b.variety || 'Heirloom Variety'}</span>
-              </div>
-            </div>
-            <!-- Rest Status Badge -->
-            <div class="flex items-center gap-1.5 mt-2 bg-surface-container-low px-2 py-1 rounded-lg border border-outline-variant/20">
-              <span class="w-2 h-2 rounded-full ${degassing.isPeak ? 'bg-emerald-500' : 'bg-secondary'}"></span>
-              <span class="text-[11px] font-semibold text-primary">${degassing.badgeText}</span>
-            </div>
           </div>
         </div>
 
-        <!-- Flavor Notes Chips -->
-        <div class="flex flex-wrap items-center gap-1.5 pt-0.5">
-          ${(b.tastingNotes || []).map(note => `
-            <span class="px-2.5 py-0.5 rounded-full bg-surface-container-low text-on-surface text-[11px] font-medium border border-outline-variant/20">
-              ${note}
-            </span>
-          `).join('')}
+        <!-- Flavor Notes & Weight -->
+        <div class="flex items-center justify-between gap-2 pt-0.5">
+          <div class="flex flex-wrap gap-1">
+            ${(b.tastingNotes || []).slice(0, 3).map(note => `
+              <span class="px-2 py-0.5 rounded-full bg-surface text-[10px] text-on-surface-variant font-medium border border-outline-variant/15">
+                ${note}
+              </span>
+            `).join('')}
+          </div>
+          <span class="text-[11px] text-on-surface-variant font-medium flex-shrink-0">~${b.weightRemaining}g</span>
         </div>
 
-        <!-- Vault Inventory Capacity Bar -->
-        <div class="bg-surface-container-low p-2.5 rounded-xl flex flex-col gap-1.5 border border-outline-variant/30">
-          <div class="flex items-center justify-between text-xs">
-            <span class="text-on-surface-variant flex items-center gap-1">
-              <span class="material-symbols-outlined text-[15px]">scale</span>
-              ${isLowInventory ? 'Low Inventory Warning' : isUnopened ? 'Unopened Bag' : 'Remaining Supply'}
-            </span>
-            <span class="font-bold ${isLowInventory ? 'text-secondary' : 'text-primary'}">
-              ~${b.weightRemaining}g <span class="font-normal text-on-surface-variant">/ ${b.weightTotal}g (${percentRemaining}%)</span>
-            </span>
-          </div>
-          <div class="w-full h-2 rounded-full bg-surface-container overflow-hidden">
-            <div class="h-full rounded-full transition-all duration-500 ${isLowInventory ? 'bg-secondary' : 'bg-secondary-container'}" 
-                 style="width: ${percentRemaining}%;"></div>
-          </div>
-        </div>
-
-        <!-- Quick Log & Dial in shortcut -->
-        <div class="flex items-center justify-between pt-1">
-          <div class="flex items-center gap-1 text-on-surface-variant">
-            <span class="material-symbols-outlined text-[16px] text-amber-500 fill-1">star</span>
+        <!-- Action Row -->
+        <div class="flex items-center justify-between pt-1 border-t border-black/[0.03] dark:border-white/[0.04]">
+          <div class="flex items-center gap-0.5 text-secondary">
+            <span class="material-symbols-outlined text-[13px] fill-1">star</span>
             <span class="text-xs font-bold text-primary">${b.rating || '4.9'}</span>
-            <span class="text-[11px] text-on-surface-variant">(${b.brewCount || 6} brews)</span>
           </div>
-          <div class="flex items-center gap-2">
-            <button onclick="quickDeductGrams('${b.id}', 15)" class="h-8 px-2.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface text-xs font-semibold flex items-center gap-1 transition-all" title="Deduct 15g single brew">
-              <span class="material-symbols-outlined text-[14px]">remove</span>
-              <span>15g</span>
+          <div class="flex items-center gap-1.5">
+            <button onclick="quickDeductGrams('${b.id}', 15)" class="px-2 py-0.5 rounded text-[11px] font-semibold text-on-surface-variant hover:text-primary transition-colors" title="Deduct 15g single brew">
+              -15g
             </button>
-            <button onclick="prefillLoggerWithBean('${b.id}')" class="h-8 px-3.5 rounded-lg bg-primary-container text-white hover:bg-secondary text-xs font-bold flex items-center gap-1.5 shadow-sm active:scale-95 transition-all">
-              <span class="material-symbols-outlined text-[15px]">coffee</span>
-              <span>${isUnopened ? 'First Brew' : 'Dial In'}</span>
+            <button onclick="prefillLoggerWithBean('${b.id}')" class="px-3 py-1 rounded-lg bg-primary text-on-primary text-xs font-bold hover:bg-secondary transition-colors">
+              Brew
             </button>
           </div>
         </div>
@@ -986,156 +950,50 @@ function renderCafesScreen() {
   container.innerHTML = list.map((c) => {
     const isVisited = c.visitedStatus === 'VISITED';
     const isApril = c.id === 'cafe-2';
-    const isProlog = c.id === 'cafe-1';
-    const isCollective = c.id === 'cafe-3';
+    const highlight = c.signatureBar || (c.communityRenowned ? 'Direct Trade & Geisha Specialty' : 'Single Origin Pour Over Bar');
 
     return `
-      <div id="cafe-card-${c.id}" class="bg-surface-container-low rounded-2xl overflow-hidden shadow-sm flex flex-col border border-outline-variant/30 transition-all">
-        <!-- Media Header & Badges -->
-        <div class="relative h-44 w-full">
-          <img class="w-full h-full object-cover" src="${c.photoUrl}" alt="${c.name}">
-          <div class="absolute inset-0 bg-gradient-to-t from-primary-container/85 via-primary-container/20 to-transparent"></div>
-          
-          <div class="absolute top-2.5 left-2.5 flex items-center gap-1.5 flex-wrap">
-            <span class="bg-primary-container/90 backdrop-blur text-surface px-2.5 py-1 rounded-full text-[10px] flex items-center gap-1 shadow-sm font-semibold">
-              <span class="material-symbols-outlined text-[13px] text-emerald-400 fill-1">${isVisited ? (isApril ? 'workspace_premium' : 'check_circle') : 'bookmark_border'}</span>
-              <span>${c.statusText || (isVisited ? 'Dined In • Visited' : 'Wishlist • Not Yet Visited')}</span>
+      <div id="cafe-card-${c.id}" class="card-minimal p-3.5 flex flex-col gap-3 transition-all hover:border-secondary/30">
+        <!-- Media & Main Header -->
+        <div class="flex gap-3">
+          <div class="w-20 h-20 rounded-xl overflow-hidden shrink-0 bg-surface-container relative">
+            <img class="w-full h-full object-cover" src="${c.photoUrl}" alt="${c.name}">
+            <span class="absolute top-1 left-1 px-1.5 py-0.5 rounded text-[9px] font-bold ${isVisited ? 'bg-primary text-on-primary' : 'bg-surface/90 text-on-surface'}">
+              ${isVisited ? 'Visited' : 'Wishlist'}
             </span>
-            ${c.subBadge ? `
-              <span class="bg-surface-container-lowest/90 backdrop-blur text-secondary px-2.5 py-1 rounded-full text-[10px] font-semibold shadow-sm">
-                ${c.subBadge}
-              </span>
-            ` : ''}
           </div>
-
-          <div class="absolute bottom-2.5 left-3.5 right-3.5 flex items-end justify-between text-white">
-            <div class="pr-2">
-              <h2 class="font-serif text-lg font-semibold tracking-tight text-white drop-shadow">${c.name}</h2>
-              <p class="text-[11px] text-surface-container-high opacity-95">${c.neighborhood} • ${c.distance} • ${c.hours}</p>
-            </div>
-            <div class="bg-surface-container-lowest text-primary px-2.5 py-1 rounded-xl shadow-md flex flex-col items-center leading-none flex-shrink-0">
-              <div class="flex items-center gap-0.5">
-                <span class="material-symbols-outlined text-[14px] text-secondary fill-1">star</span>
-                <span class="font-sans text-sm font-bold text-primary">${c.communityRating || c.userRating}</span>
+          <div class="flex-1 min-w-0 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between gap-1">
+                <span class="text-[11px] font-semibold text-secondary uppercase tracking-wider truncate">${c.neighborhood}</span>
+                <div class="flex items-center gap-0.5 text-secondary shrink-0">
+                  <span class="material-symbols-outlined text-[13px] fill-1">star</span>
+                  <span class="text-xs font-bold text-primary">${c.communityRating || c.userRating}</span>
+                </div>
               </div>
-              <span class="text-[9px] text-outline font-semibold mt-0.5">${c.reviewsCount || '340 rev'}</span>
+              <h3 class="font-serif text-base font-bold text-primary tracking-tight truncate mt-0.5">${c.name}</h3>
+              <p class="text-xs text-on-surface-variant truncate mt-0.5">${c.distance} • ${c.hours}</p>
             </div>
+            <p class="text-[11px] text-on-surface-variant/80 truncate mt-1">${highlight}</p>
           </div>
         </div>
 
-        <!-- Dossier Content Body -->
-        <div class="p-3.5 flex flex-col gap-3">
-
-          <!-- 1. Tasted Dossier / Highlights (if Visited) -->
-          ${c.tastedItems && c.tastedItems.length > 0 ? `
-            <div class="bg-surface-container rounded-xl p-3 flex flex-col gap-2">
-              <div class="flex items-center justify-between">
-                <div class="flex items-center gap-1.5 text-secondary">
-                  <span class="material-symbols-outlined text-[18px]">${isApril ? 'award_star' : 'receipt_long'}</span>
-                  <span class="text-xs font-bold uppercase tracking-wider text-on-surface">${isApril ? 'Recent Tasting Highlights' : 'Your Tasted Dossier'}</span>
-                </div>
-                <span class="text-[11px] text-secondary font-semibold">${isApril ? 'Last: 4 days ago' : `${c.tastedItems.length} logged tastings`}</span>
-              </div>
-              <div class="space-y-1.5">
-                ${c.tastedItems.map(item => `
-                  <div class="bg-surface-container-lowest p-2 rounded-lg flex items-start justify-between gap-2 border border-outline-variant/20">
-                    <div class="flex flex-col flex-1">
-                      <div class="flex items-center gap-1.5 flex-wrap">
-                        <span class="text-xs font-semibold text-primary">${item.name}</span>
-                        ${item.badge ? `<span class="text-[10px] text-secondary-container px-1.5 py-0.2 rounded bg-primary-container font-semibold">${item.badge}</span>` : ''}
-                      </div>
-                      <p class="text-[11px] text-on-surface-variant mt-0.5">${item.notes}</p>
-                    </div>
-                    <div class="flex flex-col items-end flex-shrink-0">
-                      <span class="text-xs font-semibold text-on-surface">${item.price}</span>
-                      <span class="text-[11px] text-secondary font-bold">★ ${item.rating}</span>
-                    </div>
-                  </div>
-                `).join('')}
-              </div>
-            </div>
-          ` : ''}
-
-          <!-- 2. Wishlist Objectives (if Coffee Collective) -->
-          ${c.communityRenowned ? `
-            <div class="bg-surface-container rounded-xl p-3 flex flex-col gap-1">
-              <div class="flex items-center justify-between">
-                <span class="text-xs font-bold uppercase tracking-wider text-on-surface">Community Renowned For</span>
-                <span class="text-[11px] text-secondary font-semibold">Direct Trade Pioneer</span>
-              </div>
-              <p class="text-xs text-on-surface-variant mt-0.5 leading-relaxed">
-                Celebrated for single estate Bolivian <span class="font-semibold text-primary">Takesi Geisha</span> and their signature house-made coffee soft serve infused with Kieni espresso.
-              </p>
-            </div>
-          ` : ''}
-
-          <!-- 3. Fetched Menu Sample (e.g. Coffee Collective) -->
-          ${c.fetchedMenu && c.fetchedMenu.length > 0 ? `
-            <div class="grid grid-cols-3 gap-1.5">
-              ${c.fetchedMenu.map(fm => `
-                <div class="bg-surface-container-lowest p-2 rounded-lg text-center flex flex-col justify-between border border-outline-variant/20">
-                  <span class="text-[11px] font-bold text-primary truncate">${fm.item}</span>
-                  <span class="text-xs text-secondary font-semibold mt-1">${fm.price}</span>
-                  <span class="text-[9px] text-outline-variant mt-0.5">${fm.tag}</span>
-                </div>
-              `).join('')}
-            </div>
-          ` : ''}
-
-          <!-- 4. Digital Live Menu Preview (e.g. Prolog) -->
-          ${isProlog && c.liveMenu ? `
-            <div class="flex flex-col gap-1.5">
-              <div class="flex items-center justify-between">
-                <span class="text-[10px] uppercase tracking-wider text-on-surface-variant font-bold">Live Menu Preview</span>
-                <button onclick="openLiveMenu('${c.id}')" class="text-[11px] text-secondary font-semibold hover:underline">Full Card (18)</button>
-              </div>
-              <div class="grid grid-cols-2 gap-1.5">
-                <div class="bg-surface-container-high/60 p-2 rounded-lg flex flex-col justify-between">
-                  <div class="flex items-center justify-between">
-                    <span class="text-xs font-bold text-on-surface">Ethiopia Shantawene</span>
-                    <span class="text-[11px] text-secondary font-bold">48 DKK</span>
-                  </div>
-                  <span class="text-[10px] text-on-surface-variant">Natural • Peach & Jasmine floral notes</span>
-                </div>
-                <div class="bg-surface-container-high/60 p-2 rounded-lg flex flex-col justify-between">
-                  <div class="flex items-center justify-between">
-                    <span class="text-xs font-bold text-on-surface">Batch Brew Nordic</span>
-                    <span class="text-[11px] text-secondary font-bold">36 DKK</span>
-                  </div>
-                  <span class="text-[10px] text-on-surface-variant">Colombian Pink Bourbon rotative</span>
-                </div>
-              </div>
-            </div>
-          ` : ''}
-
-          <!-- 5. Signature Extraction Bar (e.g. April) -->
-          ${c.signatureBar ? `
-            <div class="bg-surface-container-high/40 p-2.5 rounded-xl flex items-center justify-between">
-              <div class="flex items-center gap-2">
-                <span class="material-symbols-outlined text-[18px] text-secondary">tune</span>
-                <div class="flex flex-col">
-                  <span class="text-xs font-semibold text-on-surface">Signature Extraction Bar</span>
-                  <span class="text-[11px] text-on-surface-variant">${c.signatureBar}</span>
-                </div>
-              </div>
-              <span class="text-[10px] font-bold text-secondary uppercase px-2 py-0.5 bg-surface-container rounded-lg">Featured</span>
-            </div>
-          ` : ''}
-
-          <!-- 6. Action Button Controls -->
-          <div class="flex items-center gap-1.5 pt-0.5">
-            <button onclick="prefillLoggerWithCafe('${c.id}')" class="flex-1 h-10 ${isVisited ? 'bg-primary-container text-white hover:bg-secondary' : 'bg-secondary text-white hover:bg-primary-container'} rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 shadow-sm transition-colors active:scale-95">
-              <span class="material-symbols-outlined text-[16px]">${isVisited ? (isApril ? 'history_edu' : 'add_circle') : 'bookmark_add'}</span>
-              <span>${isVisited ? (isApril ? 'Log Extraction Note' : 'Log New Visit') : 'Saved to Wishlist'}</span>
+        <!-- Action Row -->
+        <div class="flex items-center justify-between pt-2 border-t border-card-border gap-2">
+          <button onclick="prefillLoggerWithCafe('${c.id}')" class="flex-1 py-1.5 px-3 rounded-lg bg-primary text-on-primary text-xs font-bold hover:bg-secondary transition-colors text-center">
+            ${isVisited ? 'Log Visit' : 'Add to Visited'}
+          </button>
+          ${c.liveMenu ? `
+            <button onclick="openLiveMenu('${c.id}')" class="py-1.5 px-3 rounded-lg bg-surface-container text-xs font-semibold text-on-surface hover:bg-surface-container-high transition-colors">
+              Menu
             </button>
-            <button onclick="openDirections('${c.id}')" aria-label="Get Directions" class="w-10 h-10 bg-surface-container rounded-xl text-primary flex items-center justify-center hover:bg-surface-container-high active:scale-95 transition-all" title="Get Directions">
-              <span class="material-symbols-outlined text-[18px]">directions</span>
-            </button>
-            <button onclick="${isVisited ? `shareCafePassport('${c.id}')` : `toggleWishlist('${c.id}')`}" aria-label="${isVisited ? 'Share' : 'Bookmark'}" class="w-10 h-10 bg-surface-container rounded-xl text-primary flex items-center justify-center hover:bg-surface-container-high active:scale-95 transition-all" title="${isVisited ? 'Share' : 'Bookmark'}">
-              <span class="material-symbols-outlined text-[18px] ${!isVisited && c.visitedStatus === 'WISHLIST' ? 'text-secondary fill-1' : ''}">${isVisited ? 'share' : (c.visitedStatus === 'WISHLIST' ? 'favorite' : 'bookmark')}</span>
-            </button>
-          </div>
-
+          ` : ''}
+          <button onclick="openDirections('${c.id}')" aria-label="Directions" class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors" title="Directions">
+            <span class="material-symbols-outlined text-[16px]">directions</span>
+          </button>
+          <button onclick="${isVisited ? `shareCafePassport('${c.id}')` : `toggleWishlist('${c.id}')`}" aria-label="Bookmark" class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors" title="${isVisited ? 'Share' : 'Bookmark'}">
+            <span class="material-symbols-outlined text-[16px] ${!isVisited && c.visitedStatus === 'WISHLIST' ? 'text-secondary fill-1' : ''}">${isVisited ? 'share' : (c.visitedStatus === 'WISHLIST' ? 'favorite' : 'bookmark')}</span>
+          </button>
         </div>
       </div>
     `;

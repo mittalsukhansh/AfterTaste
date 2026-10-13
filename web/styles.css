@@ -35,9 +35,9 @@
   
   --header-bg: rgba(254, 248, 244, 0.88);
   --bottom-nav-bg: rgba(254, 248, 244, 0.92);
-  --card-border: rgba(211, 195, 190, 0.35);
-  --shadow-warm: 0 4px 20px -2px rgba(44, 24, 16, 0.06), 0 2px 6px -1px rgba(44, 24, 16, 0.04);
-  --shadow-lg-warm: 0 10px 25px -3px rgba(44, 24, 16, 0.12), 0 4px 10px -2px rgba(44, 24, 16, 0.06);
+  --card-border: rgba(44, 24, 16, 0.07);
+  --shadow-warm: 0 1px 4px 0 rgba(44, 24, 16, 0.03), 0 4px 16px -2px rgba(44, 24, 16, 0.04);
+  --shadow-lg-warm: 0 8px 24px -4px rgba(44, 24, 16, 0.08);
 }
 
 html.dark {
@@ -65,7 +65,7 @@ html.dark {
   --on-surface: #f4eae4;
   --on-surface-variant: #b6a59d;
   --outline: #9c8981;
-  --outline-variant: #49372e;
+  --outline-variant: #3a2b24;
   
   --amber-rating: #fbbf24;
   --emerald-rested: #10b981;
@@ -73,9 +73,9 @@ html.dark {
   
   --header-bg: rgba(20, 13, 10, 0.88);
   --bottom-nav-bg: rgba(20, 13, 10, 0.92);
-  --card-border: rgba(73, 55, 46, 0.6);
-  --shadow-warm: 0 4px 20px -2px rgba(0, 0, 0, 0.4);
-  --shadow-lg-warm: 0 10px 25px -3px rgba(0, 0, 0, 0.6);
+  --card-border: rgba(255, 255, 255, 0.07);
+  --shadow-warm: 0 1px 4px 0 rgba(0, 0, 0, 0.2), 0 4px 16px -2px rgba(0, 0, 0, 0.3);
+  --shadow-lg-warm: 0 8px 24px -4px rgba(0, 0, 0, 0.5);
 }
 
 * {
@@ -179,30 +179,56 @@ body {
 
 /* Chip & Pill interactive styling */
 .pill-filter {
-  padding: 6px 14px;
+  padding: 5px 13px;
   border-radius: 9999px;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   white-space: nowrap;
   cursor: pointer;
-  border: 1px solid transparent;
-  transition: all 0.2s ease;
+  border: 1px solid var(--card-border);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .pill-filter.active {
-  background-color: var(--espresso);
+  background-color: var(--primary);
   color: var(--on-primary);
-  box-shadow: 0 2px 8px rgba(44, 24, 16, 0.2);
+  border-color: var(--primary);
+  box-shadow: 0 1px 4px rgba(44, 24, 16, 0.12);
 }
 
 .pill-filter:not(.active) {
-  background-color: var(--surface-container);
+  background-color: var(--surface-container-low);
   color: var(--on-surface-variant);
 }
 
 .pill-filter:not(.active):hover {
-  background-color: var(--surface-container-high);
+  background-color: var(--surface-container);
   color: var(--on-surface);
+}
+
+/* Minimalist Utilities */
+.card-minimal {
+  background-color: var(--surface-container-low);
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  box-shadow: var(--shadow-warm);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.card-minimal:hover {
+  border-color: rgba(200, 109, 59, 0.25);
+}
+
+.tag-minimal {
+  padding: 3px 9px;
+  border-radius: 9999px;
+  background-color: var(--surface-container);
+  color: var(--on-surface-variant);
+  font-size: 11px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 }
 
 /* Floating Action Button */

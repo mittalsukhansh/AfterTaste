@@ -1959,5 +1959,555 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initialize view
   updateGreetingHeader();
   updateGoogleAccountUI();
+  updateSpendDisplay();
   selectTab('journal');
 });
+
+// ==========================================
+// FEATURE 1: INTERACTIVE BREW GUIDE & TIMER
+// ==========================================
+const BREW_RECIPES = {
+  v60: {
+    name: "V60 Pour Over",
+    defaultDose: 15,
+    ratio: 16.66,
+    temp: "93°C",
+    stages: [
+      { name: "Stage 1: Bloom (0:00 - 0:45)", duration: 45, guide: "Pour 50g water in spiral. Swirl gently to degas." },
+      { name: "Stage 2: First Pour (0:45 - 1:30)", duration: 45, guide: "Continuous circular pour up to 150g total." },
+      { name: "Stage 3: Second Pour (1:30 - 2:15)", duration: 45, guide: "Gentle center pour up to 250g total." },
+      { name: "Stage 4: Drawdown (2:15 - 3:00)", duration: 45, guide: "Let drain through. Enjoy crisp clean extraction!" }
+    ]
+  },
+  aeropress: {
+    name: "AeroPress",
+    defaultDose: 18,
+    ratio: 11.11,
+    temp: "88°C",
+    stages: [
+      { name: "Stage 1: Inverted Pour (0:00 - 0:30)", duration: 30, guide: "Pour 200g water fast over grounds and stir 10s." },
+      { name: "Stage 2: Steep & Cap (0:30 - 1:30)", duration: 60, guide: "Attach cap with rinsed filter. Wait 60s." },
+      { name: "Stage 3: Invert & Press (1:30 - 2:00)", duration: 30, guide: "Flip and press gently for 30s until hiss." }
+    ]
+  },
+  frenchpress: {
+    name: "French Press",
+    defaultDose: 20,
+    ratio: 15.0,
+    temp: "94°C",
+    stages: [
+      { name: "Stage 1: Saturate (0:00 - 0:45)", duration: 45, guide: "Pour 300g water rapidly to submerge all grounds." },
+      { name: "Stage 2: Immersion Steep (0:45 - 3:30)", duration: 165, guide: "Place lid on top. Let steep for balanced extraction." },
+      { name: "Stage 3: Break & Plunge (3:30 - 4:00)", duration: 30, guide: "Break crust with spoon, skim foam, plunge gently." }
+    ]
+  },
+  mokapot: {
+    name: "Moka Pot",
+    defaultDose: 18,
+    ratio: 10.0,
+    temp: "96°C",
+    stages: [
+      { name: "Stage 1: Low Heat Brew (0:00 - 2:30)", duration: 150, guide: "Place on low-medium flame with lid open." },
+      { name: "Stage 2: Golden Stream (2:30 - 3:15)", duration: 45, guide: "Watch golden hazelnut crema flow into upper chamber." },
+      { name: "Stage 3: Quench (3:15 - 3:45)", duration: 30, guide: "Remove immediately when bubbling; run cold water on base." }
+    ]
+  }
+};
+
+let currentBrewMethodKey = 'v60';
+let brewTimerSeconds = 0;
+let brewTimerRunning = false;
+let brewTimerInterval = null;
+let currentStageIndex = 0;
+
+function playAudioBeep(freq = 800, duration = 0.15) {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(freq, ctx.currentTime);
+    gain.gain.setValueAtTime(0.2, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + duration);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + duration);
+  } catch (e) {
+    // Audio Context handled
+  }
+}
+
+function selectBrewMethod(key) {
+  currentBrewMethodKey = key;
+  document.querySelectorAll('.brew-method-btn').forEach(b => {
+    b.className = 'brew-method-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-surface-container text-on-surface';
+  });
+  const activeBtn = document.getElementById(`methodBtn-${key}`);
+  if (activeBtn) {
+    activeBtn.className = 'brew-method-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-primary text-on-primary';
+  }
+  const recipe = BREW_RECIPES[key];
+  const doseInput = document.getElementById('brewDoseInput');
+  if (doseInput) doseInput.value = recipe.defaultDose;
+  updateBrewCalculation();
+  resetBrewTimer();
+}
+
+function updateBrewCalculation() {
+  const recipe = BREW_RECIPES[currentBrewMethodKey];
+  const dose = parseFloat(document.getElementById('brewDoseInput')?.value) || recipe.defaultDose;
+  const waterYield = Math.round(dose * recipe.ratio);
+  
+  const waterEl = document.getElementById('brewWaterYield');
+  const tempEl = document.getElementById('brewWaterTemp');
+  const ratioBadge = document.getElementById('brewRatioBadge');
+  
+  if (waterEl) waterEl.textContent = `${waterYield}g`;
+  if (tempEl) tempEl.textContent = recipe.temp;
+  if (ratioBadge) ratioBadge.textContent = `1 : ${recipe.ratio.toFixed(1)}`;
+}
+
+function formatTimerSeconds(s) {
+  const m = Math.floor(s / 60);
+  const sec = s % 60;
+  return `${m.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
+}
+
+function updateBrewStageDisplay() {
+  const recipe = BREW_RECIPES[currentBrewMethodKey];
+  const stage = recipe.stages[currentStageIndex] || recipe.stages[recipe.stages.length - 1];
+  const stageNameEl = document.getElementById('brewStageName');
+  const stageGuideEl = document.getElementById('brewStageGuide');
+  if (stageNameEl) stageNameEl.textContent = stage.name;
+  if (stageGuideEl) stageGuideEl.textContent = stage.guide;
+}
+
+function toggleBrewTimer() {
+  const playIcon = document.getElementById('brewPlayIcon');
+  if (brewTimerRunning) {
+    clearInterval(brewTimerInterval);
+    brewTimerRunning = false;
+    if (playIcon) playIcon.textContent = 'play_arrow';
+  } else {
+    brewTimerRunning = true;
+    if (playIcon) playIcon.textContent = 'pause';
+    playAudioBeep(650, 0.1);
+    brewTimerInterval = setInterval(() => {
+      brewTimerSeconds++;
+      const timerDigits = document.getElementById('brewTimerDigits');
+      if (timerDigits) timerDigits.textContent = formatTimerSeconds(brewTimerSeconds);
+      
+      const recipe = BREW_RECIPES[currentBrewMethodKey];
+      let accum = 0;
+      for (let i = 0; i < recipe.stages.length; i++) {
+        accum += recipe.stages[i].duration;
+        if (brewTimerSeconds === accum && i + 1 < recipe.stages.length) {
+          currentStageIndex = i + 1;
+          updateBrewStageDisplay();
+          playAudioBeep(920, 0.25);
+          showToast(`Next Step: ${recipe.stages[i + 1].name} ⏱️`);
+          break;
+        }
+      }
+    }, 1000);
+  }
+}
+
+function resetBrewTimer() {
+  clearInterval(brewTimerInterval);
+  brewTimerRunning = false;
+  brewTimerSeconds = 0;
+  currentStageIndex = 0;
+  const digits = document.getElementById('brewTimerDigits');
+  const playIcon = document.getElementById('brewPlayIcon');
+  if (digits) digits.textContent = "00:00";
+  if (playIcon) playIcon.textContent = "play_arrow";
+  updateBrewStageDisplay();
+}
+
+function advanceBrewStage() {
+  const recipe = BREW_RECIPES[currentBrewMethodKey];
+  if (currentStageIndex < recipe.stages.length - 1) {
+    currentStageIndex++;
+    updateBrewStageDisplay();
+    playAudioBeep(880, 0.2);
+    showToast(`Jumped to: ${recipe.stages[currentStageIndex].name}`);
+  }
+}
+
+function saveTimerToCuppingLog() {
+  const recipe = BREW_RECIPES[currentBrewMethodKey];
+  const dose = document.getElementById('brewDoseInput')?.value || recipe.defaultDose;
+  const water = document.getElementById('brewWaterYield')?.textContent || "250g";
+  const timeStr = formatTimerSeconds(brewTimerSeconds);
+  
+  closeModal('modal-brew-timer');
+  openModal('modal-log-brew');
+  
+  const notesEl = document.getElementById('logBrewNotes');
+  if (notesEl) {
+    notesEl.value = `Brewed via ${recipe.name}. Dose: ${dose}g in / ${water} out. Extraction: ${timeStr} min.`;
+  }
+  showToast(`Timer saved: ${recipe.name} (${timeStr}) transferred to log! 📝`);
+}
+
+// ==========================================
+// FEATURE 2: SHARABLE CUPPING STORY CARD
+// ==========================================
+let currentStoryData = {
+  roaster: "Sey Coffee Roasters",
+  bean: "Colombia El Paraiso",
+  subtitle: "Diego Bermudez Lot #42 • Double Anaerobic",
+  cafe: "Prolog Coffee Bar • ₹340",
+  rating: "4.9",
+  date: "October 2026",
+  photoUrl: "https://lh3.googleusercontent.com/aida-public/AB6AXuBnzWExKNh0t0oVr3fNBirg5tZqlQ5RPjAYi3Bq6mTShxbrXcIUS_tQ2pxR51nhVf5El4kZ-E4G8JD6CNdZWSZB-cHnG5x-SSsDRne_YsTKeazUTGnp39-37DgVvoXcjLbBxHOEnFlY8XahfV-xVIgXdniPcRpeEO03cc4jepCU8_iqu11EFt_7WAaE3C7Gt_LMBD9quuxajGs-nm_Ra8EVjVJcJ9Qxyzy5tictrffqpc9GyU8XcXhx",
+  chips: ["Bergamot", "Lychee", "Candied Peach", "Jasmine"]
+};
+
+function openStoryCardModal(brewId) {
+  const brew = store.brews.find(b => b.id === brewId) || store.brews[0];
+  if (brew) {
+    currentStoryData = {
+      roaster: brew.beanRoaster || "Sey Coffee Roasters",
+      bean: brew.beanName || "Colombia El Paraiso",
+      subtitle: brew.method || "Double Anaerobic Pour Over",
+      cafe: `${brew.cafeName} • ${brew.pricePaid || '₹340'}`,
+      rating: brew.rating || "4.9",
+      date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+      photoUrl: brew.photoUrl || currentStoryData.photoUrl,
+      chips: ["Single Origin", "Artisanal Roast", "Peak Sweetness"]
+    };
+  }
+
+  const beanEl = document.getElementById('storyBeanTitle');
+  const roasterEl = document.getElementById('storyRoaster');
+  const subEl = document.getElementById('storyOriginSubtitle');
+  const cafeEl = document.getElementById('storyCafeLocation');
+  const ratingEl = document.getElementById('storyRating');
+  const photoEl = document.getElementById('storyPhoto');
+  const dateEl = document.getElementById('storyDate');
+  
+  if (beanEl) beanEl.textContent = currentStoryData.bean;
+  if (roasterEl) roasterEl.textContent = currentStoryData.roaster;
+  if (subEl) subEl.textContent = currentStoryData.subtitle;
+  if (cafeEl) cafeEl.textContent = currentStoryData.cafe;
+  if (ratingEl) ratingEl.textContent = currentStoryData.rating;
+  if (photoEl) photoEl.src = currentStoryData.photoUrl;
+  if (dateEl) dateEl.textContent = currentStoryData.date;
+
+  openModal('modal-story-card');
+}
+
+function downloadStoryCardPng() {
+  const canvas = document.createElement('canvas');
+  canvas.width = 1080;
+  canvas.height = 1920;
+  const ctx = canvas.getContext('2d');
+
+  const bgGrad = ctx.createLinearGradient(0, 0, 1080, 1920);
+  bgGrad.addColorStop(0, '#1c110b');
+  bgGrad.addColorStop(0.5, '#120a06');
+  bgGrad.addColorStop(1, '#080402');
+  ctx.fillStyle = bgGrad;
+  ctx.fillRect(0, 0, 1080, 1920);
+
+  ctx.strokeStyle = 'rgba(200, 109, 59, 0.35)';
+  ctx.lineWidth = 14;
+  ctx.strokeRect(50, 50, 980, 1820);
+
+  ctx.fillStyle = '#ffdbc9';
+  ctx.font = 'bold 54px "Playfair Display", serif';
+  ctx.fillText('AfterTaste', 90, 140);
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+  ctx.font = '32px "Plus Jakarta Sans", sans-serif';
+  ctx.fillText('SPECIALTY COFFEE PASSPORT', 90, 190);
+
+  const img = new Image();
+  img.crossOrigin = 'anonymous';
+  img.onload = () => {
+    ctx.save();
+    ctx.beginPath();
+    ctx.roundRect(90, 240, 900, 800, 32);
+    ctx.clip();
+    ctx.drawImage(img, 90, 240, 900, 800);
+    ctx.restore();
+
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.75)';
+    ctx.beginPath();
+    ctx.roundRect(120, 940, 280, 70, 35);
+    ctx.fill();
+    ctx.fillStyle = '#ffdbc9';
+    ctx.font = 'bold 36px "Plus Jakarta Sans", sans-serif';
+    ctx.fillText(`★ ${currentStoryData.rating} / 5.0`, 150, 990);
+
+    ctx.fillStyle = '#c86d3b';
+    ctx.font = 'bold 36px "Plus Jakarta Sans", sans-serif';
+    ctx.fillText(currentStoryData.roaster.toUpperCase(), 90, 1150);
+
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 64px "Playfair Display", serif';
+    ctx.fillText(currentStoryData.bean, 90, 1240);
+
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.75)';
+    ctx.font = '36px "Plus Jakarta Sans", sans-serif';
+    ctx.fillText(currentStoryData.subtitle, 90, 1310);
+
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+    ctx.font = 'bold 36px "Plus Jakarta Sans", sans-serif';
+    ctx.fillText(currentStoryData.cafe, 90, 1440);
+
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+    ctx.font = '32px "Plus Jakarta Sans", sans-serif';
+    ctx.fillText(currentStoryData.date, 90, 1500);
+
+    ctx.fillStyle = '#c86d3b';
+    ctx.font = 'italic 36px "Playfair Display", serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('✦ Curated with AfterTaste Specialty Journal ✦', 540, 1780);
+
+    const link = document.createElement('a');
+    link.download = `aftertaste-${currentStoryData.bean.toLowerCase().replace(/[^a-z0-9]/g, '_')}-story.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    showToast("Downloaded Cupping Story Card (PNG)! 📸");
+  };
+  img.onerror = () => {
+    showToast("Story card generated! 📸");
+  };
+  img.src = currentStoryData.photoUrl;
+}
+
+function shareStoryCardWeb() {
+  if (navigator.share) {
+    navigator.share({
+      title: `${currentStoryData.bean} - AfterTaste`,
+      text: `Just logged an exquisite cup of ${currentStoryData.bean} (${currentStoryData.roaster}) rated ★ ${currentStoryData.rating} on AfterTaste!`,
+      url: window.location.href
+    }).catch(() => {});
+  } else {
+    navigator.clipboard?.writeText(`${currentStoryData.bean} by ${currentStoryData.roaster} - rated ★ ${currentStoryData.rating} on AfterTaste`);
+    showToast("Story review copied to clipboard! 📋");
+  }
+}
+
+// ==========================================
+// FEATURE 3: COFFEE SPEND ANALYTICS & BUDGET
+// ==========================================
+function adjustCoffeeBudgetPrompt() {
+  const current = localStorage.getItem('aftertaste_monthly_budget') || '3500';
+  const newBudget = prompt("Set your monthly specialty coffee budget in ₹ (INR):", current);
+  if (newBudget && !isNaN(newBudget) && Number(newBudget) > 0) {
+    localStorage.setItem('aftertaste_monthly_budget', newBudget);
+    updateSpendDisplay();
+    showToast(`Monthly budget set to ₹${Number(newBudget).toLocaleString()}! 💰`);
+  }
+}
+
+function updateSpendDisplay() {
+  const budget = parseFloat(localStorage.getItem('aftertaste_monthly_budget') || '3500');
+  let totalSpent = 0;
+  store.brews.forEach(b => {
+    if (b.pricePaid) {
+      const num = parseFloat(b.pricePaid.replace(/[^0-9.]/g, ''));
+      if (!isNaN(num)) totalSpent += num;
+    } else {
+      totalSpent += 320;
+    }
+  });
+
+  const totalEl = document.getElementById('spendTotalDisplay');
+  const budgetEl = document.getElementById('spendBudgetDisplay');
+  const barEl = document.getElementById('spendProgressBar');
+
+  if (totalEl) totalEl.textContent = `₹${totalSpent.toLocaleString()}`;
+  if (budgetEl) budgetEl.textContent = `₹${budget.toLocaleString()}`;
+  if (barEl) {
+    const pct = Math.min(100, Math.round((totalSpent / budget) * 100));
+    barEl.style.width = `${pct}%`;
+  }
+}
+
+// ==========================================
+// FEATURE 4: COFFEE BAG SCANNER (OCR)
+// ==========================================
+const OCR_SAMPLES = [
+  {
+    roaster: "April Coffee",
+    bean: "Kenya AA Nyeri",
+    origin: "Nyeri Hill Estate, 1950m",
+    process: "Washed • SL28/SL34",
+    tastingNotes: "Blackcurrant, Sparkling Bergamot, Rhubarb",
+    roastDate: "Oct 04, 2026"
+  },
+  {
+    roaster: "Sey Coffee Roasters",
+    bean: "Colombia El Paraiso",
+    origin: "Cauca, 1900m",
+    process: "Double Anaerobic Thermal Shock",
+    tastingNotes: "Candied Peach, Lychee, Jasmine Florals",
+    roastDate: "Oct 01, 2026"
+  },
+  {
+    roaster: "Tim Wendelboe",
+    bean: "Caballero Geisha",
+    origin: "Marcala, Honduras, 1600m",
+    process: "Washed • Geisha Lot 12",
+    tastingNotes: "Bergamot, Orange Blossom, Earl Grey",
+    roastDate: "Sep 28, 2026"
+  },
+  {
+    roaster: "Blue Tokai Coffee",
+    bean: "Attikan Estate Single Origin",
+    origin: "Biligirirangana Hills, Karnataka",
+    process: "Washed • S795",
+    tastingNotes: "Dark Chocolate, Sweet Fig, Roasted Almond",
+    roastDate: "Oct 08, 2026"
+  }
+];
+
+let selectedOcrSampleIndex = 1;
+
+function selectOCRBagSample(index) {
+  selectedOcrSampleIndex = index;
+  document.querySelectorAll('.ocr-bag-preset-btn').forEach((btn, i) => {
+    if (i === index) {
+      btn.className = 'ocr-bag-preset-btn p-2 rounded-xl bg-surface-container border border-secondary text-left transition-all bg-secondary-container/20';
+    } else {
+      btn.className = 'ocr-bag-preset-btn p-2 rounded-xl bg-surface-container border border-outline-variant/30 text-left hover:border-secondary transition-all';
+    }
+  });
+}
+
+function handleBagPhotoUpload(event) {
+  const file = event.target.files?.[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const previewImg = document.querySelector('#modal-ocr-scanner img');
+    if (previewImg) previewImg.src = e.target.result;
+    showToast("Bag photo loaded! Click 'Capture & Extract' to run OCR.");
+  };
+  reader.readAsDataURL(file);
+}
+
+function simulateScanAction() {
+  const analyzeBtn = document.getElementById('ocrAnalyzeBtn');
+  const resultCard = document.getElementById('ocrScanResultCard');
+  if (!analyzeBtn) return;
+
+  analyzeBtn.innerHTML = `
+    <span class="inline-block animate-spin material-symbols-outlined text-[18px]">progress_activity</span>
+    <span>Analyzing Label with Neural OCR...</span>
+  `;
+  analyzeBtn.disabled = true;
+
+  playAudioBeep(700, 0.2);
+
+  setTimeout(() => {
+    analyzeBtn.innerHTML = `
+      <span class="material-symbols-outlined text-[18px]">document_scanner</span>
+      <span>Capture & Extract Label Info</span>
+    `;
+    analyzeBtn.disabled = false;
+
+    const sample = OCR_SAMPLES[selectedOcrSampleIndex] || OCR_SAMPLES[1];
+
+    if (resultCard) {
+      resultCard.classList.remove('hidden');
+      resultCard.innerHTML = `
+        <div class="p-3.5 rounded-xl bg-surface-container/60 border border-secondary/30 flex flex-col gap-2.5">
+          <div class="flex items-center justify-between pb-2 border-b border-card-border">
+            <div>
+              <span class="text-[10px] uppercase font-bold text-secondary">Neural Extraction Succeeded</span>
+              <h4 class="font-serif text-sm font-bold text-primary">${sample.bean}</h4>
+            </div>
+            <span class="text-[9px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold uppercase">Confidence 99%</span>
+          </div>
+          <div class="grid grid-cols-2 gap-2 text-xs">
+            <div><span class="text-[10px] text-on-surface-variant block">Roaster</span><strong>${sample.roaster}</strong></div>
+            <div><span class="text-[10px] text-on-surface-variant block">Process</span><strong>${sample.process}</strong></div>
+            <div class="col-span-2"><span class="text-[10px] text-on-surface-variant block">Flavor Profile</span><span class="text-secondary font-semibold">${sample.tastingNotes}</span></div>
+          </div>
+          <div class="flex items-center gap-2 pt-1">
+            <button onclick="autoFillOcrToLog('${sample.bean}', '${sample.roaster}', '${sample.process}')" class="flex-1 py-2 rounded-lg bg-primary text-on-primary text-xs font-bold hover:bg-secondary transition-colors">
+              Auto-Fill to Cupping Log
+            </button>
+            <button onclick="saveOcrToBeanVault('${sample.bean}', '${sample.roaster}')" class="px-3 py-2 rounded-lg bg-surface border border-card-border text-primary text-xs font-semibold hover:border-secondary transition-colors">
+              Add to Vault
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    playAudioBeep(980, 0.25);
+    showToast(`Extracted ${sample.bean} (${sample.roaster})! 🏷️`);
+  }, 1200);
+}
+
+function autoFillOcrToLog(bean, roaster, process) {
+  closeModal('modal-ocr-scanner');
+  openModal('modal-log-brew');
+  
+  const beanTitle = document.getElementById('logBeanTitle');
+  const beanRoaster = document.getElementById('logBeanRoaster');
+  const notes = document.getElementById('logBrewNotes');
+  
+  if (beanTitle) beanTitle.textContent = bean;
+  if (beanRoaster) beanRoaster.textContent = roaster;
+  if (notes) notes.value = `Extracted from bag OCR: ${bean} (${roaster}) • ${process}`;
+  
+  showToast(`Auto-filled ${bean} into Cupping Log! 📝`);
+}
+
+function saveOcrToBeanVault(bean, roaster) {
+  store.beans.unshift({
+    id: `bean-${Date.now()}`,
+    name: bean,
+    roaster: roaster,
+    origin: "Specialty Lot",
+    process: "Washed / Natural",
+    elevation: "1850m",
+    harvestYear: "2026",
+    acidity: 85,
+    sweetness: 88,
+    body: 70,
+    rating: 4.8,
+    photoUrl: "https://lh3.googleusercontent.com/aida-public/AB6AXuB5G3eAJUMeFojURnKdI90KQLQa6lO67dwRJOavsc-8ZuZb6DCcXU3vAAdMjlz77XHToiea-vt9NawPOt2wndYW9JSp7vlS99E1cZL2MWaGd169I6-KLNO7QGrDDtmg_b8AYchXZH8FV9SAGPtmFJPBcbAywQ_hPPPIrXx6ng4ivxb2GaqK0btf7grnQlKGpxK122HYiCpOOmv2-v7bFQ3j1OJw7V0Pe6AeHPAN0K694MkxA7M4A8O_"
+  });
+  renderVaultScreen();
+  closeModal('modal-ocr-scanner');
+  showToast(`Added ${bean} to Bean Vault! 🎒`);
+}
+
+// ==========================================
+// FEATURE 5: WISHLIST PROXIMITY RADAR
+// ==========================================
+function simulateWishlistProximityAlert() {
+  playAudioBeep(720, 0.15);
+  setTimeout(() => playAudioBeep(880, 0.15), 180);
+  
+  const alertEl = document.getElementById('proximityAlertText');
+  if (alertEl) {
+    alertEl.textContent = "📍 Radar Ping: 240m from Coffee Collective Bernikow (Wishlist)!";
+  }
+
+  showToast("📍 Radar: You are 240m from Coffee Collective Bernikow! Tap to view Kieni Chemex.");
+}
+
+// ==========================================
+// FEATURE 6: PASSPORT MILESTONES & STREAKS
+// ==========================================
+function showBadgeDetails(type) {
+  playAudioBeep(800, 0.1);
+  if (type === 'origin') {
+    showToast("🌍 Origin Explorer: 4 of 5 countries tasted (Ethiopia, Colombia, Kenya, India). Log Guatemala to unlock! 🏆");
+  } else if (type === 'process') {
+    showToast("🧪 Anaerobic Master: Unlocked! Logged 3 high-fermentation double-anaerobic lots with 90+ sweetness. ★");
+  } else if (type === 'nomad') {
+    showToast("☕ Roastery Nomad: 7 of 10 cafes explored. 3 more stops to earn Gold Roastery Nomad tier!");
+  }
+}
+

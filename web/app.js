@@ -1369,186 +1369,237 @@ function openLiveMenu(cafeId) {
   openModal('modal-live-menu');
 }
 
+let currentLogMethod = 'Single Origin Pour Over';
+let currentLogTemp = 'Hot';
+let currentLogVessel = 'For Here';
+let currentLogRating = 4.5;
+
+function selectMethod(btn, methodName, subtitle) {
+  document.querySelectorAll('.method-card').forEach(card => {
+    card.classList.remove('bg-primary', 'text-on-primary', 'shadow-md', 'active');
+    card.classList.add('bg-surface-container', 'text-on-surface');
+    const label = card.querySelector('.text-xs');
+    if (label) {
+      label.classList.remove('text-surface-bright');
+      label.classList.add('text-primary');
+    }
+    const icon = card.querySelector('.material-symbols-outlined');
+    if (icon) {
+      icon.classList.add('text-on-surface-variant');
+    }
+  });
+  btn.classList.add('bg-primary', 'text-on-primary', 'shadow-md', 'active');
+  btn.classList.remove('bg-surface-container', 'text-on-surface');
+  const activeLabel = btn.querySelector('.text-xs');
+  if (activeLabel) {
+    activeLabel.classList.add('text-surface-bright');
+    activeLabel.classList.remove('text-primary');
+  }
+  const activeIcon = btn.querySelector('.material-symbols-outlined');
+  if (activeIcon) {
+    activeIcon.classList.remove('text-on-surface-variant');
+  }
+  currentLogMethod = methodName;
+  const label = document.getElementById('selectedMethodLabel');
+  if (label) label.textContent = `${methodName} (${subtitle || 'Manual'})`;
+}
+
+function selectTemp(temp) {
+  currentLogTemp = temp;
+  const btnHot = document.getElementById('btnTempHot');
+  const btnIced = document.getElementById('btnTempIced');
+  const desc = document.getElementById('tempDescription');
+  if (temp === 'Hot') {
+    if (btnHot) btnHot.className = 'flex-1 py-1 px-2 rounded-lg bg-primary text-on-primary text-xs text-center font-semibold transition-colors';
+    if (btnIced) btnIced.className = 'flex-1 py-1 px-2 rounded-lg bg-surface-container-high text-on-surface text-xs text-center transition-colors';
+    if (desc) desc.textContent = 'Warm Ceramic Cup';
+  } else {
+    if (btnIced) btnIced.className = 'flex-1 py-1 px-2 rounded-lg bg-primary text-on-primary text-xs text-center font-semibold transition-colors';
+    if (btnHot) btnHot.className = 'flex-1 py-1 px-2 rounded-lg bg-surface-container-high text-on-surface text-xs text-center transition-colors';
+    if (desc) desc.textContent = 'Chilled Glass with Large Cube';
+  }
+}
+
+function selectVessel(vessel) {
+  currentLogVessel = vessel;
+  const btnHere = document.getElementById('btnVesselHere');
+  const btnToGo = document.getElementById('btnVesselToGo');
+  const desc = document.getElementById('vesselDescription');
+  if (vessel === 'For Here') {
+    if (btnHere) btnHere.className = 'flex-1 py-1 px-2 rounded-lg bg-primary text-on-primary text-xs text-center font-semibold transition-colors';
+    if (btnToGo) btnToGo.className = 'flex-1 py-1 px-2 rounded-lg bg-surface-container-high text-on-surface text-xs text-center transition-colors';
+    if (desc) desc.textContent = 'Handmade Pottery';
+  } else {
+    if (btnToGo) btnToGo.className = 'flex-1 py-1 px-2 rounded-lg bg-primary text-on-primary text-xs text-center font-semibold transition-colors';
+    if (btnHere) btnHere.className = 'flex-1 py-1 px-2 rounded-lg bg-surface-container-high text-on-surface text-xs text-center transition-colors';
+    if (desc) desc.textContent = 'Compostable Takeaway Cup';
+  }
+}
+
+function toggleTag(btn) {
+  const isSelected = btn.classList.contains('bg-primary');
+  if (isSelected) {
+    btn.classList.remove('bg-primary', 'text-on-primary');
+    btn.classList.add('bg-surface-container', 'text-on-surface');
+    const checkIcon = btn.querySelector('.material-symbols-outlined');
+    if (checkIcon) checkIcon.remove();
+  } else {
+    btn.classList.add('bg-primary', 'text-on-primary');
+    btn.classList.remove('bg-surface-container', 'text-on-surface');
+    const iconSpan = document.createElement('span');
+    iconSpan.className = 'material-symbols-outlined text-[14px]';
+    iconSpan.textContent = 'check';
+    btn.appendChild(iconSpan);
+  }
+  const count = document.querySelectorAll('#flavorTagsGroup .tag-chip.bg-primary').length;
+  const countEl = document.getElementById('selectedTagsCount');
+  if (countEl) countEl.textContent = `${count} Selected`;
+}
+
+function addCustomFlavorTag() {
+  const custom = prompt("Enter a sensory cupping note or flavor descriptor:", "Bergamot & Earl Grey");
+  if (custom && custom.trim()) {
+    const group = document.getElementById('flavorTagsGroup');
+    const newBtn = document.createElement('button');
+    newBtn.type = 'button';
+    newBtn.className = 'tag-chip px-3 py-1.5 rounded-full bg-primary text-on-primary text-xs font-semibold flex items-center gap-1 transition-all';
+    newBtn.onclick = function() { toggleTag(this); };
+    newBtn.innerHTML = `<span>${custom.trim()}</span><span class="material-symbols-outlined text-[14px]">check</span>`;
+    group.insertBefore(newBtn, group.lastElementChild);
+    const count = document.querySelectorAll('#flavorTagsGroup .tag-chip.bg-primary').length;
+    const countEl = document.getElementById('selectedTagsCount');
+    if (countEl) countEl.textContent = `${count} Selected`;
+    showToast(`Added custom descriptor: ${custom.trim()}`);
+  }
+}
+
+function setRating(score) {
+  currentLogRating = score;
+  const starContainer = document.getElementById('starContainer');
+  if (starContainer) {
+    const stars = starContainer.querySelectorAll('.material-symbols-outlined');
+    stars.forEach((star, index) => {
+      if (index < score) {
+        star.textContent = 'star';
+        star.style.fontVariationSettings = "'FILL' 1";
+      } else {
+        star.textContent = 'star';
+        star.style.fontVariationSettings = "'FILL' 0";
+      }
+    });
+  }
+  const label = document.getElementById('scoreLabel');
+  if (label) {
+    label.textContent = `${score}.0 of 5.0 (Exceptional)`;
+  }
+}
+
+let sampleCafeIdx = 0;
+function cycleSampleCafes() {
+  sampleCafeIdx = (sampleCafeIdx + 1) % store.cafes.length;
+  const cafe = store.cafes[sampleCafeIdx];
+  const nameEl = document.getElementById('logSelectedCafeName');
+  if (nameEl) nameEl.textContent = cafe.name;
+  showToast(`Switched active cafe stop to: ${cafe.name}`);
+}
+
+let sampleBeanIdx = 0;
+function cycleSampleBeans() {
+  sampleBeanIdx = (sampleBeanIdx + 1) % store.beans.length;
+  const bean = store.beans[sampleBeanIdx];
+  const titleEl = document.getElementById('logBeanTitle');
+  const roasterEl = document.getElementById('logBeanRoaster');
+  const lotBadge = document.getElementById('logBeanLotBadge');
+  const imgEl = document.getElementById('logBeanImg');
+  if (titleEl) titleEl.textContent = bean.name;
+  if (roasterEl) roasterEl.textContent = `${bean.roaster} • ${bean.process}`;
+  if (lotBadge) lotBadge.textContent = `${bean.origin} • Lot #0${sampleBeanIdx + 42}`;
+  if (imgEl && bean.photoUrl) imgEl.src = bean.photoUrl;
+  showToast(`Switched single origin bean: ${bean.name}`);
+}
+
+function promptPhotoUpload() {
+  showToast("Photo attached: IMG_Prolog_CeramicCup.heic 📸");
+}
+
+function shareLogPreview() {
+  showToast("Brew log recipe snapshot copied to clipboard! 📋");
+}
+
 function prefillLoggerWithBean(beanId) {
   const bean = store.beans.find(b => b.id === beanId);
   if (!bean) return;
-
-  const beanInput = document.getElementById('logBeanInput');
-  const roasterInput = document.getElementById('logRoasterInput');
-  if (beanInput) beanInput.value = bean.name;
-  if (roasterInput) roasterInput.value = bean.roaster;
-
+  const titleEl = document.getElementById('logBeanTitle');
+  const roasterEl = document.getElementById('logBeanRoaster');
+  const lotBadge = document.getElementById('logBeanLotBadge');
+  const imgEl = document.getElementById('logBeanImg');
+  if (titleEl) titleEl.textContent = bean.name;
+  if (roasterEl) roasterEl.textContent = `${bean.roaster} • ${bean.process}`;
+  if (lotBadge) lotBadge.textContent = `${bean.origin} • ${bean.elevation || '1,800m'}`;
+  if (imgEl && bean.photoUrl) imgEl.src = bean.photoUrl;
   openModal('modal-log-brew');
 }
 
 function prefillLoggerWithCafe(cafeId) {
   const cafe = store.cafes.find(c => c.id === cafeId);
   if (!cafe) return;
-
-  const cafeInput = document.getElementById('logCafeInput');
-  if (cafeInput) cafeInput.value = cafe.name;
-
+  const nameEl = document.getElementById('logSelectedCafeName');
+  if (nameEl) nameEl.textContent = cafe.name;
   openModal('modal-log-brew');
 }
 
-// AI OCR Scanner Simulator
-let selectedOCRBag = null;
-const OCR_SAMPLE_BAGS = [
-  {
-    roaster: "April Coffee Roasters",
-    name: "Kenya Kamwangi AA",
-    origin: "Kenya",
-    countryFlag: "🇰🇪",
-    process: "Washed",
-    variety: "SL28 & SL34",
-    elevation: "1,850m",
-    notes: ["Blackcurrant", "Red Grapefruit", "Bergamot"]
-  },
-  {
-    roaster: "Sey Coffee Roasters",
-    name: "Colombia El Paraiso",
-    origin: "Colombia",
-    countryFlag: "🇨🇴",
-    process: "Double Anaerobic",
-    variety: "Castillo",
-    elevation: "1,930m",
-    notes: ["Strawberry Jam", "Rose Floral", "Lychee"]
-  },
-  {
-    roaster: "Tim Wendelboe",
-    name: "Caballero Geisha",
-    origin: "Honduras",
-    countryFlag: "🇭🇳",
-    process: "Washed",
-    variety: "Geisha",
-    elevation: "1,600m",
-    notes: ["Jasmine", "Bergamot", "Peach"]
-  }
-];
-
-function selectOCRBagSample(index) {
-  selectedOCRBag = OCR_SAMPLE_BAGS[index];
-  document.querySelectorAll('.ocr-bag-preset-btn').forEach((btn, idx) => {
-    btn.classList.toggle('border-secondary', idx === index);
-    btn.classList.toggle('bg-secondary-container/20', idx === index);
-  });
-}
-
-function simulateScanAction() {
-  const resultCard = document.getElementById('ocrScanResultCard');
-  const scanBtn = document.getElementById('ocrAnalyzeBtn');
-  
-  if (scanBtn) {
-    scanBtn.innerHTML = `
-      <span class="material-symbols-outlined text-[18px] animate-spin">refresh</span>
-      <span>Extracting typography & origin...</span>
-    `;
-    scanBtn.disabled = true;
-  }
+function saveBrewLog() {
+  const saveBtn = document.getElementById('saveLogBtn');
+  if (!saveBtn) return;
+  const originalHtml = saveBtn.innerHTML;
+  saveBtn.disabled = true;
+  saveBtn.innerHTML = `
+    <span class="material-symbols-outlined text-[18px] animate-spin">progress_activity</span>
+    <span>Logging Ritual...</span>
+  `;
 
   setTimeout(() => {
-    const bag = selectedOCRBag || OCR_SAMPLE_BAGS[0];
-    if (resultCard) {
-      resultCard.classList.remove('hidden');
-      resultCard.innerHTML = `
-        <div class="card-nordic p-4 bg-emerald-50 dark:bg-emerald-950/40 border-emerald-500/30 flex flex-col gap-2.5">
-          <div class="flex items-center justify-between text-xs text-emerald-800 dark:text-emerald-300 font-bold">
-            <span class="flex items-center gap-1">
-              <span class="material-symbols-outlined text-[16px]">check_circle</span>
-              <span>100% OCR Neural Match</span>
-            </span>
-            <span>Roast Date: Today</span>
-          </div>
-          <h4 class="font-serif text-base font-bold text-primary">${bag.roaster} - ${bag.name}</h4>
-          <p class="text-xs text-on-surface-variant">${bag.countryFlag} ${bag.origin} • ${bag.process} • ${bag.elevation}</p>
-          <div class="flex flex-wrap gap-1 mt-1">
-            ${bag.notes.map(n => `<span class="px-2 py-0.5 rounded bg-surface text-[10px] font-semibold text-primary">${n}</span>`).join('')}
-          </div>
-          <button onclick="commitOCRBagToVault()" class="mt-2 w-full py-2.5 rounded-xl bg-secondary text-on-secondary font-semibold text-xs shadow-md">
-            Add to Active Vault Rotation
-          </button>
-        </div>
-      `;
-    }
+    saveBtn.innerHTML = `
+      <span class="material-symbols-outlined text-[18px] text-emerald-400">check_circle</span>
+      <span>Saved to Field Ledger!</span>
+    `;
 
-    if (scanBtn) {
-      scanBtn.innerHTML = `
-        <span class="material-symbols-outlined text-[18px]">document_scanner</span>
-        <span>Re-scan Label</span>
-      `;
-      scanBtn.disabled = false;
-    }
-  }, 1200);
-}
+    const cafeName = document.getElementById('logSelectedCafeName')?.textContent || 'Prolog Coffee Bar';
+    const beanName = document.getElementById('logBeanTitle')?.textContent || 'Ethiopia Gesha Village';
+    const roaster = document.getElementById('logBeanRoaster')?.textContent?.split('•')[0]?.trim() || 'Onyx Coffee Lab';
+    const notesText = document.getElementById('cuppingNotes')?.value || 'Super clean cup, bright citric acidity, delicate floral finish.';
+    const selectedTags = Array.from(document.querySelectorAll('#flavorTagsGroup .tag-chip.bg-primary span:first-child')).map(s => s.textContent.trim());
 
-function commitOCRBagToVault() {
-  const bag = selectedOCRBag || OCR_SAMPLE_BAGS[0];
-  const newBean = {
-    id: `bean-${Date.now()}`,
-    roaster: bag.roaster,
-    name: bag.name,
-    origin: bag.origin,
-    countryFlag: bag.countryFlag,
-    process: bag.process,
-    variety: bag.variety,
-    elevation: bag.elevation,
-    roastDate: new Date().toISOString().split('T')[0],
-    weightTotal: 250,
-    weightRemaining: 250,
-    tastingNotes: bag.notes,
-    status: "ACTIVE",
-    notes: "Scanned via AI Bag OCR",
-    photoUrl: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=600&q=80"
-  };
+    const newBrew = {
+      id: `brew-${Date.now()}`,
+      cafeName,
+      roaster,
+      beanName,
+      method: currentLogMethod || 'Pour Over',
+      methodBadge: currentLogMethod || 'Pour Over',
+      ratio: 'Diego Bermudez Lot #42 • 15g / 240g',
+      price: '55 DKK',
+      temperature: currentLogTemp,
+      vessel: currentLogVessel,
+      tastingNotes: selectedTags.length > 0 ? selectedTags : ['Floral & Jasmine', 'Stone Fruit', 'Berry & Blackberry'],
+      rating: currentLogRating || 4.5,
+      notes: notesText,
+      photoUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDoL9ULxF80sNM_IzngYfSeWTPAd7EM7Jcc5q-YmsdmhCvt_kOo7HubGXWvQ8xGaZzo4llqokts7YbRBY0rAZtAy0GHPFQv82gnm6FbNqrTMzGDA_X6kWy6FbHoNUI0r6-AVLEh9P_ygTEaGHimC9Z5MbUZkUorjZSRy945p6R856rqePqh2IvXQq28Oy-0jptyCP1-3tDU8zn6455mNOznEm5Ko9bWUGPUAP0nVxsu20Qx3oTkD_pG',
+      timeDisplay: 'Just Now',
+      timestamp: new Date().toISOString()
+    };
 
-  store.addBean(newBean);
-  closeModal('modal-ocr-scanner');
-  renderVaultScreen();
-  showToast(`Added ${bag.name} to Bean Vault!`);
-}
+    store.addBrew(newBrew);
 
-// Log New Brew Form Submission
-function handleLogBrewSubmit(e) {
-  e.preventDefault();
-
-  const cafeName = document.getElementById('logCafeInput').value.trim() || 'Home Brew Bar';
-  const beanName = document.getElementById('logBeanInput').value.trim() || 'House Single Origin';
-  const roaster = document.getElementById('logRoasterInput').value.trim() || 'Specialty Roaster';
-  const method = document.getElementById('logMethodSelect').value;
-  const ratio = document.getElementById('logRatioInput').value.trim() || '1:16 Ratio';
-  const price = document.getElementById('logPriceInput').value.trim() || '50 DKK';
-  const notes = document.getElementById('logNotesInput').value.trim() || 'Balanced extraction.';
-  const rating = parseFloat(document.getElementById('logRatingInput').value) || 4.8;
-  const photoUrl = document.getElementById('logPhotoUrlInput').value.trim() || 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=600&q=80';
-
-  // Selected flavor tags
-  const selectedTags = Array.from(document.querySelectorAll('.log-tag-pill.active')).map(el => el.textContent.trim());
-  if (selectedTags.length === 0) {
-    selectedTags.push('Citrus', 'Stone Fruit', 'Floral');
-  }
-
-  const newBrew = {
-    id: `brew-${Date.now()}`,
-    cafeName,
-    roaster,
-    beanName,
-    method,
-    ratio,
-    price,
-    temperature: 'Hot',
-    vessel: 'Pottery Cup',
-    tastingNotes: selectedTags,
-    rating,
-    notes,
-    photoUrl,
-    timestamp: new Date().toISOString()
-  };
-
-  store.addBrew(newBrew);
-  closeModal('modal-log-brew');
-  renderJournalScreen();
-  renderAnalyticsScreen();
-  showToast("Tasting saved to your Journal! ☕");
+    setTimeout(() => {
+      saveBtn.innerHTML = originalHtml;
+      saveBtn.disabled = false;
+      closeModal('modal-log-brew');
+      renderJournalScreen();
+      renderAnalyticsScreen();
+      showToast("Saved Entry #142 to Cafe Passport! ☕");
+    }, 1200);
+  }, 700);
 }
 
 // --- 7. INITIALIZATION ---

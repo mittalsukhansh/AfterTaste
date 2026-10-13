@@ -875,106 +875,321 @@
     <!-- STACK MODALS & SHEETS                      -->
     <!-- ========================================== -->
 
-    <!-- MODAL 1: LOG NEW BREW MODAL SHEET -->
+    <!-- MODAL 1: LOG NEW BREW MODAL SHEET (Page 4 Experience) -->
     <div id="modal-log-brew" class="modal-overlay">
-      <div class="modal-sheet p-5 flex flex-col gap-4">
-        <!-- Header -->
-        <div class="flex items-center justify-between pb-3 border-b border-outline-variant/30">
+      <div class="modal-sheet max-h-[92vh] flex flex-col overflow-hidden bg-surface">
+        
+        <!-- Header Sticky Bar -->
+        <div class="h-16 px-4 flex items-center justify-between border-b border-outline-variant/30 bg-surface/95 backdrop-blur z-20 flex-shrink-0">
           <div class="flex items-center gap-2">
-            <div class="w-8 h-8 rounded-full bg-secondary-container/30 flex items-center justify-center text-secondary">
-              <span class="material-symbols-outlined text-[18px]">add_circle</span>
+            <button onclick="closeModal('modal-log-brew')" aria-label="Go Back" class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface hover:text-secondary hover:bg-surface-container transition-colors">
+              <span class="material-symbols-outlined text-[22px]">arrow_back</span>
+            </button>
+            <img alt="AfterTaste Brand Logo" class="h-7 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCQm7yd9p2TUxoYSMT3vEdV8kYtGAR_IqaaKlYS1q9UDsSCqEbchbzTFCX-3JpDx_A9T0WoF1B7Qpa3glUyVQ8KFeR5fBkQr-C_qv7Rj7qCbqCbHPjm5UFG59FTmEPgLEEmS9DNZmWSiJhxgmGUC5uWjYXrAzeGFw2x4rBvZuDCl21uHgQ7XfetGViE1A3XCt7w2I6WZeByRq73MEaN62E1BpjJxVVEQCDjr8A976EFnhnh_KVrrq5i">
+            <h1 class="font-serif text-lg font-bold text-primary tracking-tight truncate max-w-[170px]">New Brew</h1>
+          </div>
+          <div class="flex items-center gap-1">
+            <div class="flex items-center gap-1 bg-surface-container px-2.5 py-1 rounded-full text-xs font-semibold text-on-surface hover:bg-surface-container-high cursor-pointer transition-colors">
+              <span class="material-symbols-outlined text-[14px] text-secondary">language</span>
+              <span>EN</span>
+              <span class="material-symbols-outlined text-[14px] text-on-surface-variant">arrow_drop_down</span>
             </div>
+            <button onclick="shareCafePassport('cafe-1')" aria-label="Share Recipe" class="w-9 h-9 rounded-full flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors">
+              <span class="material-symbols-outlined text-[20px]">share</span>
+            </button>
+            <img alt="Profile" class="w-8 h-8 rounded-full object-cover ml-1 border border-outline-variant/40" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCBADWmUuDDiTrjYBYgrm0JlJs64P804kqnvC1yYcxzJTVRJzb0VjBVhOGm2GK0vCrkiqkt3IoQdW6q5rK_do3Lfxhkzh6K7fRZV0jkqNsteCST1SeZtv_XAocXnNaL4sS5Bly44jiCZLTNAid4tBrAyzp8YyAW524FZUo9ZOlQGYZpkTemB_KsmLVX5HFE2NCKuv6oIdJUkftzBzz4bSsOEsQvSbPWZIuPCo8rWEmBcTLBmlKDnNvg">
+          </div>
+        </div>
+
+        <!-- Scrollable Modal Body -->
+        <div class="flex-1 overflow-y-auto px-4 py-3 flex flex-col gap-4">
+          
+          <!-- Subtle Ritual Header Context -->
+          <div class="flex items-start justify-between pt-1">
             <div>
-              <h3 class="font-serif text-lg font-bold text-primary">Log New Brew</h3>
-              <p class="text-[11px] text-on-surface-variant">Record your cafe experience or home cup</p>
+              <div class="flex items-center gap-1.5 mb-1 flex-wrap">
+                <span class="text-[10px] text-secondary uppercase tracking-widest font-bold">Cafe Passport • Entry #142</span>
+                <span class="px-2 py-0.5 rounded-full bg-[#ffdbc9] dark:bg-[#753400] text-[#753400] dark:text-[#ffdbc9] text-[10px] font-semibold flex items-center gap-1">
+                  <span class="material-symbols-outlined text-[12px]">verified</span>
+                  <span>Verified Stop</span>
+                </span>
+              </div>
+              <h2 class="font-serif text-2xl font-bold text-primary tracking-tight">Log Cafe Experience</h2>
+              <div id="logCafeLocationPill" onclick="cycleSampleCafes()" class="mt-2 flex items-center gap-1.5 bg-surface-container-low px-3 py-1.5 rounded-lg border border-outline-variant/30 text-on-surface w-fit cursor-pointer hover:bg-surface-container transition-colors shadow-sm">
+                <span class="material-symbols-outlined text-[16px] text-secondary">location_on</span>
+                <span id="logSelectedCafeName" class="text-xs font-semibold text-primary">Prolog Coffee Bar</span>
+                <span id="logSelectedCafeCity" class="text-xs text-on-surface-variant">• Copenhagen</span>
+                <span class="material-symbols-outlined text-[14px] text-secondary ml-1">expand_more</span>
+              </div>
+            </div>
+            <div class="w-11 h-11 rounded-full bg-surface-container-high flex items-center justify-center text-primary shadow-sm flex-shrink-0">
+              <span class="material-symbols-outlined text-[22px]">storefront</span>
             </div>
           </div>
-          <button onclick="closeModal('modal-log-brew')" class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant hover:text-primary">
-            <span class="material-symbols-outlined text-[18px]">close</span>
+
+          <!-- Section 1: Method Selector -->
+          <section class="flex flex-col gap-1.5">
+            <div class="flex items-center justify-between">
+              <label class="text-[11px] font-bold text-on-surface-variant uppercase tracking-wider">Ordered Beverage / Preparation</label>
+              <span class="text-xs text-secondary font-semibold" id="selectedMethodLabel">Single Origin Pour Over</span>
+            </div>
+            <div class="flex gap-2.5 overflow-x-auto py-1 -mx-4 px-4 no-scrollbar">
+              <button class="method-card flex-shrink-0 flex flex-col items-center justify-center w-24 h-24 rounded-2xl bg-surface-container text-on-surface hover:bg-surface-container-high transition-all" onclick="selectMethod(this, 'Batch Brew', 'Daily Drip')" type="button">
+                <span class="material-symbols-outlined text-[26px] mb-1 text-on-surface-variant">coffee</span>
+                <span class="text-xs font-semibold text-center text-primary">Batch Brew</span>
+                <span class="text-[10px] text-on-surface-variant">Daily Drip</span>
+              </button>
+              <button class="method-card flex-shrink-0 flex flex-col items-center justify-center w-24 h-24 rounded-2xl bg-primary text-on-primary shadow-md transition-all active" onclick="selectMethod(this, 'Pour Over', 'Manual Brew')" type="button">
+                <span class="material-symbols-outlined text-[26px] mb-1">filter_alt</span>
+                <span class="text-xs font-semibold text-center text-surface-bright">Pour Over</span>
+                <span class="text-[10px] opacity-75">Manual Brew</span>
+              </button>
+              <button class="method-card flex-shrink-0 flex flex-col items-center justify-center w-24 h-24 rounded-2xl bg-surface-container text-on-surface hover:bg-surface-container-high transition-all" onclick="selectMethod(this, 'Espresso', 'Straight / Cortado')" type="button">
+                <span class="material-symbols-outlined text-[26px] mb-1 text-on-surface-variant">local_cafe</span>
+                <span class="text-xs font-semibold text-center text-primary">Espresso</span>
+                <span class="text-[10px] text-on-surface-variant">Straight / Cortado</span>
+              </button>
+              <button class="method-card flex-shrink-0 flex flex-col items-center justify-center w-24 h-24 rounded-2xl bg-surface-container text-on-surface hover:bg-surface-container-high transition-all" onclick="selectMethod(this, 'Milk Drink', 'Flat White / Latte')" type="button">
+                <span class="material-symbols-outlined text-[26px] mb-1 text-on-surface-variant">emoji_food_beverage</span>
+                <span class="text-xs font-semibold text-center text-primary">Milk Drink</span>
+                <span class="text-[10px] text-on-surface-variant">Flat White / Latte</span>
+              </button>
+              <button class="method-card flex-shrink-0 flex flex-col items-center justify-center w-24 h-24 rounded-2xl bg-surface-container text-on-surface hover:bg-surface-container-high transition-all" onclick="selectMethod(this, 'Cold Brew', 'Iced Tonic')" type="button">
+                <span class="material-symbols-outlined text-[26px] mb-1 text-on-surface-variant">ac_unit</span>
+                <span class="text-xs font-semibold text-center text-primary">Cold Brew</span>
+                <span class="text-[10px] text-on-surface-variant">Iced Tonic</span>
+              </button>
+            </div>
+          </section>
+
+          <!-- Section 2: Bean Selection -->
+          <section class="flex flex-col gap-1.5">
+            <div class="flex items-center justify-between">
+              <label class="text-[11px] font-bold text-on-surface-variant uppercase tracking-wider">Single Origin Bean</label>
+              <span id="logBeanLotBadge" class="text-[11px] text-on-surface-variant font-medium">Lot #044-B</span>
+            </div>
+            <div class="bg-surface-container-low rounded-xl p-3.5 shadow-sm flex flex-col gap-2.5 border border-outline-variant/30">
+              <div class="flex items-start justify-between gap-3">
+                <div class="flex items-center gap-3">
+                  <div class="w-12 h-12 rounded-lg bg-surface-container-high flex-shrink-0 overflow-hidden relative shadow-sm">
+                    <img id="logBeanImg" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB5G3eAJUMeFojURnKdI90KQLQa6lO67dwRJOavsc-8ZuZb6DCcXU3vAAdMjlz77XHToiea-vt9NawPOt2wndYW9JSp7vlS99E1cZL2MWaGd169I6-KLNO7QGrDDtmg_b8AYchXZH8FV9SAGPtmFJPBcbAywQ_hPPPIrXx6ng4ivxb2GaqK0btf7grnQlKGpxK122HYiCpOOmv2-v7bFQ3j1OJw7V0Pe6AeHPAN0K694MkxA7M4A8O_" alt="Lightly roasted specialty coffee beans on cupping spoon">
+                  </div>
+                  <div class="flex flex-col min-w-0">
+                    <span id="logBeanTitle" class="font-serif text-sm font-bold text-primary truncate">Ethiopia Gesha Village</span>
+                    <span id="logBeanRoaster" class="text-xs text-on-surface-variant truncate">Onyx Coffee Lab • Honey Process</span>
+                  </div>
+                </div>
+                <button onclick="openModal('modal-ocr-scanner')" aria-label="Scan bag barcode or QR code" class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-secondary hover:bg-secondary-container hover:text-on-secondary-container transition-colors flex-shrink-0" type="button" title="Scan Bag Label / QR">
+                  <span class="material-symbols-outlined text-[20px]">qr_code_scanner</span>
+                </button>
+              </div>
+              <div class="flex items-center gap-1.5 pt-0.5 flex-wrap">
+                <span class="px-2 py-0.5 rounded-full bg-[#ffdbc9] dark:bg-[#753400] text-[#753400] dark:text-[#ffdbc9] text-[10px] font-semibold flex items-center gap-1">
+                  <span class="material-symbols-outlined text-[12px]">thumb_up</span>
+                  <span>Barista Recommended</span>
+                </span>
+                <span class="px-2 py-0.5 rounded-full bg-[#cbebc3] dark:bg-[#334d2f] text-[#334d2f] dark:text-[#cbebc3] text-[10px] font-semibold">
+                  Light Roast • Floral
+                </span>
+                <span onclick="cycleSampleBeans()" class="ml-auto flex items-center text-secondary text-[10px] font-semibold cursor-pointer hover:underline">
+                  <span>Ask Barista / Switch</span>
+                  <span class="material-symbols-outlined text-[14px] ml-0.5">unfold_more</span>
+                </span>
+              </div>
+            </div>
+          </section>
+
+          <!-- Section 3: Brew Dial & Measurements -->
+          <section class="flex flex-col gap-2.5">
+            <div class="flex items-center justify-between">
+              <label class="text-[11px] font-bold text-on-surface-variant uppercase tracking-wider">Serving & Order Details</label>
+              <span class="text-xs text-secondary font-semibold">Dine-in Ritual</span>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-2.5">
+              <!-- Temperature -->
+              <div class="bg-surface-container rounded-xl p-3 flex flex-col justify-between shadow-sm border border-outline-variant/30">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-semibold text-on-surface-variant">Temperature</span>
+                  <span class="material-symbols-outlined text-[16px] text-secondary">thermostat</span>
+                </div>
+                <div class="my-2 flex gap-1.5">
+                  <button id="btnTempHot" onclick="selectTemp('Hot')" class="flex-1 py-1 px-2 rounded-lg bg-primary text-on-primary text-xs text-center font-semibold transition-colors" type="button">Hot</button>
+                  <button id="btnTempIced" onclick="selectTemp('Iced')" class="flex-1 py-1 px-2 rounded-lg bg-surface-container-high text-on-surface text-xs text-center transition-colors" type="button">Iced 🧊</button>
+                </div>
+                <span id="tempDescription" class="text-[10px] text-on-surface-variant text-center">Warm Ceramic Cup</span>
+              </div>
+
+              <!-- Vessel & Service -->
+              <div class="bg-surface-container rounded-xl p-3 flex flex-col justify-between shadow-sm border border-outline-variant/30">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-semibold text-on-surface-variant">Vessel & Service</span>
+                  <span class="material-symbols-outlined text-[16px] text-secondary">local_cafe</span>
+                </div>
+                <div class="my-2 flex gap-1.5">
+                  <button id="btnVesselHere" onclick="selectVessel('For Here')" class="flex-1 py-1 px-2 rounded-lg bg-primary text-on-primary text-xs text-center font-semibold transition-colors" type="button">For Here</button>
+                  <button id="btnVesselToGo" onclick="selectVessel('To Go')" class="flex-1 py-1 px-2 rounded-lg bg-surface-container-high text-on-surface text-xs text-center transition-colors" type="button">To Go</button>
+                </div>
+                <span id="vesselDescription" class="text-[10px] text-on-surface-variant text-center">Handmade Pottery</span>
+              </div>
+            </div>
+
+            <!-- Price & Milk Row -->
+            <div class="grid grid-cols-2 gap-2.5">
+              <div class="bg-surface-container-low rounded-xl p-2.5 flex items-center gap-2.5 shadow-sm border border-outline-variant/30">
+                <div class="w-9 h-9 rounded-lg bg-surface-container-highest flex items-center justify-center text-secondary flex-shrink-0">
+                  <span class="material-symbols-outlined text-[18px]">payments</span>
+                </div>
+                <div class="flex flex-col min-w-0">
+                  <span class="text-[10px] text-on-surface-variant uppercase font-medium">Price Paid</span>
+                  <span id="logPriceDisplay" class="text-xs font-bold text-on-surface truncate">55 DKK <span class="text-on-surface-variant font-normal text-[10px]">(~$8)</span></span>
+                </div>
+              </div>
+              <div class="bg-surface-container-low rounded-xl p-2.5 flex items-center gap-2.5 shadow-sm border border-outline-variant/30">
+                <div class="w-9 h-9 rounded-lg bg-surface-container-highest flex items-center justify-center text-secondary flex-shrink-0">
+                  <span class="material-symbols-outlined text-[18px]">water_bottle</span>
+                </div>
+                <div class="flex flex-col min-w-0">
+                  <span class="text-[10px] text-on-surface-variant uppercase font-medium">Milk Option</span>
+                  <span class="text-xs font-bold text-on-surface truncate">Oat (Oatly Barista)</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Section 4: Cafe Vibe & Barista Craft -->
+          <section class="bg-primary-container text-white rounded-xl p-3.5 shadow-md flex flex-col gap-3 relative overflow-hidden border border-secondary/20">
+            <div class="absolute -right-8 -top-8 w-32 h-32 rounded-full bg-secondary opacity-15 pointer-events-none blur-xl"></div>
+            <div class="flex items-center justify-between relative z-10">
+              <div class="flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-[18px] text-secondary-container">temp_preferences_custom</span>
+                <span class="text-[10px] text-[#ffdbc9] uppercase tracking-wider font-semibold">Cafe Vibe & Barista Craft</span>
+              </div>
+              <span class="text-[10px] bg-white/10 px-2 py-0.5 rounded-full text-white">Afternoon Visit • 14:45</span>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-2 relative z-10">
+              <div class="bg-white/10 rounded-lg p-2 flex flex-col gap-0.5">
+                <span class="text-[10px] text-[#ffdbc9]">Acoustics & Mood</span>
+                <span class="text-xs font-semibold text-white">Vinyl Jazz • Lively</span>
+                <div class="flex items-center gap-1 text-[#ffdbc9] text-[10px] mt-0.5">
+                  <span class="material-symbols-outlined text-[13px]">volume_down</span>
+                  <span>Comfortable 65dB</span>
+                </div>
+              </div>
+              <div class="bg-white/10 rounded-lg p-2 flex flex-col gap-0.5">
+                <span class="text-[10px] text-[#ffdbc9]">Barista Hospitality</span>
+                <span class="text-xs font-semibold text-white">Warm & Passionate</span>
+                <div class="flex items-center gap-1 text-[#ffdbc9] text-[10px] mt-0.5">
+                  <span class="material-symbols-outlined text-[13px]">forum</span>
+                  <span>Shared origin story</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="relative z-10 bg-white/10 rounded-lg p-2 flex items-center justify-between text-[10px]">
+              <span class="text-white font-semibold flex items-center gap-1">
+                <span class="material-symbols-outlined text-[15px] text-[#ffdbc9]">wifi</span>
+                Free Guest WiFi & Dog Friendly
+              </span>
+              <span class="text-[#ffdbc9]">Outdoor Benches Available</span>
+            </div>
+          </section>
+
+          <!-- Section 5: Sensory & Tasting Notes -->
+          <section class="flex flex-col gap-2">
+            <div class="flex items-center justify-between">
+              <label class="text-[11px] font-bold text-on-surface-variant uppercase tracking-wider">Sensory Impressions</label>
+              <span id="selectedTagsCount" class="text-xs text-secondary font-semibold">3 Selected</span>
+            </div>
+
+            <!-- Flavor Tags (Tap to toggle) -->
+            <div class="flex flex-wrap gap-1.5" id="flavorTagsGroup">
+              <button class="tag-chip px-3 py-1.5 rounded-full bg-primary text-on-primary text-xs font-semibold flex items-center gap-1 transition-all" onclick="toggleTag(this)" type="button">
+                <span>Floral & Jasmine</span>
+                <span class="material-symbols-outlined text-[14px]">check</span>
+              </button>
+              <button class="tag-chip px-3 py-1.5 rounded-full bg-primary text-on-primary text-xs font-semibold flex items-center gap-1 transition-all" onclick="toggleTag(this)" type="button">
+                <span>Stone Fruit</span>
+                <span class="material-symbols-outlined text-[14px]">check</span>
+              </button>
+              <button class="tag-chip px-3 py-1.5 rounded-full bg-surface-container text-on-surface hover:bg-surface-container-high text-xs font-semibold flex items-center gap-1 transition-all" onclick="toggleTag(this)" type="button">
+                <span>Citrus & Meyer Lemon</span>
+              </button>
+              <button class="tag-chip px-3 py-1.5 rounded-full bg-primary text-on-primary text-xs font-semibold flex items-center gap-1 transition-all" onclick="toggleTag(this)" type="button">
+                <span>Berry & Blackberry</span>
+                <span class="material-symbols-outlined text-[14px]">check</span>
+              </button>
+              <button class="tag-chip px-3 py-1.5 rounded-full bg-surface-container text-on-surface hover:bg-surface-container-high text-xs font-semibold flex items-center gap-1 transition-all" onclick="toggleTag(this)" type="button">
+                <span>Dark Chocolate</span>
+              </button>
+              <button class="tag-chip px-3 py-1.5 rounded-full bg-surface-container text-on-surface hover:bg-surface-container-high text-xs font-semibold flex items-center gap-1 transition-all" onclick="toggleTag(this)" type="button">
+                <span>Orange Blossom Honey</span>
+              </button>
+              <button onclick="addCustomFlavorTag()" class="px-3 py-1.5 rounded-full bg-surface-container-low text-secondary text-xs font-semibold flex items-center gap-1 hover:bg-surface-container transition-all" type="button">
+                <span class="material-symbols-outlined text-[14px]">add</span>
+                <span>Add Custom Descriptor</span>
+              </button>
+            </div>
+
+            <!-- Overall Taste Rating Bar -->
+            <div class="bg-surface-container-low rounded-xl p-3 flex items-center justify-between shadow-sm border border-outline-variant/30 mt-1">
+              <div class="flex flex-col">
+                <span class="text-xs font-semibold text-on-surface">Overall Taste & Experience</span>
+                <span class="text-[11px] text-on-surface-variant" id="scoreLabel">4.5 of 5.0 (Exceptional)</span>
+              </div>
+              <div class="flex items-center gap-1 text-secondary" id="starContainer">
+                <button aria-label="1 Star" class="focus:outline-none" onclick="setRating(1)" type="button"><span class="material-symbols-outlined text-[22px]" style="font-variation-settings: 'FILL' 1;">star</span></button>
+                <button aria-label="2 Stars" class="focus:outline-none" onclick="setRating(2)" type="button"><span class="material-symbols-outlined text-[22px]" style="font-variation-settings: 'FILL' 1;">star</span></button>
+                <button aria-label="3 Stars" class="focus:outline-none" onclick="setRating(3)" type="button"><span class="material-symbols-outlined text-[22px]" style="font-variation-settings: 'FILL' 1;">star</span></button>
+                <button aria-label="4 Stars" class="focus:outline-none" onclick="setRating(4)" type="button"><span class="material-symbols-outlined text-[22px]" style="font-variation-settings: 'FILL' 1;">star</span></button>
+                <button aria-label="4.5 Stars" class="focus:outline-none" onclick="setRating(5)" type="button"><span class="material-symbols-outlined text-[22px]" style="font-variation-settings: 'FILL' 1;">star_half</span></button>
+              </div>
+            </div>
+
+            <!-- Personal Tasting Notes Textarea -->
+            <div class="flex flex-col gap-1 mt-1">
+              <label class="text-[11px] font-bold text-on-surface-variant uppercase tracking-wider" for="cuppingNotes">Tasting Notes & Memory of Visit</label>
+              <div class="relative bg-surface-container rounded-xl p-2.5 shadow-sm border border-outline-variant/30">
+                <textarea id="cuppingNotes" class="w-full bg-transparent resize-none border-none outline-none text-xs text-on-surface placeholder:text-on-surface-variant/60" rows="3" placeholder="Describe flavor highlights, pastry pairing, table conversation...">Super clean cup, bright citric acidity, delicate floral finish with lingering peach nectar.</textarea>
+                <div class="flex justify-between items-center pt-1.5 border-t border-outline-variant/20">
+                  <span class="material-symbols-outlined text-[15px] text-on-surface-variant">edit_note</span>
+                  <span id="cuppingNotesCount" class="text-[10px] text-on-surface-variant">84 / 240 chars</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Section 6: Photo Log Snippet -->
+          <div class="bg-surface-container-low rounded-xl p-2.5 flex items-center justify-between shadow-sm border border-outline-variant/30">
+            <div class="flex items-center gap-2.5">
+              <div class="w-12 h-12 rounded-lg bg-surface-container-highest overflow-hidden relative shadow-sm">
+                <img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDoL9ULxF80sNM_IzngYfSeWTPAd7EM7Jcc5q-YmsdmhCvt_kOo7HubGXWvQ8xGaZzo4llqokts7YbRBY0rAZtAy0GHPFQv82gnm6FbNqrTMzGDA_X6kWy6FbHoNUI0r6-AVLEh9P_ygTEaGHimC9Z5MbUZkUorjZSRy945p6R856rqePqh2IvXQq28Oy-0jptyCP1-3tDU8zn6455mNOznEm5Ko9bWUGPUAP0nVxsu20Qx3oTkD_pG" alt="Hand poured coffee inside an origami ceramic dripper">
+              </div>
+              <div class="flex flex-col">
+                <span class="text-xs font-semibold text-primary">Cup & Latte Art Photo</span>
+                <span class="text-[10px] text-on-surface-variant">IMG_Prolog_CeramicCup.heic</span>
+              </div>
+            </div>
+            <button onclick="promptPhotoUpload()" class="w-9 h-9 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors" type="button" title="Add / Replace Photo">
+              <span class="material-symbols-outlined text-[18px]">add_a_photo</span>
+            </button>
+          </div>
+
+        </div>
+
+        <!-- Sticky Bottom Commit Panel -->
+        <div class="w-full bg-surface/95 backdrop-blur-xl p-3 border-t border-outline-variant/30 flex items-center gap-2.5 z-20 flex-shrink-0">
+          <button onclick="closeModal('modal-log-brew')" class="h-11 px-4 rounded-xl bg-surface-container text-on-surface text-xs font-bold hover:bg-surface-container-high transition-colors" type="button">
+            Draft
+          </button>
+          <button id="saveLogBtn" onclick="saveBrewLog()" class="flex-1 h-11 rounded-xl bg-primary text-on-primary text-xs font-bold flex items-center justify-center gap-1.5 shadow-md hover:bg-secondary active:scale-[0.99] transition-all" type="button">
+            <span class="material-symbols-outlined text-[18px] text-[#ffdbc9]">travel_explore</span>
+            <span>Save to Cafe Passport</span>
+            <span class="text-[#ffdbc9] text-[10px] font-normal">• Entry #142</span>
           </button>
         </div>
 
-        <!-- Form Body -->
-        <form id="logBrewForm" class="flex flex-col gap-3.5">
-          <!-- Method Selector -->
-          <div>
-            <label class="block text-xs font-bold text-primary mb-1 uppercase tracking-wider">Preparation / Method</label>
-            <select id="logMethodSelect" class="w-full h-11 px-3 bg-surface-container rounded-xl text-xs text-on-surface border border-outline-variant/30 focus:outline-none">
-              <option value="Pour Over">Pour Over (V60, Kalita, Chemex)</option>
-              <option value="Espresso">Espresso / Cortado</option>
-              <option value="Batch Brew">Batch Brew / Daily Drip</option>
-              <option value="Milk Beverage">Milk Beverage (Flat White, Latte)</option>
-              <option value="Cold Brew">Cold Brew / Iced Tonic</option>
-            </select>
-          </div>
-
-          <!-- Cafe & Roaster Fields -->
-          <div class="grid grid-cols-2 gap-2">
-            <div>
-              <label class="block text-xs font-bold text-primary mb-1 uppercase tracking-wider">Cafe / Location</label>
-              <input id="logCafeInput" type="text" value="Prolog Coffee Bar" placeholder="e.g. Prolog Coffee Bar" class="w-full h-10 px-3 bg-surface-container rounded-xl text-xs text-on-surface border border-outline-variant/30 focus:outline-none" required>
-            </div>
-            <div>
-              <label class="block text-xs font-bold text-primary mb-1 uppercase tracking-wider">Roastery</label>
-              <input id="logRoasterInput" type="text" value="Sey Coffee Roasters" placeholder="e.g. Sey, April" class="w-full h-10 px-3 bg-surface-container rounded-xl text-xs text-on-surface border border-outline-variant/30 focus:outline-none" required>
-            </div>
-          </div>
-
-          <!-- Bean Name & Ratio -->
-          <div class="grid grid-cols-2 gap-2">
-            <div>
-              <label class="block text-xs font-bold text-primary mb-1 uppercase tracking-wider">Bean / Lot</label>
-              <input id="logBeanInput" type="text" value="Colombia El Paraiso" placeholder="e.g. Colombia El Paraiso" class="w-full h-10 px-3 bg-surface-container rounded-xl text-xs text-on-surface border border-outline-variant/30 focus:outline-none" required>
-            </div>
-            <div>
-              <label class="block text-xs font-bold text-primary mb-1 uppercase tracking-wider">Ratio & Specs</label>
-              <input id="logRatioInput" type="text" value="1:16 Ratio • 15g / 240g" placeholder="e.g. 1:16 • 15g / 240g" class="w-full h-10 px-3 bg-surface-container rounded-xl text-xs text-on-surface border border-outline-variant/30 focus:outline-none">
-            </div>
-          </div>
-
-          <!-- Price & Rating -->
-          <div class="grid grid-cols-2 gap-2">
-            <div>
-              <label class="block text-xs font-bold text-primary mb-1 uppercase tracking-wider">Price Paid</label>
-              <input id="logPriceInput" type="text" value="52 DKK" placeholder="e.g. 52 DKK" class="w-full h-10 px-3 bg-surface-container rounded-xl text-xs text-on-surface border border-outline-variant/30 focus:outline-none">
-            </div>
-            <div>
-              <label class="block text-xs font-bold text-primary mb-1 uppercase tracking-wider">Rating (1 to 5 ★)</label>
-              <input id="logRatingInput" type="number" step="0.1" min="1" max="5" value="4.9" class="w-full h-10 px-3 bg-surface-container rounded-xl text-xs text-on-surface border border-outline-variant/30 focus:outline-none" required>
-            </div>
-          </div>
-
-          <!-- Sensory Impressions Tag Cloud -->
-          <div>
-            <label class="block text-xs font-bold text-primary mb-1 uppercase tracking-wider">Sensory Impressions (Tap to toggle)</label>
-            <div class="flex flex-wrap gap-1.5 mt-1">
-              <button type="button" class="log-tag-pill pill-filter active">Floral & Jasmine</button>
-              <button type="button" class="log-tag-pill pill-filter active">Stone Fruit</button>
-              <button type="button" class="log-tag-pill pill-filter active">Citrus & Bergamot</button>
-              <button type="button" class="log-tag-pill pill-filter">Strawberry Jam</button>
-              <button type="button" class="log-tag-pill pill-filter">Dark Chocolate</button>
-              <button type="button" class="log-tag-pill pill-filter">Crisp Acidity</button>
-              <button type="button" class="log-tag-pill pill-filter">Silky Honey</button>
-            </div>
-          </div>
-
-          <!-- Tasting Memo Notes -->
-          <div>
-            <label class="block text-xs font-bold text-primary mb-1 uppercase tracking-wider">Tasting Notes Memo</label>
-            <textarea id="logNotesInput" rows="2" placeholder="Sensory impressions, atmosphere, barista notes..." class="w-full p-2.5 bg-surface-container rounded-xl text-xs text-on-surface border border-outline-variant/30 focus:outline-none">Silky tactile mouthfeel with wild floral jasmine fragrance on opening.</textarea>
-          </div>
-
-          <!-- Photo URL -->
-          <div>
-            <label class="block text-xs font-bold text-primary mb-1 uppercase tracking-wider">Photo URL</label>
-            <input id="logPhotoUrlInput" type="url" value="https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=600&q=80" class="w-full h-10 px-3 bg-surface-container rounded-xl text-xs text-on-surface border border-outline-variant/30 focus:outline-none">
-          </div>
-
-          <!-- Submit Button -->
-          <button type="submit" class="mt-2 w-full py-3 rounded-xl bg-secondary text-white font-bold text-xs uppercase tracking-wider shadow-lg hover:bg-caramel active:scale-95 transition-all">
-            Save to Coffee Journal
-          </button>
-        </form>
       </div>
     </div>
 

@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>AfterTaste — Specialty Coffee Journal & Cafe Hopping Companion</title>
+  
+  <!-- Google Fonts: Playfair Display (Artisanal Display) & Plus Jakarta Sans (Modern UI) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            surface: 'var(--surface)',
+            'surface-dim': 'var(--surface-dim)',
+            'surface-container-low': 'var(--surface-container-low)',
+            'surface-container': 'var(--surface-container)',
+            'surface-container-high': 'var(--surface-container-high)',
+            'surface-container-highest': 'var(--surface-container-highest)',
+            espresso: 'var(--espresso)',
+            roast: 'var(--roast)',
+            caramel: 'var(--caramel)',
+            primary: 'var(--primary)',
+            'on-primary': 'var(--on-primary)',
+            'primary-container': 'var(--primary-container)',
+            'on-primary-container': 'var(--on-primary-container)',
+            secondary: 'var(--secondary)',
+            'on-secondary': 'var(--on-secondary)',
+            'secondary-container': 'var(--secondary-container)',
+            'on-secondary-container': 'var(--on-secondary-container)',
+            'on-surface': 'var(--on-surface)',
+            'on-surface-variant': 'var(--on-surface-variant)',
+            outline: 'var(--outline)',
+            'outline-variant': 'var(--outline-variant)'
+          },
+          fontFamily: {
+            serif: ['Playfair Display', 'Georgia', 'serif'],
+            sans: ['Plus Jakarta Sans', 'system-ui', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Mobile Viewport Shell (390 - 430px Responsive Native Container) -->
+  <div class="mobile-viewport">
+
+    <!-- 1. TOP APP BAR (GLOBAL HEADER) -->
+    <header class="fixed top-0 max-w-[430px] w-full z-40 header-glass">
+      <div class="h-16 px-4 flex items-center justify-between">
+        <!-- Brand Monogram & App Title -->
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center text-secondary-container shadow-sm border border-secondary/30">
+            <span class="material-symbols-outlined text-[18px]">local_cafe</span>
+          </div>
+          <div class="flex flex-col">
+            <div class="flex items-center gap-1.5">
+              <span class="font-serif text-xl font-bold tracking-tight text-primary leading-none">AfterTaste</span>
+              <span id="topBarSubtitle" class="text-xs font-semibold text-secondary leading-none">— journal</span>
+            </div>
+            <span class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium mt-0.5">Specialty Coffee Passport</span>
+          </div>
+        </div>
+
+        <!-- Controls: Language, Theme, Notifications, Avatar -->
+        <div class="flex items-center gap-1">
+          <!-- Language Switcher -->
+          <button id="langSelectBtn" class="flex items-center gap-0.5 px-2 py-1 rounded-full bg-surface-container hover:bg-surface-container-high transition-colors text-xs font-bold text-on-surface" title="Switch Language">
+            <span class="material-symbols-outlined text-[14px] text-secondary">translate</span>
+            <span class="lang-code">EN</span>
+          </button>
+
+          <!-- Theme Mode Toggle -->
+          <button id="themeToggleBtn" class="w-9 h-9 flex items-center justify-center rounded-full text-on-surface-variant hover:text-primary transition-colors" title="Toggle Theme">
+            <span class="material-symbols-outlined text-[20px]">dark_mode</span>
+          </button>
+
+          <!-- Notifications Center -->
+          <button onclick="openModal('modal-notifications')" class="relative w-9 h-9 flex items-center justify-center rounded-full text-on-surface-variant hover:text-primary transition-colors" title="Notifications">
+            <span class="material-symbols-outlined text-[20px]">notifications</span>
+            <span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-secondary"></span>
+          </button>
+
+          <!-- User Avatar Profile -->
+          <button onclick="openModal('modal-profile')" class="w-9 h-9 rounded-full overflow-hidden border-2 border-secondary/40 ml-1 hover:border-secondary transition-colors" title="Profile">
+            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80" alt="Maya Profile" class="w-full h-full object-cover">
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- MAIN SCROLLABLE CONTENT BODY -->
+    <main class="flex-1 w-full pt-16 pb-24 px-4 flex flex-col gap-5">
+
+      <!-- ========================================== -->
+      <!-- VIEW 1: DAILY BREW JOURNAL (#journal)      -->
+      <!-- ========================================== -->
+      <section id="screen-journal" class="flex flex-col gap-4">
+        
+        <!-- Morning Dial-In Greeting & Ritual Ribbon -->
+        <div class="flex flex-col pt-2">
+          <div class="flex items-center justify-between mb-1">
+            <div class="flex items-center gap-2">
+              <span class="pulse-dot"></span>
+              <span class="text-xs uppercase tracking-wider font-semibold text-on-surface-variant">Morning Dial-in</span>
+            </div>
+            <span id="currentTimeBadge" class="text-xs font-bold text-secondary">08:42 AM</span>
+          </div>
+          <h1 id="greetingTitle" class="font-serif text-2xl font-bold text-primary tracking-tight">Good morning, Maya ☕</h1>
+          <p id="greetingSubtitle" class="text-xs text-on-surface-variant mt-0.5">Ready for today's cafe hop or morning brew ritual?</p>
+
+          <!-- Weekly Rhythm & Telemetry Ribbon -->
+          <div class="flex items-center gap-2.5 overflow-x-auto py-2 -mx-4 px-4 no-scrollbar">
+            <!-- Metric 1 -->
+            <div class="flex items-center gap-2 bg-surface-container px-3 py-2 rounded-xl flex-shrink-0 border border-outline-variant/30">
+              <div class="w-7 h-7 rounded-full bg-surface-container-highest flex items-center justify-center text-primary">
+                <span class="material-symbols-outlined text-[16px]">coffee_maker</span>
+              </div>
+              <div class="flex flex-col">
+                <span class="text-[10px] text-on-surface-variant uppercase font-medium">Weekly Rhythm</span>
+                <span id="weeklyRhythmCount" class="text-xs font-bold text-primary">4 Brews</span>
+              </div>
+            </div>
+            <!-- Metric 2 -->
+            <div class="flex items-center gap-2 bg-surface-container px-3 py-2 rounded-xl flex-shrink-0 border border-outline-variant/30">
+              <div class="w-7 h-7 rounded-full bg-secondary-container/30 flex items-center justify-center text-secondary">
+                <span class="material-symbols-outlined text-[16px]">eco</span>
+              </div>
+              <div class="flex flex-col">
+                <span class="text-[10px] text-on-surface-variant uppercase font-medium">Vault Favorite</span>
+                <span class="text-xs font-bold text-primary">Colombia El Paraiso</span>
+              </div>
+            </div>
+            <!-- Metric 3 -->
+            <div class="flex items-center gap-2 bg-surface-container px-3 py-2 rounded-xl flex-shrink-0 border border-outline-variant/30">
+              <div class="w-7 h-7 rounded-full bg-amber-100 dark:bg-amber-950 flex items-center justify-center text-amber-500">
+                <span class="material-symbols-outlined text-[16px] fill-1">star</span>
+              </div>
+              <div class="flex flex-col">
+                <span class="text-[10px] text-on-surface-variant uppercase font-medium">Avg Extraction</span>
+                <span class="text-xs font-bold text-primary">4.85 ★</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Log Hero Banner -->
+        <div class="relative overflow-hidden rounded-2xl bg-primary-container text-white p-4 shadow-xl border border-secondary/20">
+          <div class="absolute -right-8 -bottom-8 w-40 h-40 rounded-full bg-secondary opacity-25 blur-2xl pointer-events-none"></div>
+          <div class="relative z-10 flex items-center justify-between gap-3">
+            <div class="flex-1">
+              <div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-white/10 backdrop-blur-md mb-2">
+                <span class="material-symbols-outlined text-[13px] text-secondary">timer</span>
+                <span class="text-[11px] font-semibold text-secondary-container">Analog Timer Active</span>
+              </div>
+              <h2 class="font-serif text-lg font-bold text-white tracking-tight">Quick Log Today's Cup</h2>
+              <p class="text-xs text-white/70 mt-1 max-w-[210px]">Record roastery, beans, sensory notes, and cup photo in seconds.</p>
+              <button onclick="openModal('modal-log-brew')" class="mt-3 inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-secondary text-white text-xs font-bold shadow-md hover:bg-caramel active:scale-95 transition-all">
+                <span class="material-symbols-outlined text-[16px]">add_circle</span>
+                <span>Initiate Brew Log</span>
+              </button>
+            </div>
+            <div class="w-20 h-20 rounded-xl overflow-hidden flex-shrink-0 shadow-inner bg-surface-container-highest">
+              <img src="https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=400&q=80" alt="Specialty Coffee Dripper" class="w-full h-full object-cover">
+            </div>
+          </div>
+        </div>
+
+        <!-- Featured Brew Card: Today's House Extraction -->
+        <div class="flex flex-col gap-2">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-1.5">
+              <span class="text-xs uppercase tracking-wider font-bold text-on-surface-variant">Today's Featured Cup</span>
+              <span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+            </div>
+            <button onclick="openModal('modal-log-brew')" class="text-xs font-semibold text-secondary hover:underline flex items-center gap-0.5">
+              <span>Log Similar</span>
+              <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+            </button>
+          </div>
+
+          <div class="card-nordic p-4 flex flex-col gap-3">
+            <div class="flex items-start justify-between gap-3">
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-1.5 mb-1">
+                  <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 text-[11px] font-bold">
+                    Double Anaerobic
+                  </span>
+                  <span class="text-xs text-on-surface-variant">Sey Coffee Roasters</span>
+                </div>
+                <h3 class="font-serif text-lg font-bold text-primary tracking-tight truncate">Colombia El Paraiso</h3>
+                <p class="text-xs text-on-surface-variant">Diego Bermudez Lot #42 • Cauca, 1,930m</p>
+              </div>
+              <div class="w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 shadow-sm bg-surface-container-high">
+                <img src="https://images.unsplash.com/photo-1587734195503-904fca47e0e9?auto=format&fit=crop&w=400&q=80" alt="Colombia El Paraiso" class="w-full h-full object-cover">
+              </div>
+            </div>
+
+            <!-- Telemetry 4-Column Grid -->
+            <div class="grid grid-cols-4 gap-2 bg-surface-container-low p-2.5 rounded-xl border border-outline-variant/30 text-center">
+              <div>
+                <span class="text-[10px] text-on-surface-variant uppercase">Cafe</span>
+                <p class="text-xs font-bold text-primary truncate">Prolog</p>
+              </div>
+              <div>
+                <span class="text-[10px] text-on-surface-variant uppercase">Order</span>
+                <p class="text-xs font-bold text-primary truncate">Pour Over</p>
+              </div>
+              <div>
+                <span class="text-[10px] text-on-surface-variant uppercase">Price</span>
+                <p class="text-xs font-bold text-primary">52 DKK</p>
+              </div>
+              <div>
+                <span class="text-[10px] text-on-surface-variant uppercase">Roast</span>
+                <p class="text-xs font-bold text-primary truncate">Light Scand.</p>
+              </div>
+            </div>
+
+            <!-- Sensory Tags & Score -->
+            <div class="flex items-center justify-between pt-1">
+              <div class="flex flex-wrap gap-1">
+                <span class="px-2 py-0.5 rounded-full bg-surface-container text-[11px] text-on-surface-variant">Strawberry Jam</span>
+                <span class="px-2 py-0.5 rounded-full bg-surface-container text-[11px] text-on-surface-variant">Rose Floral</span>
+                <span class="px-2 py-0.5 rounded-full bg-surface-container text-[11px] text-on-surface-variant">Lychee</span>
+              </div>
+              <div class="flex items-center gap-1 text-amber-500 font-bold text-sm">
+                <span class="material-symbols-outlined text-[18px] fill-1">star</span>
+                <span class="text-primary">4.9</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filterable Journal Timeline Stream -->
+        <div class="flex flex-col gap-2 mt-2">
+          <div class="flex items-center justify-between">
+            <h3 class="font-serif text-lg font-bold text-primary">Journal History</h3>
+            <span class="text-xs text-on-surface-variant">Filtered by preparation</span>
+          </div>
+
+          <!-- Method Filter Chips -->
+          <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1">
+            <button class="pill-filter journal-filter-btn active" data-filter="All">All</button>
+            <button class="pill-filter journal-filter-btn" data-filter="Pour Over">Pour Over</button>
+            <button class="pill-filter journal-filter-btn" data-filter="Batch Brew">Batch Brew</button>
+            <button class="pill-filter journal-filter-btn" data-filter="Espresso">Espresso</button>
+            <button class="pill-filter journal-filter-btn" data-filter="Cold Brew">Cold Brew</button>
+          </div>
+
+          <!-- Journal Feed Cards Stream -->
+          <div id="journalFeedContainer" class="flex flex-col gap-3 mt-1">
+            <!-- Dynamically populated by renderJournalScreen() -->
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ========================================== -->
+      <!-- VIEW 2: BEAN & ROASTER VAULT (#vault)      -->
+      <!-- ========================================== -->
+      <section id="screen-vault" class="hidden flex flex-col gap-4">
+        
+        <!-- Search Input Bar -->
+        <div class="relative flex items-center">
+          <span class="material-symbols-outlined absolute left-3.5 text-on-surface-variant pointer-events-none text-[20px]">search</span>
+          <input id="vaultSearchInput" type="text" placeholder="Search beans, origins, roasters..." 
+                 class="w-full h-11 pl-11 pr-11 bg-surface-container rounded-xl text-xs text-on-surface placeholder:text-on-surface-variant/70 focus:outline-none border border-outline-variant/30 shadow-sm transition-all">
+          <button onclick="openModal('modal-ocr-scanner')" class="absolute right-2.5 w-7 h-7 rounded-lg bg-surface flex items-center justify-center text-on-surface-variant shadow-sm active:scale-95 transition-transform" title="Scan Barcode / Label">
+            <span class="material-symbols-outlined text-[18px]">photo_camera</span>
+          </button>
+        </div>
+
+        <!-- Inventory Segment Filter Chips -->
+        <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5">
+          <button class="pill-filter vault-segment-btn active flex items-center gap-1.5" data-segment="ACTIVE">
+            <span>Active Bags</span>
+            <span id="badgeActiveBeans" class="w-4 h-4 rounded-full bg-secondary text-white text-[10px] flex items-center justify-center font-bold">3</span>
+          </button>
+          <button class="pill-filter vault-segment-btn flex items-center gap-1.5" data-segment="FINISHED">
+            <span>Finished</span>
+            <span id="badgeFinishedBeans" class="w-4 h-4 rounded-full bg-surface-container-highest text-on-surface-variant text-[10px] flex items-center justify-center">1</span>
+          </button>
+          <button class="pill-filter vault-segment-btn flex items-center gap-1.5" data-segment="WISHLIST">
+            <span>Wishlist</span>
+            <span id="badgeWishlistBeans" class="w-4 h-4 rounded-full bg-surface-container-highest text-on-surface-variant text-[10px] flex items-center justify-center">1</span>
+          </button>
+        </div>
+
+        <!-- AI OCR Bag Scanner Hero Card -->
+        <div onclick="openModal('modal-ocr-scanner')" class="group relative overflow-hidden bg-primary-container text-white rounded-2xl p-4 shadow-md cursor-pointer transition-all active:scale-[0.99] border border-secondary/20">
+          <div class="absolute -right-6 -bottom-6 w-28 h-28 rounded-full bg-secondary/25 blur-xl pointer-events-none"></div>
+          <div class="relative z-10 flex items-center justify-between">
+            <div class="flex items-center gap-3 min-w-0">
+              <div class="w-11 h-11 rounded-xl bg-white/10 backdrop-blur-md flex items-center justify-center text-secondary flex-shrink-0 shadow-inner">
+                <span class="material-symbols-outlined text-[24px]">photo_camera</span>
+              </div>
+              <div class="flex flex-col min-w-0">
+                <div class="flex items-center gap-1.5">
+                  <span class="font-serif text-base font-bold text-white tracking-tight">Scan New Bag</span>
+                  <span class="px-1.5 py-0.5 rounded bg-secondary text-white text-[10px] uppercase font-bold tracking-wider">AI OCR</span>
+                </div>
+                <span class="text-xs text-white/70 truncate mt-0.5">Instant roast date, origin & tasting note logging</span>
+              </div>
+            </div>
+            <span class="material-symbols-outlined text-white text-[20px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+          </div>
+        </div>
+
+        <!-- Section Title: Currently Dialing In -->
+        <div class="flex items-baseline justify-between mt-1">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+            <h2 class="font-serif text-lg font-bold text-primary">Currently Dialing In</h2>
+          </div>
+          <span class="text-xs text-on-surface-variant font-medium">Whole bean inventory</span>
+        </div>
+
+        <!-- Bean Inventory Cards Stack -->
+        <div id="vaultBeansContainer" class="flex flex-col gap-3">
+          <!-- Dynamically populated by renderVaultScreen() -->
+        </div>
+
+        <!-- Section: Saved & Past Roasters Collection -->
+        <div class="mt-4 flex flex-col gap-3">
+          <div class="flex items-baseline justify-between">
+            <div class="flex flex-col">
+              <h2 class="font-serif text-lg font-bold text-primary">Saved Roasters</h2>
+              <span class="text-xs text-on-surface-variant">Partners & cupping archives</span>
+            </div>
+            <button onclick="showToast('Browsing 18 partner roastery archives')" class="text-xs font-semibold text-secondary hover:underline">View All (18)</button>
+          </div>
+
+          <!-- 2-Column Roaster Showcase -->
+          <div class="grid grid-cols-2 gap-2.5">
+            <!-- Roaster 1: Tim Wendelboe -->
+            <div onclick="showToast('Tim Wendelboe: 5 past harvests in vault')" class="card-nordic p-3.5 flex flex-col justify-between gap-3 cursor-pointer group hover:border-secondary/40">
+              <div class="flex items-center justify-between">
+                <div class="w-9 h-9 rounded-full bg-surface-container-highest flex items-center justify-center font-serif text-sm font-bold text-primary">
+                  TW
+                </div>
+                <span class="text-[10px] px-2 py-0.5 rounded-full bg-surface-container-highest text-on-surface-variant font-medium">Oslo</span>
+              </div>
+              <div>
+                <h4 class="font-serif text-sm font-bold text-primary truncate group-hover:text-secondary transition-colors">Tim Wendelboe</h4>
+                <span class="text-[11px] text-on-surface-variant mt-0.5 block">5 past harvests</span>
+              </div>
+            </div>
+
+            <!-- Roaster 2: Onyx Coffee Lab -->
+            <div onclick="showToast('Onyx Coffee Lab: 8 past harvests in vault')" class="card-nordic p-3.5 flex flex-col justify-between gap-3 cursor-pointer group hover:border-secondary/40">
+              <div class="flex items-center justify-between">
+                <div class="w-9 h-9 rounded-full bg-surface-container-highest flex items-center justify-center font-serif text-sm font-bold text-primary">
+                  OX
+                </div>
+                <span class="text-[10px] px-2 py-0.5 rounded-full bg-surface-container-highest text-on-surface-variant font-medium">Arkansas</span>
+              </div>
+              <div>
+                <h4 class="font-serif text-sm font-bold text-primary truncate group-hover:text-secondary transition-colors">Onyx Coffee Lab</h4>
+                <span class="text-[11px] text-on-surface-variant mt-0.5 block">8 past harvests</span>
+              </div>
+            </div>
+
+            <!-- Roaster 3: Prodigal Coffee -->
+            <div onclick="showToast('Prodigal Coffee: 3 past harvests in vault')" class="card-nordic p-3.5 flex flex-col justify-between gap-3 cursor-pointer group hover:border-secondary/40">
+              <div class="flex items-center justify-between">
+                <div class="w-9 h-9 rounded-full bg-surface-container-highest flex items-center justify-center font-serif text-sm font-bold text-primary">
+                  PR
+                </div>
+                <span class="text-[10px] px-2 py-0.5 rounded-full bg-surface-container-highest text-on-surface-variant font-medium">Boulder</span>
+              </div>
+              <div>
+                <h4 class="font-serif text-sm font-bold text-primary truncate group-hover:text-secondary transition-colors">Prodigal Coffee</h4>
+                <span class="text-[11px] text-on-surface-variant mt-0.5 block">3 past harvests</span>
+              </div>
+            </div>
+
+            <!-- Roaster 4: Gardelli Specialty -->
+            <div onclick="showToast('Gardelli Specialty: 6 past harvests in vault')" class="card-nordic p-3.5 flex flex-col justify-between gap-3 cursor-pointer group hover:border-secondary/40">
+              <div class="flex items-center justify-between">
+                <div class="w-9 h-9 rounded-full bg-surface-container-highest flex items-center justify-center font-serif text-sm font-bold text-primary">
+                  GA
+                </div>
+                <span class="text-[10px] px-2 py-0.5 rounded-full bg-surface-container-highest text-on-surface-variant font-medium">Forlì</span>
+              </div>
+              <div>
+                <h4 class="font-serif text-sm font-bold text-primary truncate group-hover:text-secondary transition-colors">Gardelli</h4>
+                <span class="text-[11px] text-on-surface-variant mt-0.5 block">6 past harvests</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- VIEW 3: CAFE MAP & PASSPORT (#cafes)       -->
+      <!-- ========================================== -->
+      <section id="screen-cafes" class="hidden flex flex-col gap-4">
+
+        <!-- Search & Location Context Bar -->
+        <div class="pt-1 pb-1 flex flex-col gap-2">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-1.5 text-on-surface-variant">
+              <span class="material-symbols-outlined text-[18px] text-secondary">location_on</span>
+              <span class="text-xs font-semibold tracking-wide text-on-surface">Copenhagen, Vesterbro</span>
+              <span class="text-outline-variant">•</span>
+              <span class="text-[11px] text-on-surface-variant">within 3 km</span>
+            </div>
+            <button class="flex items-center gap-1 bg-surface-container-high px-2.5 py-1 rounded-full text-on-surface-variant hover:text-primary transition-colors">
+              <span class="material-symbols-outlined text-[14px] text-secondary">tune</span>
+              <span class="text-[11px] font-semibold">Radius 3 km</span>
+            </button>
+          </div>
+          <!-- Search Input Shell -->
+          <div class="relative flex items-center">
+            <span class="material-symbols-outlined absolute left-3.5 text-[20px] text-outline">search</span>
+            <input id="cafeSearchInput" class="w-full h-11 pl-10 pr-10 bg-surface-container rounded-xl text-xs text-on-surface placeholder:text-outline outline-none focus:bg-surface-container-low transition-colors" placeholder="Search cafes, roasteries, pour-over bars..." type="text">
+            <button aria-label="Voice Search" class="absolute right-2.5 w-7 h-7 flex items-center justify-center text-outline hover:text-secondary">
+              <span class="material-symbols-outlined text-[18px]">mic</span>
+            </button>
+          </div>
+          <!-- Quick Filter Pills -->
+          <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
+            <button class="pill-filter cafe-filter-btn active whitespace-nowrap px-3 py-1.5 rounded-full text-xs font-semibold" data-filter="ALL">
+              All Nearby (12)
+            </button>
+            <button class="pill-filter cafe-filter-btn whitespace-nowrap px-3 py-1.5 rounded-full text-xs font-semibold" data-filter="VISITED">
+              Dined In (8)
+            </button>
+            <button class="pill-filter cafe-filter-btn whitespace-nowrap px-3 py-1.5 rounded-full text-xs font-semibold" data-filter="WISHLIST">
+              Wishlist (4)
+            </button>
+            <button class="pill-filter cafe-filter-btn whitespace-nowrap px-3 py-1.5 rounded-full text-xs font-semibold" data-filter="SINGLE_ORIGIN">
+              Single Origin Filter
+            </button>
+            <button class="pill-filter cafe-filter-btn whitespace-nowrap px-3 py-1.5 rounded-full text-xs font-semibold" data-filter="MATCHA">
+              Specialty Matcha/Bakes
+            </button>
+          </div>
+        </div>
+
+        <!-- Passport Summary Metric Strip -->
+        <div class="my-0.5">
+          <div class="bg-surface-container-low rounded-xl p-3 shadow-sm flex items-center justify-between border border-outline-variant/30">
+            <div class="flex flex-col items-center flex-1 px-1 text-center">
+              <div class="flex items-center gap-1 text-secondary">
+                <span class="material-symbols-outlined text-[18px]">bookmark_check</span>
+                <span id="passportExploredCount" class="font-serif text-lg font-bold text-primary">8</span>
+              </div>
+              <span class="text-[10px] text-on-surface-variant mt-0.5 font-medium uppercase">Cafes Explored</span>
+            </div>
+            <div class="w-px h-8 bg-outline-variant/40"></div>
+            <div class="flex flex-col items-center flex-1 px-1 text-center">
+              <div class="flex items-center gap-1 text-secondary">
+                <span class="material-symbols-outlined text-[18px]">local_cafe</span>
+                <span id="passportDrinksCount" class="font-serif text-lg font-bold text-primary">14</span>
+              </div>
+              <span class="text-[10px] text-on-surface-variant mt-0.5 font-medium uppercase">Tasting Drinks</span>
+            </div>
+            <div class="w-px h-8 bg-outline-variant/40"></div>
+            <div class="flex flex-col items-center flex-1 px-1 text-center">
+              <div class="flex items-center gap-1 text-secondary">
+                <span class="material-symbols-outlined text-[18px] fill-1">star</span>
+                <span id="passportRatingCount" class="font-serif text-lg font-bold text-primary">4.85</span>
+              </div>
+              <span class="text-[10px] text-on-surface-variant mt-0.5 font-medium uppercase">Avg Rating</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Interactive Nordic Cartography Card -->
+        <div class="relative w-full h-72 rounded-2xl overflow-hidden shadow-md bg-[#F4ECE6] dark:bg-[#1a120e] border border-outline-variant/40">
+          <!-- Vector Map Canvas (Artisanal Copenhagen Warm Tones) -->
+          <svg class="absolute inset-0 w-full h-full object-cover" fill="none" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+            <!-- Land Mass & Warm Ground -->
+            <rect fill="#F4ECE6" height="300" width="400"></rect>
+            <!-- Canals and Waterways in muted soft slate slate-caramel -->
+            <path d="M-20 60 C80 90, 160 30, 240 70 C310 100, 370 60, 420 85 L420 120 C360 95, 290 140, 210 100 C150 70, 70 120, -20 90 Z" fill="#E2D4C8" opacity="0.6"></path>
+            <path d="M280 0 C300 70, 310 150, 290 300 L320 300 C340 150, 330 60, 310 0 Z" fill="#E2D4C8" opacity="0.5"></path>
+            <!-- Parks / Green Reserves in muted sage tint -->
+            <path d="M40 180 C60 170, 120 175, 130 210 C140 240, 90 270, 50 250 C20 230, 25 190, 40 180 Z" fill="#CBEBC3" fill-opacity="0.35"></path>
+            <path d="M240 200 C270 190, 340 195, 360 230 C340 260, 270 270, 240 240 Z" fill="#CBEBC3" fill-opacity="0.35"></path>
+            <!-- Urban Blocks & Secondary Roads -->
+            <path d="M-10 140 L410 150" stroke="#EDE2D8" stroke-linecap="round" stroke-width="14"></path>
+            <path d="M90 -10 L110 310" stroke="#EDE2D8" stroke-linecap="round" stroke-width="12"></path>
+            <path d="M190 -10 L180 310" stroke="#EDE2D8" stroke-linecap="round" stroke-width="16"></path>
+            <path d="M20 70 L390 260" stroke="#EDE2D8" stroke-linecap="round" stroke-width="10"></path>
+            <path d="M-10 240 L300 210" stroke="#EDE2D8" stroke-width="8"></path>
+            <!-- Primary Arterials (Espresso Warm Tint) -->
+            <path d="M10 145 C120 150, 210 170, 390 140" stroke="#74584E" stroke-dasharray="4 4" stroke-opacity="0.22" stroke-width="3"></path>
+            <path d="M185 0 C180 120, 195 210, 180 300" stroke="#74584E" stroke-opacity="0.25" stroke-width="3"></path>
+          </svg>
+
+          <!-- User Live Location Pulse Dot -->
+          <div class="absolute left-[38%] top-[55%] -translate-x-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-none">
+            <span class="w-8 h-8 rounded-full bg-secondary/20 animate-ping absolute"></span>
+            <span class="w-4 h-4 rounded-full bg-surface-container-lowest shadow-md flex items-center justify-center">
+              <span class="w-2.5 h-2.5 rounded-full bg-secondary"></span>
+            </span>
+          </div>
+
+          <!-- Dynamic Interactive Map Pins Overlay -->
+          <div id="mapPinsContainer" class="absolute inset-0">
+            <!-- Dynamically populated by renderCafesScreen() -->
+          </div>
+
+          <!-- Map Controls & Floating Utilities -->
+          <div class="absolute top-2.5 right-2.5 flex flex-col gap-1.5 z-20">
+            <button aria-label="Recenter Map" onclick="recenterMap()" class="w-9 h-9 rounded-xl bg-surface-container-lowest/90 backdrop-blur text-on-surface flex items-center justify-center shadow-md hover:bg-surface transition-colors" title="Recenter Map">
+              <span class="material-symbols-outlined text-[18px]">my_location</span>
+            </button>
+            <button aria-label="Layer Options" onclick="toggleMapLayers()" class="w-9 h-9 rounded-xl bg-surface-container-lowest/90 backdrop-blur text-on-surface flex items-center justify-center shadow-md hover:bg-surface transition-colors" title="Layer Options">
+              <span class="material-symbols-outlined text-[18px]">layers</span>
+            </button>
+          </div>
+
+          <!-- Floating Bottom Left Legend / View Toggle -->
+          <div class="absolute bottom-2.5 left-2.5 right-2.5 flex items-center justify-between pointer-events-none z-20">
+            <div class="pointer-events-auto bg-surface-container-lowest/90 backdrop-blur px-2.5 py-1 rounded-full shadow-sm flex items-center gap-2">
+              <div class="flex items-center gap-1">
+                <span class="w-2 h-2 rounded-full bg-primary-container"></span>
+                <span class="text-[10px] text-on-surface-variant font-medium">Visited</span>
+              </div>
+              <div class="flex items-center gap-1">
+                <span class="w-2 h-2 rounded-full bg-outline-variant"></span>
+                <span class="text-[10px] text-on-surface-variant font-medium">Wishlist</span>
+              </div>
+            </div>
+            <button onclick="scrollToCafesList()" class="pointer-events-auto bg-primary-container text-on-primary px-3 py-1.5 rounded-full text-xs font-semibold shadow-md flex items-center gap-1 hover:bg-secondary transition-colors">
+              <span class="material-symbols-outlined text-[16px]">expand_less</span>
+              <span>Dossier View</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Cafe Cards & Detailed Dining Dossiers -->
+        <div id="cafesCardsContainer" class="flex flex-col gap-4">
+          <!-- Dynamically populated by renderCafesScreen() -->
+        </div>
+
+        <!-- Ambient Footer Delight Callout -->
+        <div class="pb-4 pt-2 flex flex-col items-center text-center">
+          <div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center text-secondary mb-2">
+            <span class="material-symbols-outlined text-[22px]">explore</span>
+          </div>
+          <span class="font-serif text-base font-semibold text-primary">Curated for Serious Palates</span>
+          <p class="text-xs text-on-surface-variant max-w-xs mt-1">
+            AfterTaste Passport automatically matches roast profiles from your home logs to nearby cafe menus.
+          </p>
+        </div>
+
+      </section>
+
+      <!-- ========================================== -->
+      <!-- VIEW 4: SENSORY & BREW ANALYTICS (#analytics) -->
+      <!-- ========================================== -->
+      <section id="screen-analytics" class="hidden flex flex-col gap-4">
+
+        <!-- Enthusiast Coffee Passport Card -->
+        <div class="relative overflow-hidden rounded-2xl bg-primary-container text-white p-4 shadow-xl border border-secondary/20">
+          <div class="absolute -right-10 -top-10 w-40 h-40 rounded-full bg-secondary/20 blur-2xl pointer-events-none"></div>
+          <div class="relative z-10 flex flex-col gap-3">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-[18px] text-secondary-container fill-1">verified</span>
+                <span class="text-[11px] uppercase tracking-wider font-bold text-secondary-container">Enthusiast Coffee Passport</span>
+              </div>
+              <span class="text-[10px] px-2 py-0.5 rounded-full bg-white/10 text-white font-mono">N° 0842-DK</span>
+            </div>
+
+            <div class="flex flex-col">
+              <span class="text-[10px] uppercase tracking-wider text-white/60">Palate Level</span>
+              <h2 class="font-serif text-2xl font-bold text-white tracking-tight">Seasoned Cupper</h2>
+            </div>
+
+            <div class="grid grid-cols-3 gap-2 pt-1 border-t border-white/10 text-center">
+              <div class="bg-white/10 p-2 rounded-xl backdrop-blur-sm">
+                <span class="font-serif text-lg font-bold text-white leading-tight">48</span>
+                <p class="text-[10px] text-white/70 mt-0.5">Total Brews</p>
+              </div>
+              <div class="bg-white/10 p-2 rounded-xl backdrop-blur-sm">
+                <span class="font-serif text-lg font-bold text-white leading-tight">14</span>
+                <p class="text-[10px] text-white/70 mt-0.5">Origins Explored</p>
+              </div>
+              <div class="bg-white/10 p-2 rounded-xl backdrop-blur-sm">
+                <span class="font-serif text-base font-bold text-secondary-container leading-tight">Washed ETH</span>
+                <p class="text-[10px] text-white/70 mt-0.5">Top Profile</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5-Axis Flavor Equilibrium Radar Polygon -->
+        <div class="card-nordic p-4 flex flex-col gap-3">
+          <div class="flex items-center justify-between">
+            <div>
+              <span class="text-[10px] uppercase tracking-wider text-secondary font-bold">Palate Architecture</span>
+              <h3 class="font-serif text-lg font-bold text-primary">Flavor Equilibrium</h3>
+            </div>
+            <span class="text-[11px] bg-surface-container px-2.5 py-1 rounded-full text-on-surface-variant font-medium">Last 30 Days</span>
+          </div>
+
+          <!-- Dynamic SVG Radar Chart -->
+          <div class="relative flex items-center justify-center py-2">
+            <svg id="sensoryRadarSvg" class="w-full max-w-[280px] h-[250px] overflow-visible" viewBox="0 0 280 250">
+              <!-- Concentric Guide Polygons (20%, 40%, 60%, 80%, 100%) -->
+              <polygon points="140,40 225.6,102.2 192.9,202.8 87.1,202.8 54.4,102.2" class="radar-grid" />
+              <polygon points="140,58 208.5,107.8 182.3,188.2 97.7,188.2 71.5,107.8" class="radar-grid" />
+              <polygon points="140,76 191.4,113.3 171.7,173.7 108.3,173.7 88.6,113.3" class="radar-grid" />
+              <polygon points="140,94 174.2,118.9 161.1,159.1 118.9,159.1 105.8,118.9" class="radar-grid" />
+              <polygon points="140,112 157.1,124.4 150.6,144.6 129.4,144.6 122.9,124.4" class="radar-grid" />
+
+              <!-- Axis Rays from Center (140, 130) -->
+              <line x1="140" y1="130" x2="140" y2="40" class="radar-axis" />
+              <line x1="140" y1="130" x2="225.6" y2="102.2" class="radar-axis" />
+              <line x1="140" y1="130" x2="192.9" y2="202.8" class="radar-axis" />
+              <line x1="140" y1="130" x2="87.1" y2="202.8" class="radar-axis" />
+              <line x1="140" y1="130" x2="54.4" y2="102.2" class="radar-axis" />
+
+              <!-- Data Filled Polygon -->
+              <polygon id="radarDataPolygon" points="140,56 210,105 180,185 92,185 70,110" class="radar-polygon" />
+
+              <!-- Vertex Highlight Nodes -->
+              <circle id="radarPoint0" cx="140" cy="56" r="4.5" class="radar-point" />
+              <circle id="radarPoint1" cx="210" cy="105" r="4.5" class="radar-point" />
+              <circle id="radarPoint2" cx="180" cy="185" r="4.5" class="radar-point" />
+              <circle id="radarPoint3" cx="92" cy="185" r="4.5" class="radar-point" />
+              <circle id="radarPoint4" cx="70" cy="110" r="4.5" class="radar-point" />
+
+              <!-- Axis Labels -->
+              <text x="140" y="28" text-anchor="middle" class="text-[11px] font-bold fill-primary font-sans">Acidity</text>
+              <text x="242" y="105" text-anchor="start" class="text-[11px] font-bold fill-primary font-sans">Sweetness</text>
+              <text x="205" y="218" text-anchor="middle" class="text-[11px] font-bold fill-primary font-sans">Body</text>
+              <text x="75" y="218" text-anchor="middle" class="text-[11px] font-bold fill-primary font-sans">Clarity</text>
+              <text x="38" y="105" text-anchor="end" class="text-[11px] font-bold fill-primary font-sans">Bitterness</text>
+            </svg>
+          </div>
+
+          <!-- 5-Metric Value Strip -->
+          <div class="grid grid-cols-5 gap-1.5 text-center bg-surface-container-low p-2 rounded-xl border border-outline-variant/30 text-xs">
+            <div>
+              <span class="text-[10px] text-on-surface-variant block">Acidity</span>
+              <span id="metricAcidity" class="font-bold text-primary">82%</span>
+            </div>
+            <div>
+              <span class="text-[10px] text-on-surface-variant block">Sweet</span>
+              <span id="metricSweetness" class="font-bold text-primary">76%</span>
+            </div>
+            <div>
+              <span class="text-[10px] text-on-surface-variant block">Body</span>
+              <span id="metricBody" class="font-bold text-primary">65%</span>
+            </div>
+            <div>
+              <span class="text-[10px] text-on-surface-variant block">Clarity</span>
+              <span id="metricClarity" class="font-bold text-primary">88%</span>
+            </div>
+            <div>
+              <span class="text-[10px] text-on-surface-variant block">Bitter</span>
+              <span id="metricBitterness" class="font-bold text-primary">32%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dominant Aroma Frequency Breakdown -->
+        <div class="card-nordic p-4 flex flex-col gap-3">
+          <div class="flex items-center justify-between">
+            <h3 class="font-serif text-lg font-bold text-primary">Dominant Aroma Frequency</h3>
+            <span class="text-xs text-secondary font-semibold">Tasting Wheel Affinity</span>
+          </div>
+
+          <div class="flex flex-col gap-2.5">
+            <!-- Aroma 1 -->
+            <div class="flex flex-col gap-1">
+              <div class="flex items-center justify-between text-xs">
+                <span class="font-medium text-primary">Citrus & Bergamot (Floral / Fruity)</span>
+                <span class="font-bold text-secondary">52%</span>
+              </div>
+              <div class="w-full h-2 rounded-full bg-surface-container overflow-hidden">
+                <div class="h-full rounded-full bg-secondary" style="width: 52%;"></div>
+              </div>
+            </div>
+            <!-- Aroma 2 -->
+            <div class="flex flex-col gap-1">
+              <div class="flex items-center justify-between text-xs">
+                <span class="font-medium text-primary">Jasmine & White Flowers (Floral)</span>
+                <span class="font-bold text-secondary">44%</span>
+              </div>
+              <div class="w-full h-2 rounded-full bg-surface-container overflow-hidden">
+                <div class="h-full rounded-full bg-secondary" style="width: 44%;"></div>
+              </div>
+            </div>
+            <!-- Aroma 3 -->
+            <div class="flex flex-col gap-1">
+              <div class="flex items-center justify-between text-xs">
+                <span class="font-medium text-primary">Stone Fruit & Peach (Fruity)</span>
+                <span class="font-bold text-secondary">38%</span>
+              </div>
+              <div class="w-full h-2 rounded-full bg-surface-container overflow-hidden">
+                <div class="h-full rounded-full bg-secondary" style="width: 38%;"></div>
+              </div>
+            </div>
+            <!-- Aroma 4 -->
+            <div class="flex flex-col gap-1">
+              <div class="flex items-center justify-between text-xs">
+                <span class="font-medium text-primary">Dark Chocolate & Cacao (Roasted)</span>
+                <span class="font-bold text-secondary">30%</span>
+              </div>
+              <div class="w-full h-2 rounded-full bg-surface-container overflow-hidden">
+                <div class="h-full rounded-full bg-secondary" style="width: 30%;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Terroir Archive & Origin Map -->
+        <div class="card-nordic p-4 flex flex-col gap-3">
+          <div class="flex items-center justify-between">
+            <h3 class="font-serif text-lg font-bold text-primary">Terroir Exploration Archive</h3>
+            <span class="text-xs text-on-surface-variant">4 Top Regions</span>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2.5">
+            <div class="bg-surface-container p-3 rounded-xl border border-outline-variant/30 flex flex-col gap-1">
+              <div class="flex items-center justify-between">
+                <span class="text-lg">🇪🇹</span>
+                <span class="text-xs font-bold text-secondary">18 Lots</span>
+              </div>
+              <h5 class="font-serif text-sm font-bold text-primary">Ethiopia</h5>
+              <span class="text-[10px] text-on-surface-variant">1,900m – 2,200m • Washed & Natural</span>
+            </div>
+            <div class="bg-surface-container p-3 rounded-xl border border-outline-variant/30 flex flex-col gap-1">
+              <div class="flex items-center justify-between">
+                <span class="text-lg">🇨🇴</span>
+                <span class="text-xs font-bold text-secondary">14 Lots</span>
+              </div>
+              <h5 class="font-serif text-sm font-bold text-primary">Colombia</h5>
+              <span class="text-[10px] text-on-surface-variant">1,750m – 2,050m • Thermal Shock</span>
+            </div>
+            <div class="bg-surface-container p-3 rounded-xl border border-outline-variant/30 flex flex-col gap-1">
+              <div class="flex items-center justify-between">
+                <span class="text-lg">🇰🇪</span>
+                <span class="text-xs font-bold text-secondary">9 Lots</span>
+              </div>
+              <h5 class="font-serif text-sm font-bold text-primary">Kenya</h5>
+              <span class="text-[10px] text-on-surface-variant">1,800m – 2,100m • SL28/SL34</span>
+            </div>
+            <div class="bg-surface-container p-3 rounded-xl border border-outline-variant/30 flex flex-col gap-1">
+              <div class="flex items-center justify-between">
+                <span class="text-lg">🇭🇳</span>
+                <span class="text-xs font-bold text-secondary">7 Lots</span>
+              </div>
+              <h5 class="font-serif text-sm font-bold text-primary">Honduras</h5>
+              <span class="text-[10px] text-on-surface-variant">1,500m – 1,700m • Geisha Honey</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Smart Roast Recommendations -->
+        <div class="card-nordic p-4 flex flex-col gap-3">
+          <div class="flex items-center justify-between">
+            <h3 class="font-serif text-lg font-bold text-primary">Smart Roast Recommendations</h3>
+            <span class="text-xs text-secondary font-semibold">98% Palate Affinity</span>
+          </div>
+
+          <div class="flex flex-col gap-2">
+            <div class="flex items-center justify-between p-2.5 rounded-xl bg-surface-container border border-outline-variant/30">
+              <div class="flex-1 min-w-0 pr-2">
+                <span class="text-[10px] text-secondary font-bold uppercase tracking-wider">Tim Wendelboe</span>
+                <h5 class="font-serif text-sm font-bold text-primary truncate">Caballero Geisha (Washed)</h5>
+                <p class="text-[11px] text-on-surface-variant">Matches high affinity for Jasmine & Peach clarity</p>
+              </div>
+              <button onclick="openModal('modal-log-brew')" class="px-3 py-1.5 rounded-lg bg-secondary text-white text-xs font-semibold">
+                Brew
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+    </main>
+
+    <!-- 2. PERSISTENT BOTTOM NAVIGATION BAR -->
+    <nav class="fixed bottom-0 max-w-[430px] w-full z-40 bottom-nav-glass">
+      <div class="flex items-center justify-around h-16 px-3 relative">
+        <!-- Tab 1: Journal -->
+        <button data-tab="journal" class="bottom-nav-item flex flex-col items-center justify-center flex-1 h-full text-secondary font-bold transition-colors">
+          <span class="material-symbols-outlined text-[22px]">local_cafe</span>
+          <span class="text-[11px] mt-0.5">Journal</span>
+        </button>
+
+        <!-- Tab 2: Vault -->
+        <button data-tab="vault" class="bottom-nav-item flex flex-col items-center justify-center flex-1 h-full text-on-surface-variant transition-colors">
+          <span class="material-symbols-outlined text-[22px]">inventory_2</span>
+          <span class="text-[11px] mt-0.5">Vault</span>
+        </button>
+
+        <!-- Central Floating Action Button (Log New Brew) -->
+        <div class="flex-1 flex justify-center -translate-y-3">
+          <button id="fabQuickLogBtn" class="fab-quicklog" title="Log New Brew">
+            <span class="material-symbols-outlined text-[26px]">add</span>
+          </button>
+        </div>
+
+        <!-- Tab 3: Analytics -->
+        <button data-tab="analytics" class="bottom-nav-item flex flex-col items-center justify-center flex-1 h-full text-on-surface-variant transition-colors">
+          <span class="material-symbols-outlined text-[22px]">ssid_chart</span>
+          <span class="text-[11px] mt-0.5">Analytics</span>
+        </button>
+
+        <!-- Tab 4: Cafes -->
+        <button data-tab="cafes" class="bottom-nav-item flex flex-col items-center justify-center flex-1 h-full text-on-surface-variant transition-colors">
+          <span class="material-symbols-outlined text-[22px]">storefront</span>
+          <span class="text-[11px] mt-0.5">Cafes</span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- ========================================== -->
+    <!-- STACK MODALS & SHEETS                      -->
+    <!-- ========================================== -->
+
+    <!-- MODAL 1: LOG NEW BREW MODAL SHEET -->
+    <div id="modal-log-brew" class="modal-overlay">
+      <div class="modal-sheet p-5 flex flex-col gap-4">
+        <!-- Header -->
+        <div class="flex items-center justify-between pb-3 border-b border-outline-variant/30">
+          <div class="flex items-center gap-2">
+            <div class="w-8 h-8 rounded-full bg-secondary-container/30 flex items-center justify-center text-secondary">
+              <span class="material-symbols-outlined text-[18px]">add_circle</span>
+            </div>
+            <div>
+              <h3 class="font-serif text-lg font-bold text-primary">Log New Brew</h3>
+              <p class="text-[11px] text-on-surface-variant">Record your cafe experience or home cup</p>
+            </div>
+          </div>
+          <button onclick="closeModal('modal-log-brew')" class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant hover:text-primary">
+            <span class="material-symbols-outlined text-[18px]">close</span>
+          </button>
+        </div>
+
+        <!-- Form Body -->
+        <form id="logBrewForm" class="flex flex-col gap-3.5">
+          <!-- Method Selector -->
+          <div>
+            <label class="block text-xs font-bold text-primary mb-1 uppercase tracking-wider">Preparation / Method</label>
+            <select id="logMethodSelect" class="w-full h-11 px-3 bg-surface-container rounded-xl text-xs text-on-surface border border-outline-variant/30 focus:outline-none">
+              <option value="Pour Over">Pour Over (V60, Kalita, Chemex)</option>
+              <option value="Espresso">Espresso / Cortado</option>
+              <option value="Batch Brew">Batch Brew / Daily Drip</option>
+              <option value="Milk Beverage">Milk Beverage (Flat White, Latte)</option>
+              <option value="Cold Brew">Cold Brew / Iced Tonic</option>
+            </select>
+          </div>
+
+          <!-- Cafe & Roaster Fields -->
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-xs font-bold text-primary mb-1 uppercase tracking-wider">Cafe / Location</label>
+              <input id="logCafeInput" type="text" value="Prolog Coffee Bar" placeholder="e.g. Prolog Coffee Bar" class="w-full h-10 px-3 bg-surface-container rounded-xl text-xs text-on-surface border border-outline-variant/30 focus:outline-none" required>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-primary mb-1 uppercase tracking-wider">Roastery</label>
+              <input id="logRoasterInput" type="text" value="Sey Coffee Roasters" placeholder="e.g. Sey, April" class="w-full h-10 px-3 bg-surface-container rounded-xl text-xs text-on-surface border border-outline-variant/30 focus:outline-none" required>
+            </div>
+          </div>
+
+          <!-- Bean Name & Ratio -->
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-xs font-bold text-primary mb-1 uppercase tracking-wider">Bean / Lot</label>
+              <input id="logBeanInput" type="text" value="Colombia El Paraiso" placeholder="e.g. Colombia El Paraiso" class="w-full h-10 px-3 bg-surface-container rounded-xl text-xs text-on-surface border border-outline-variant/30 focus:outline-none" required>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-primary mb-1 uppercase tracking-wider">Ratio & Specs</label>
+              <input id="logRatioInput" type="text" value="1:16 Ratio • 15g / 240g" placeholder="e.g. 1:16 • 15g / 240g" class="w-full h-10 px-3 bg-surface-container rounded-xl text-xs text-on-surface border border-outline-variant/30 focus:outline-none">
+            </div>
+          </div>
+
+          <!-- Price & Rating -->
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-xs font-bold text-primary mb-1 uppercase tracking-wider">Price Paid</label>
+              <input id="logPriceInput" type="text" value="52 DKK" placeholder="e.g. 52 DKK" class="w-full h-10 px-3 bg-surface-container rounded-xl text-xs text-on-surface border border-outline-variant/30 focus:outline-none">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-primary mb-1 uppercase tracking-wider">Rating (1 to 5 ★)</label>
+              <input id="logRatingInput" type="number" step="0.1" min="1" max="5" value="4.9" class="w-full h-10 px-3 bg-surface-container rounded-xl text-xs text-on-surface border border-outline-variant/30 focus:outline-none" required>
+            </div>
+          </div>
+
+          <!-- Sensory Impressions Tag Cloud -->
+          <div>
+            <label class="block text-xs font-bold text-primary mb-1 uppercase tracking-wider">Sensory Impressions (Tap to toggle)</label>
+            <div class="flex flex-wrap gap-1.5 mt-1">
+              <button type="button" class="log-tag-pill pill-filter active">Floral & Jasmine</button>
+              <button type="button" class="log-tag-pill pill-filter active">Stone Fruit</button>
+              <button type="button" class="log-tag-pill pill-filter active">Citrus & Bergamot</button>
+              <button type="button" class="log-tag-pill pill-filter">Strawberry Jam</button>
+              <button type="button" class="log-tag-pill pill-filter">Dark Chocolate</button>
+              <button type="button" class="log-tag-pill pill-filter">Crisp Acidity</button>
+              <button type="button" class="log-tag-pill pill-filter">Silky Honey</button>
+            </div>
+          </div>
+
+          <!-- Tasting Memo Notes -->
+          <div>
+            <label class="block text-xs font-bold text-primary mb-1 uppercase tracking-wider">Tasting Notes Memo</label>
+            <textarea id="logNotesInput" rows="2" placeholder="Sensory impressions, atmosphere, barista notes..." class="w-full p-2.5 bg-surface-container rounded-xl text-xs text-on-surface border border-outline-variant/30 focus:outline-none">Silky tactile mouthfeel with wild floral jasmine fragrance on opening.</textarea>
+          </div>
+
+          <!-- Photo URL -->
+          <div>
+            <label class="block text-xs font-bold text-primary mb-1 uppercase tracking-wider">Photo URL</label>
+            <input id="logPhotoUrlInput" type="url" value="https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=600&q=80" class="w-full h-10 px-3 bg-surface-container rounded-xl text-xs text-on-surface border border-outline-variant/30 focus:outline-none">
+          </div>
+
+          <!-- Submit Button -->
+          <button type="submit" class="mt-2 w-full py-3 rounded-xl bg-secondary text-white font-bold text-xs uppercase tracking-wider shadow-lg hover:bg-caramel active:scale-95 transition-all">
+            Save to Coffee Journal
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- MODAL 2: AI OCR BAG SCANNER SIMULATOR -->
+    <div id="modal-ocr-scanner" class="modal-overlay">
+      <div class="modal-sheet p-5 flex flex-col gap-4">
+        <!-- Header -->
+        <div class="flex items-center justify-between pb-3 border-b border-outline-variant/30">
+          <div class="flex items-center gap-2">
+            <div class="w-8 h-8 rounded-full bg-secondary-container/30 flex items-center justify-center text-secondary">
+              <span class="material-symbols-outlined text-[18px]">document_scanner</span>
+            </div>
+            <div>
+              <h3 class="font-serif text-lg font-bold text-primary">AI OCR Bag Scanner</h3>
+              <p class="text-[11px] text-on-surface-variant">Neural extraction of roast date & origin</p>
+            </div>
+          </div>
+          <button onclick="closeModal('modal-ocr-scanner')" class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant hover:text-primary">
+            <span class="material-symbols-outlined text-[18px]">close</span>
+          </button>
+        </div>
+
+        <!-- Camera Viewfinder Simulation -->
+        <div class="relative w-full h-52 rounded-2xl overflow-hidden bg-black flex items-center justify-center border-2 border-dashed border-secondary/50">
+          <img src="https://images.unsplash.com/photo-1587734195503-904fca47e0e9?auto=format&fit=crop&w=600&q=80" alt="Bag viewfinder" class="w-full h-full object-cover opacity-75">
+          <!-- Sweeping Laser Scan Line -->
+          <div class="laser-line"></div>
+          <!-- Framing Reticle -->
+          <div class="absolute inset-4 border border-white/40 rounded-xl pointer-events-none flex flex-col justify-between p-2">
+            <div class="flex justify-between">
+              <span class="text-[10px] bg-black/60 text-white px-2 py-0.5 rounded font-mono">ALIGN COFFEE LABEL</span>
+              <span class="text-[10px] bg-secondary text-white px-1.5 py-0.5 rounded font-bold">OCR READY</span>
+            </div>
+            <span class="text-[10px] text-white/80 text-center font-medium bg-black/50 py-1 rounded">Position roaster and lot text in box</span>
+          </div>
+        </div>
+
+        <!-- Sample Label Presets for Instant Demo -->
+        <div>
+          <span class="text-xs font-bold text-primary uppercase tracking-wider block mb-1.5">Select Sample Bag Label</span>
+          <div class="grid grid-cols-3 gap-2">
+            <button onclick="selectOCRBagSample(0)" class="ocr-bag-preset-btn p-2 rounded-xl bg-surface-container border border-outline-variant/30 text-left hover:border-secondary transition-all">
+              <span class="text-[10px] font-bold text-secondary block">April Coffee</span>
+              <p class="text-xs font-bold text-primary truncate">Kenya AA</p>
+            </button>
+            <button onclick="selectOCRBagSample(1)" class="ocr-bag-preset-btn p-2 rounded-xl bg-surface-container border border-outline-variant/30 text-left hover:border-secondary transition-all border-secondary bg-secondary-container/20">
+              <span class="text-[10px] font-bold text-secondary block">Sey Coffee</span>
+              <p class="text-xs font-bold text-primary truncate">El Paraiso</p>
+            </button>
+            <button onclick="selectOCRBagSample(2)" class="ocr-bag-preset-btn p-2 rounded-xl bg-surface-container border border-outline-variant/30 text-left hover:border-secondary transition-all">
+              <span class="text-[10px] font-bold text-secondary block">Tim Wendelboe</span>
+              <p class="text-xs font-bold text-primary truncate">Geisha</p>
+            </button>
+          </div>
+        </div>
+
+        <!-- Trigger Scan Action Button -->
+        <button id="ocrAnalyzeBtn" onclick="simulateScanAction()" class="w-full py-3 rounded-xl bg-secondary text-white font-bold text-xs uppercase tracking-wider shadow-lg hover:bg-caramel active:scale-95 transition-all flex items-center justify-center gap-2">
+          <span class="material-symbols-outlined text-[18px]">document_scanner</span>
+          <span>Capture & Extract Label Info</span>
+        </button>
+
+        <!-- Dynamic Extracted Result Card Slot -->
+        <div id="ocrScanResultCard" class="hidden">
+          <!-- Populated by simulateScanAction() -->
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL 3: LIVE CAFE MENU PREVIEW -->
+    <div id="modal-live-menu" class="modal-overlay">
+      <div class="modal-sheet p-5 flex flex-col gap-4">
+        <div class="flex items-center justify-between pb-3 border-b border-outline-variant/30">
+          <div>
+            <h3 id="liveMenuCafeTitle" class="font-serif text-lg font-bold text-primary">Live Offerings</h3>
+            <p class="text-[11px] text-on-surface-variant">Real-time roastery and seasonal drip list</p>
+          </div>
+          <button onclick="closeModal('modal-live-menu')" class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant hover:text-primary">
+            <span class="material-symbols-outlined text-[18px]">close</span>
+          </button>
+        </div>
+
+        <div id="liveMenuItemsContainer" class="flex flex-col gap-2 max-h-[60vh] overflow-y-auto">
+          <!-- Populated by openLiveMenu() -->
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL 4: NOTIFICATIONS POPOVER -->
+    <div id="modal-notifications" class="modal-overlay">
+      <div class="modal-sheet p-5 flex flex-col gap-4">
+        <div class="flex items-center justify-between pb-2 border-b border-outline-variant/30">
+          <h3 class="font-serif text-lg font-bold text-primary">Sensory Notifications</h3>
+          <button onclick="closeModal('modal-notifications')" class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant">
+            <span class="material-symbols-outlined text-[18px]">close</span>
+          </button>
+        </div>
+
+        <div class="flex flex-col gap-2.5">
+          <div class="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-500/30 flex gap-2.5">
+            <span class="material-symbols-outlined text-emerald-600 text-[20px] flex-shrink-0">workspace_premium</span>
+            <div>
+              <h5 class="text-xs font-bold text-emerald-900 dark:text-emerald-200">Optimal Degassing Window Reached!</h5>
+              <p class="text-[11px] text-emerald-800 dark:text-emerald-300 mt-0.5">Your <em>Sey Colombia El Paraiso</em> is 11 days off roast—peak floral sweetness window.</p>
+            </div>
+          </div>
+          <div class="p-3 rounded-xl bg-surface-container border border-outline-variant/30 flex gap-2.5">
+            <span class="material-symbols-outlined text-secondary text-[20px] flex-shrink-0">award_star</span>
+            <div>
+              <h5 class="text-xs font-bold text-primary">Passport Milestone Unlocked</h5>
+              <p class="text-[11px] text-on-surface-variant mt-0.5">Earned "Seasoned Cupper" tier with 48 registered extractions!</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL 5: USER PROFILE DRAWER -->
+    <div id="modal-profile" class="modal-overlay">
+      <div class="modal-sheet p-5 flex flex-col gap-4">
+        <div class="flex items-center justify-between pb-2 border-b border-outline-variant/30">
+          <h3 class="font-serif text-lg font-bold text-primary">Cupper Profile</h3>
+          <button onclick="closeModal('modal-profile')" class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant">
+            <span class="material-symbols-outlined text-[18px]">close</span>
+          </button>
+        </div>
+
+        <div class="flex items-center gap-3 p-3 rounded-xl bg-surface-container">
+          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80" alt="Maya" class="w-14 h-14 rounded-full object-cover border-2 border-secondary">
+          <div>
+            <h4 class="font-serif text-base font-bold text-primary">Maya Lindqvist</h4>
+            <span class="text-xs text-secondary font-semibold">Copenhagen Cupper • N° 0842-DK</span>
+            <p class="text-[11px] text-on-surface-variant mt-0.5">maya.coffee@aftertaste.app</p>
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-2 pt-2">
+          <button onclick="showToast('Journal exported to AfterTaste-Backup.json'); closeModal('modal-profile');" class="w-full py-2.5 rounded-xl bg-surface-container text-xs font-bold text-primary flex items-center justify-center gap-2 hover:bg-surface-container-high transition-colors">
+            <span class="material-symbols-outlined text-[16px]">file_download</span>
+            <span>Export Journal Data (JSON / CSV)</span>
+          </button>
+          <button onclick="localStorage.clear(); location.reload();" class="w-full py-2 rounded-xl text-xs font-semibold text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/20 transition-colors">
+            Reset Demo Data to Initial Seeds
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- GLOBAL TOAST NOTIFICATION -->
+    <div id="globalToastBar" class="toast-bar">
+      <div class="bg-primary text-white px-4 py-3 rounded-xl shadow-2xl flex items-center justify-between border border-secondary/30">
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-secondary text-[20px]">check_circle</span>
+          <span id="globalToastMessage" class="text-xs font-semibold">Tasting saved to your Journal!</span>
+        </div>
+        <span class="text-[10px] text-white/60 font-mono">AfterTaste</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Core App Engine Script -->
+  <script src="app.js"></script>
+</body>
+</html>

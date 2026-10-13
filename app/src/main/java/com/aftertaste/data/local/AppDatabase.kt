@@ -12,6 +12,8 @@ import com.aftertaste.data.local.dao.WishlistCafeDao
 import com.aftertaste.data.local.entity.CafeVisit
 import com.aftertaste.data.local.entity.OrderedItem
 import com.aftertaste.data.local.entity.Photo
+import com.aftertaste.data.local.dao.BeanDao
+import com.aftertaste.data.local.entity.Bean
 import com.aftertaste.data.local.entity.Tag
 import com.aftertaste.data.local.entity.WishlistCafe
 
@@ -21,9 +23,10 @@ import com.aftertaste.data.local.entity.WishlistCafe
         OrderedItem::class,
         Tag::class,
         Photo::class,
-        WishlistCafe::class
+        WishlistCafe::class,
+        Bean::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -32,6 +35,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun tagDao(): TagDao
     abstract fun photoDao(): PhotoDao
     abstract fun wishlistCafeDao(): WishlistCafeDao
+    abstract fun beanDao(): BeanDao
 
     companion object {
         @Volatile

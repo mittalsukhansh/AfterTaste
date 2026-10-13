@@ -1,5 +1,6 @@
 package com.aftertaste.repository
 
+import com.aftertaste.data.local.entity.Bean
 import com.aftertaste.data.local.entity.Cafe
 import com.aftertaste.data.local.entity.CafeVisit
 import com.aftertaste.data.local.entity.CafeVisitWithDetails
@@ -35,4 +36,13 @@ interface CafeRepository {
 
     // Tags
     fun getAllTags(): Flow<List<String>>
+
+    // Bean Vault Operations
+    fun getAllBeans(): Flow<List<Bean>>
+    fun getBeansByStatus(status: String): Flow<List<Bean>>
+    fun getBeanById(id: Long): Flow<Bean?>
+    suspend fun saveBean(bean: Bean): Long
+    suspend fun deleteBean(id: Long)
+    suspend fun deductBeanWeight(id: Long, grams: Float)
+    suspend fun preseedBeansIfEmpty()
 }

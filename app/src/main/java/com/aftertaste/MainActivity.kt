@@ -48,6 +48,7 @@ fun MainAppContent() {
             database.tagDao(),
             database.photoDao(),
             database.wishlistCafeDao(),
+            database.beanDao()
         )
     }
     val viewModel: CafeViewModel = viewModel(factory = CafeViewModelFactory(repository))

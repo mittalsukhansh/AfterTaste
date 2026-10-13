@@ -1,10 +1,12 @@
 package com.aftertaste.repository
 
+import com.aftertaste.data.local.dao.BeanDao
 import com.aftertaste.data.local.dao.CafeVisitDao
 import com.aftertaste.data.local.dao.OrderedItemDao
 import com.aftertaste.data.local.dao.PhotoDao
 import com.aftertaste.data.local.dao.TagDao
 import com.aftertaste.data.local.dao.WishlistCafeDao
+import com.aftertaste.data.local.entity.Bean
 import com.aftertaste.data.local.entity.Cafe
 import com.aftertaste.data.local.entity.CafeVisit
 import com.aftertaste.data.local.entity.CafeVisitWithDetails
@@ -14,13 +16,15 @@ import com.aftertaste.data.local.entity.Tag
 import com.aftertaste.data.local.entity.WishlistCafe
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.emptyFlow
 
 class CafeRepositoryImpl(
     private val cafeVisitDao: CafeVisitDao,
     private val orderedItemDao: OrderedItemDao,
     private val tagDao: TagDao,
     private val photoDao: PhotoDao,
-    private val wishlistCafeDao: WishlistCafeDao
+    private val wishlistCafeDao: WishlistCafeDao,
+    private val beanDao: BeanDao? = null
 ) : CafeRepository {
 
     override fun getAllVisits(): Flow<List<CafeVisitWithDetails>> {
@@ -151,5 +155,114 @@ class CafeRepositoryImpl(
 
     override fun getAllTags(): Flow<List<String>> {
         return tagDao.getAllDistinctTags()
+    }
+
+    override fun getAllBeans(): Flow<List<Bean>> {
+        return beanDao?.getAllBeans() ?: emptyFlow()
+    }
+
+    override fun getBeansByStatus(status: String): Flow<List<Bean>> {
+        return beanDao?.getBeansByStatus(status) ?: emptyFlow()
+    }
+
+    override fun getBeanById(id: Long): Flow<Bean?> {
+        return beanDao?.getBeanById(id) ?: emptyFlow()
+    }
+
+    override suspend fun saveBean(bean: Bean): Long {
+        return beanDao?.insertBean(bean) ?: 0L
+    }
+
+    override suspend fun deleteBean(id: Long) {
+        beanDao?.deleteBeanById(id)
+    }
+
+    override suspend fun deductBeanWeight(id: Long, grams: Float) {
+        val bean = beanDao?.getBeanByIdSync(id) ?: return
+        val newWeight = (bean.weightRemaining - grams).coerceAtLeast(0f)
+        val newStatus = if (newWeight <= 0f) "FINISHED" else bean.status
+        beanDao.updateBean(bean.copy(weightRemaining = newWeight, status = newStatus))
+    }
+
+    override suspend fun preseedBeansIfEmpty() {
+        if (beanDao == null) return
+        val count = beanDao.getBeanCount()
+        if (count == 0) {
+            val now = System.currentTimeMillis()
+            val dayMs = 24 * 60 * 60 * 1000L
+            val initialBeans = listOf(
+                Bean(
+                    roaster = "Sey Coffee",
+                    name = "Rodrigo Sanchez • Purple Caturra",
+                    origin = "Colombia",
+                    process = "Cold Aerobic Fermentation",
+                    variety = "Purple Caturra",
+                    elevation = "1750m",
+                    roastDate = now - 9 * dayMs, // 9 days off roast (Peak Window)
+                    weightTotal = 250f,
+                    weightRemaining = 160f,
+                    tastingNotes = "Raspberry Jam, Pink Grapefruit, Floral Honey",
+                    status = "ACTIVE",
+                    notes = "Exceptional clarity on V60 (1:16.5 ratio). Sweet, sparkling acidity."
+                ),
+                Bean(
+                    roaster = "Tim Wendelboe",
+                    name = "Caballero • Geisha Lot 4",
+                    origin = "Honduras",
+                    process = "Washed",
+                    variety = "Geisha",
+                    elevation = "1600m",
+                    roastDate = now - 14 * dayMs, // 14 days off roast (Peak Window)
+                    weightTotal = 250f,
+                    weightRemaining = 90f,
+                    tastingNotes = "Jasmine, Bergamot, White Peach, Black Tea",
+                    status = "ACTIVE",
+                    notes = "Classic Nordic light roast profile. Silky body with floral finish."
+                ),
+                Bean(
+                    roaster = "April Coffee Copenhagen",
+                    name = "Volcan Azul • San Roque",
+                    origin = "Costa Rica",
+                    process = "Natural Anaerobic",
+                    variety = "San Roque",
+                    elevation = "1550m",
+                    roastDate = now - 3 * dayMs, // 3 days off roast (Degassing)
+                    weightTotal = 250f,
+                    weightRemaining = 250f,
+                    tastingNotes = "Strawberry Compote, Passion Fruit, Cacao Nibs",
+                    status = "ACTIVE",
+                    notes = "Resting window recommendation: best from day 10 onward."
+                ),
+                Bean(
+                    roaster = "Onyx Coffee Lab",
+                    name = "Tropical Weather",
+                    origin = "Ethiopia & Colombia",
+                    process = "Washed & Natural Blend",
+                    variety = "Heirloom & Caturra",
+                    elevation = "1900-2100m",
+                    roastDate = now - 28 * dayMs, // 28 days off roast (Past Peak / Finished)
+                    weightTotal = 340f,
+                    weightRemaining = 0f,
+                    tastingNotes = "Candied Plum, Dark Chocolate, Berry Jam",
+                    status = "FINISHED",
+                    notes = "Finished bag. Worked wonders as both batch brew and espresso."
+                ),
+                Bean(
+                    roaster = "La Cabra",
+                    name = "Worka Sakaro",
+                    origin = "Ethiopia",
+                    process = "Washed",
+                    variety = "Kurume & Dega",
+                    elevation = "2000-2200m",
+                    roastDate = now,
+                    weightTotal = 250f,
+                    weightRemaining = 250f,
+                    tastingNotes = "Meyer Lemon, Earl Grey, Apricot",
+                    status = "WISHLIST",
+                    notes = "High-altitude lot to order next season."
+                )
+            )
+            beanDao.insertBeans(initialBeans)
+        }
     }
 }

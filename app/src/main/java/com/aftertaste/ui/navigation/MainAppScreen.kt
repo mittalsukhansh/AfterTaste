@@ -8,9 +8,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Dashboard
 import androidx.compose.material.icons.filled.FreeBreakfast
+import androidx.compose.material.icons.filled.LocalCafe
 import androidx.compose.material.icons.filled.Map
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
@@ -36,6 +38,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.aftertaste.ui.analytics.SensoryAnalyticsScreen
 import com.aftertaste.ui.cafe.CafeDetailScreen
 import com.aftertaste.ui.cafe.CafeListScreen
 import com.aftertaste.ui.components.CoffeeCupIcon
@@ -48,14 +51,17 @@ import com.aftertaste.ui.theme.CoffeeClay
 import com.aftertaste.ui.theme.EspressoText
 import com.aftertaste.ui.theme.ParchmentCream
 import com.aftertaste.ui.theme.TerracottaAccent
+import com.aftertaste.ui.vault.BeanVaultScreen
 import com.aftertaste.ui.viewmodel.CafeViewModel
 import com.aftertaste.ui.visit.AddEditVisitScreen
 import com.aftertaste.ui.visit.VisitDetailScreen
 import com.aftertaste.ui.wishlist.WishlistScreen
 
 sealed class BottomTab(val route: String, val title: String, val icon: ImageVector) {
-    object Dashboard : BottomTab("dashboard", "Dashboard", Icons.Default.Dashboard)
+    object Dashboard : BottomTab("dashboard", "Journal", Icons.Default.Dashboard)
+    object Vault : BottomTab("vault", "Vault", Icons.Default.LocalCafe)
     object Directory : BottomTab("directory", "Cafes", Icons.Default.FreeBreakfast)
+    object Analytics : BottomTab("analytics", "Analytics", Icons.Default.AutoAwesome)
     object MapView : BottomTab("map", "Map", Icons.Default.Map)
     object Wishlist : BottomTab("wishlist", "Wishlist", Icons.Default.Bookmark)
     object Search : BottomTab("search", "Search", Icons.Default.Search)
@@ -81,8 +87,10 @@ fun AfterTasteTopAppBar(
 ) {
     val subtitleDash = when (currentDestination) {
         is AppDestination.Tab -> when (currentDestination.tab) {
-            BottomTab.Dashboard -> "dashboard"
+            BottomTab.Dashboard -> "journal"
+            BottomTab.Vault -> "bean vault"
             BottomTab.Directory -> "directory"
+            BottomTab.Analytics -> "analytics"
             BottomTab.MapView -> "map"
             BottomTab.Wishlist -> "wishlist"
             BottomTab.Search -> "search"
@@ -144,10 +152,10 @@ fun MainAppScreen(
     val bottomTabs = remember {
         listOf(
             BottomTab.Dashboard,
+            BottomTab.Vault,
             BottomTab.Directory,
+            BottomTab.Analytics,
             BottomTab.MapView,
-            BottomTab.Wishlist,
-            BottomTab.Search,
             BottomTab.Settings
         )
     }
@@ -243,6 +251,18 @@ fun MainAppScreen(
                             }
                         )
                     }
+                    BottomTab.Vault -> {
+                        BeanVaultScreen(
+                            viewModel = viewModel,
+                            modifier = Modifier.padding(innerPadding),
+                            onNavigateToBrewWithBean = { bean ->
+                                currentDestination = AppDestination.AddEditVisit(
+                                    prefilledCafeName = "${bean.roaster} - ${bean.name}",
+                                    prefilledLocation = bean.origin
+                                )
+                            }
+                        )
+                    }
                     BottomTab.Directory -> {
                         CafeListScreen(
                             viewModel = viewModel,
@@ -253,6 +273,12 @@ fun MainAppScreen(
                             onAddVisitClicked = {
                                 currentDestination = AppDestination.AddEditVisit()
                             }
+                        )
+                    }
+                    BottomTab.Analytics -> {
+                        SensoryAnalyticsScreen(
+                            viewModel = viewModel,
+                            modifier = Modifier.padding(innerPadding)
                         )
                     }
                     BottomTab.MapView -> {

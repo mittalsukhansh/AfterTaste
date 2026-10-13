@@ -3,6 +3,7 @@ package com.aftertaste.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aftertaste.data.local.entity.AccountUser
+import com.aftertaste.data.local.entity.Bean
 import com.aftertaste.data.local.entity.Cafe
 import com.aftertaste.data.local.entity.CafeVisit
 import com.aftertaste.data.local.entity.CafeVisitWithDetails
@@ -18,12 +19,19 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class CafeViewModel(
     private val repository: CafeRepository
 ) : ViewModel() {
+
+    init {
+        viewModelScope.launch {
+            repository.preseedBeansIfEmpty()
+        }
+    }
 
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
@@ -75,6 +83,21 @@ class CafeViewModel(
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = emptyList()
         )
+
+    val beans: StateFlow<List<Bean>> = repository.getAllBeans()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
+
+    val activeBeans: StateFlow<List<Bean>> = beans.map { beanList ->
+        beanList.filter { it.status == "ACTIVE" }
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = emptyList()
+    )
 
     fun setSearchQuery(query: String) {
         _searchQuery.value = query
@@ -166,5 +189,31 @@ class CafeViewModel(
             repository.removeFromWishlistByName(cafeName)
             syncCloudData()
         }
+    }
+
+    fun saveBean(bean: Bean, onComplete: (Long) -> Unit = {}) {
+        viewModelScope.launch {
+            val id = repository.saveBean(bean)
+            syncCloudData()
+            onComplete(id)
+        }
+    }
+
+    fun deleteBean(id: Long) {
+        viewModelScope.launch {
+            repository.deleteBean(id)
+            syncCloudData()
+        }
+    }
+
+    fun deductBeanWeight(id: Long, grams: Float) {
+        viewModelScope.launch {
+            repository.deductBeanWeight(id, grams)
+            syncCloudData()
+        }
+    }
+
+    fun getBeanById(id: Long): Flow<Bean?> {
+        return repository.getBeanById(id)
     }
 }

@@ -95,22 +95,26 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
-// Preset Vibe Tags
+// Preset Vibe & Sensory Descriptors (PRD Section 2.5)
 private val PRESET_TAGS = listOf(
+    "Floral & Jasmine",
+    "Stone Fruit",
+    "Citrus & Bergamot",
+    "Dark Chocolate",
+    "Caramel & Honey",
+    "Red Berries",
     "WorkFriendly",
     "Cozy",
     "Quiet",
-    "OatMilk",
+    "FastWifi",
+    "Artisanal",
     "GoodOutlets",
     "PetFriendly",
-    "Artisanal",
-    "GreatEspresso",
-    "Spacious",
-    "FastWifi"
+    "Spacious"
 )
 
 private val ROAST_PROFILES = listOf("Light Roast", "Medium Roast", "Dark Roast", "Omni Roast")
-private val BREW_METHODS = listOf("Espresso", "Pour Over", "Cold Brew", "Aeropress", "French Press")
+private val BREW_METHODS = listOf("Pour Over", "Espresso", "Batch Drip", "Cold Brew", "Milk Beverage")
 private val FOOD_SUGGESTIONS = listOf("Pizza", "Almond Croissant", "Cheesecake", "Avocado Toast", "Bagel", "Sandwich")
 
 private val SEATING_TYPES = listOf("Couch", "Bar", "Outdoor", "Mixed")
@@ -142,9 +146,11 @@ fun AddEditVisitScreen(
     var overallRating by remember { mutableFloatStateOf(4.0f) }
 
     // Coffee Beans & Roast
+    val activeBeans by viewModel.activeBeans.collectAsState()
+    var selectedBeanId by remember { mutableStateOf<Long?>(null) }
     var beanOrigin by remember { mutableStateOf("") }
-    var selectedRoastProfile by remember { mutableStateOf("Medium Roast") }
-    var selectedBrewMethod by remember { mutableStateOf("Espresso") }
+    var selectedRoastProfile by remember { mutableStateOf("Light Roast") }
+    var selectedBrewMethod by remember { mutableStateOf("Pour Over") }
 
     // Sub-scores
     var tasteRating by remember { mutableFloatStateOf(4.0f) }
@@ -152,6 +158,13 @@ fun AddEditVisitScreen(
     var seatingRating by remember { mutableFloatStateOf(4.0f) }
     var wifiRating by remember { mutableFloatStateOf(4.0f) }
     var serviceRating by remember { mutableFloatStateOf(4.0f) }
+
+    // 5-Axis Sensory Equilibrium Scores (0-100%)
+    var acidity by remember { mutableFloatStateOf(75f) }
+    var sweetness by remember { mutableFloatStateOf(75f) }
+    var body by remember { mutableFloatStateOf(65f) }
+    var clarity by remember { mutableFloatStateOf(80f) }
+    var bitterness by remember { mutableFloatStateOf(30f) }
 
     // Tags
     val selectedTags = remember { mutableStateListOf<String>() }
@@ -195,7 +208,13 @@ fun AddEditVisitScreen(
                 noiseLevel = v.noiseLevel ?: "Medium"
                 crowdLevel = v.crowdLevel ?: "Moderate"
                 wouldReturn = v.wouldReturn
-                notes = v.notes ?: ""
+                selectedBeanId = v.beanId
+                v.preparationMethod?.let { selectedBrewMethod = it }
+                v.acidity?.let { acidity = it.toFloat() }
+                v.sweetness?.let { sweetness = it.toFloat() }
+                v.body?.let { body = it.toFloat() }
+                v.clarity?.let { clarity = it.toFloat() }
+                v.bitterness?.let { bitterness = it.toFloat() }
 
                 selectedTags.clear()
                 selectedTags.addAll(details.tags.map { it.tagName })

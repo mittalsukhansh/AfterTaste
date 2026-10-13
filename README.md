@@ -1,7 +1,7 @@
 # AfterTaste
 
 [![Android](https://img.shields.io/badge/Platform-Android-green.svg)](https://developer.android.com)
-[![Release](https://img.shields.io/badge/Release-v1.0.0-orange.svg)](https://github.com/mittalsukhansh/AfterTaste/releases/tag/v1.0.0)
+[![Release](https://img.shields.io/badge/Release-v1.0.1-orange.svg)](https://github.com/mittalsukhansh/AfterTaste/releases/tag/v1.0.1)
 [![Kotlin](https://img.shields.io/badge/Language-Kotlin%202.2-blue.svg)](https://kotlinlang.org)
 [![Compose](https://img.shields.io/badge/UI-Jetpack%20Compose%20M3-brightgreen.svg)](https://developer.android.com/jetpack/compose)
 [![Room](https://img.shields.io/badge/Database-Room%20KSP-orange.svg)](https://developer.android.com/training/data-storage/room)
@@ -14,9 +14,10 @@
 
 | Version | Release Date | Download APK | Release Notes |
 |:---|:---|:---|:---|
-| **v1.0.0** (Latest) | October 2026 | [Download AfterTaste-v1.0.0.apk](https://github.com/mittalsukhansh/AfterTaste/releases/download/v1.0.0/AfterTaste-v1.0.0.apk) | [Changelog](https://github.com/mittalsukhansh/AfterTaste/releases/tag/v1.0.0) |
+| **v1.0.1** (Latest) | October 2026 | [Download AfterTaste-v1.0.1.apk](https://github.com/mittalsukhansh/AfterTaste/releases/download/v1.0.1/AfterTaste-v1.0.1.apk) | [Changelog](https://github.com/mittalsukhansh/AfterTaste/releases/tag/v1.0.1) |
+| **v1.0.0** | October 2026 | [Download AfterTaste-v1.0.0.apk](https://github.com/mittalsukhansh/AfterTaste/releases/download/v1.0.0/AfterTaste-v1.0.0.apk) | [Changelog](https://github.com/mittalsukhansh/AfterTaste/releases/tag/v1.0.0) |
 
-> **Direct APK Installation**: Download `AfterTaste-v1.0.0.apk` directly on your Android device (Android 7.0+ / API 24+) and install. Ensure "Install unknown apps" permission is enabled in your device settings.
+> **Direct APK Installation**: Download `AfterTaste-v1.0.1.apk` directly on your Android device (Android 7.0+ / API 24+) and install. Ensure "Install unknown apps" permission is enabled in your device settings.
 
 ---
 

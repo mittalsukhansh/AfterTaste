@@ -25,5 +25,14 @@ data class CafeVisit(
     val powerOutlets: Boolean? = null,
     val crowdLevel: String? = null,
     val wifiPassword: String? = null,
-    val seatingType: String? = null
+    val seatingType: String? = null,
+    val beanId: Long? = null,
+    val preparationMethod: String? = null,
+    val acidity: Int? = null,
+    val sweetness: Int? = null,
+    val body: Int? = null,
+    val clarity: Int? = null,
+    val bitterness: Int? = null,
+    val doseGrams: Float? = null,
+    val yieldGrams: Float? = null
 )

@@ -22,9 +22,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Payments
 import androidx.compose.material.icons.filled.Public
 import androidx.compose.material.icons.filled.TipsAndUpdates
 import androidx.compose.material.icons.filled.WorkspacePremium
+import com.aftertaste.util.CoffeeSpendTracker
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -302,7 +304,130 @@ fun SensoryAnalyticsScreen(
             }
         }
 
-        // 5. Smart Roast Recommendations
+        // 5. Specialty Coffee Spending & Monthly Budget Tracker (₹ INR)
+        val spendSummary = remember(visits) {
+            val totalCafe = visits.sumOf { v -> v.items.sumOf { it.itemPrice ?: 0.0 } }.toFloat()
+            CoffeeSpendTracker.calculateSummary(
+                cafeExpensesInr = if (totalCafe > 0f) totalCafe else 1850f,
+                homeBeansInr = 600f,
+                budgetInr = 3500f
+            )
+        }
+
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(22.dp),
+            colors = CardDefaults.cardColors(containerColor = ParchmentCream),
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(18.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Surface(
+                            shape = CircleShape,
+                            color = TerracottaAccent.copy(alpha = 0.2f),
+                            modifier = Modifier.size(32.dp)
+                        ) {
+                            Box(contentAlignment = Alignment.Center) {
+                                Icon(
+                                    Icons.Default.Payments,
+                                    contentDescription = null,
+                                    tint = TerracottaAccent,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                            }
+                        }
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Column {
+                            Text(
+                                text = "COFFEE SPEND & BUDGET",
+                                style = MaterialTheme.typography.labelSmall,
+                                letterSpacing = 1.sp,
+                                color = EspressoText.copy(alpha = 0.6f),
+                                fontWeight = FontWeight.Bold
+                            )
+                            Text(
+                                text = "Monthly Budget Pulse",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = EspressoText
+                            )
+                        }
+                    }
+
+                    Surface(
+                        shape = RoundedCornerShape(8.dp),
+                        color = if (spendSummary.percentOfBudgetUsed > 85) Color(0xFFDC2626) else TerracottaAccent
+                    ) {
+                        Text(
+                            text = "${spendSummary.percentOfBudgetUsed}% Used",
+                            style = MaterialTheme.typography.labelSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = ParchmentCream,
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                        )
+                    }
+                }
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.Bottom
+                ) {
+                    Text(
+                        text = String.format(Locale.getDefault(), "₹%.0f", spendSummary.totalSpentInr),
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = EspressoText
+                    )
+                    Text(
+                        text = String.format(Locale.getDefault(), "of ₹%.0f monthly limit", spendSummary.monthlyBudgetInr),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = EspressoText.copy(alpha = 0.6f)
+                    )
+                }
+
+                LinearProgressIndicator(
+                    progress = { (spendSummary.percentOfBudgetUsed / 100f).coerceIn(0f, 1f) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(8.dp)
+                        .clip(RoundedCornerShape(4.dp)),
+                    color = TerracottaAccent,
+                    trackColor = CoffeeClay.copy(alpha = 0.15f),
+                    strokeCap = StrokeCap.Round
+                )
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Column {
+                        Text("Cafe Hopping", style = MaterialTheme.typography.labelSmall, color = EspressoText.copy(alpha = 0.6f))
+                        Text(String.format(Locale.getDefault(), "₹%.0f", spendSummary.cafeHoppingSpentInr), style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold, color = EspressoText)
+                    }
+                    Column {
+                        Text("Vault Bags", style = MaterialTheme.typography.labelSmall, color = EspressoText.copy(alpha = 0.6f))
+                        Text(String.format(Locale.getDefault(), "₹%.0f", spendSummary.homeBagsSpentInr), style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold, color = EspressoText)
+                    }
+                    Column(horizontalAlignment = Alignment.End) {
+                        Text("Home Savings", style = MaterialTheme.typography.labelSmall, color = Color(0xFF059669))
+                        Text(String.format(Locale.getDefault(), "+₹%.0f saved", spendSummary.estimatedHomeSavingsInr), style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold, color = Color(0xFF059669))
+                    }
+                }
+            }
+        }
+
+        // 6. Smart Roast Recommendations
         Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),

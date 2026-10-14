@@ -33,6 +33,7 @@ import androidx.compose.material.icons.filled.Payments
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material.icons.filled.Whatshot
 import androidx.compose.material.icons.filled.Wifi
 import androidx.compose.material.icons.filled.WorkspacePremium
@@ -43,6 +44,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import com.aftertaste.ui.components.BrewTimerDialog
+import com.aftertaste.data.local.entity.PassportBadgeCatalog
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -94,6 +97,7 @@ fun DashboardScreen(
     val stats = remember(visits) { StatsHelper.calculateStats(visits) }
 
     var selectedBadgeForModal by remember { mutableStateOf<CoffeeBadge?>(null) }
+    var showBrewTimer by remember { mutableStateOf(false) }
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -162,8 +166,82 @@ fun DashboardScreen(
                 onNavigateToWishlist = onNavigateToWishlist,
                 onNavigateToMapView = onNavigateToMapView,
                 onNavigateToSearch = onNavigateToSearch,
-                onNavigateToSettings = onNavigateToSettings
+                onNavigateToSettings = onNavigateToSettings,
+                onOpenBrewTimer = { showBrewTimer = true }
             )
+
+            // Smart Brew Dial-in Quick Card
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { showBrewTimer = true },
+                shape = RoundedCornerShape(20.dp),
+                colors = CardDefaults.cardColors(containerColor = EspressoText),
+                elevation = CardDefaults.cardElevation(defaultElevation = 3.dp)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Surface(
+                            shape = CircleShape,
+                            color = TerracottaAccent,
+                            modifier = Modifier.size(44.dp)
+                        ) {
+                            Box(contentAlignment = Alignment.Center) {
+                                Icon(
+                                    imageVector = Icons.Default.Timer,
+                                    contentDescription = null,
+                                    tint = EspressoText,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            }
+                        }
+                        Column {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Text(
+                                    text = "Smart Pour Timer & Ratios",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = ParchmentCream
+                                )
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Surface(
+                                    shape = RoundedCornerShape(4.dp),
+                                    color = TerracottaAccent
+                                ) {
+                                    Text(
+                                        text = "NEW",
+                                        style = MaterialTheme.typography.labelSmall,
+                                        fontWeight = FontWeight.Bold,
+                                        color = EspressoText,
+                                        modifier = Modifier.padding(horizontal = 4.dp, vertical = 1.dp)
+                                    )
+                                }
+                            }
+                            Text(
+                                text = "V60 • AeroPress • French Press • Moka Pot",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = ParchmentCream.copy(alpha = 0.75f)
+                            )
+                        }
+                    }
+
+                    Icon(
+                        imageVector = Icons.Default.ChevronRight,
+                        contentDescription = "Open Timer",
+                        tint = TerracottaAccent
+                    )
+                }
+            }
 
             // 2. Key Stats Summary Cards Carousel/Row
             Text(
@@ -190,7 +268,7 @@ fun DashboardScreen(
                 item {
                     StatSummaryCard(
                         title = "Total Spend",
-                        value = String.format(Locale.getDefault(), "$%.2f", stats.totalSpend),
+                        value = String.format(Locale.getDefault(), "₹%.0f", stats.totalSpend),
                         subtitle = "Coffee Journal",
                         icon = Icons.Default.Payments,
                         containerColor = ParchmentCream
@@ -342,6 +420,12 @@ fun DashboardScreen(
             onDismiss = { selectedBadgeForModal = null }
         )
     }
+
+    if (showBrewTimer) {
+        BrewTimerDialog(
+            onDismiss = { showBrewTimer = false }
+        )
+    }
 }
 
 @Composable
@@ -351,6 +435,7 @@ fun QuickActionBar(
     onNavigateToMapView: () -> Unit,
     onNavigateToSearch: () -> Unit,
     onNavigateToSettings: () -> Unit,
+    onOpenBrewTimer: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -362,7 +447,7 @@ fun QuickActionBar(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 12.dp, horizontal = 8.dp),
+                .padding(vertical = 12.dp, horizontal = 6.dp),
             horizontalArrangement = Arrangement.SpaceAround,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -371,6 +456,12 @@ fun QuickActionBar(
                 label = "+ Add",
                 onClick = onNavigateToAddVisit,
                 isPrimary = true
+            )
+
+            QuickActionButton(
+                icon = Icons.Default.Timer,
+                label = "Brew",
+                onClick = onOpenBrewTimer
             )
 
             QuickActionButton(

@@ -448,7 +448,7 @@ fun VisitDetailScreen(
                                     Row(verticalAlignment = Alignment.CenterVertically) {
                                         if (item.itemPrice != null) {
                                             Text(
-                                                text = String.format(Locale.getDefault(), "$%.2f", item.itemPrice),
+                                                text = String.format(Locale.getDefault(), "₹%.0f", item.itemPrice),
                                                 style = MaterialTheme.typography.bodySmall,
                                                 fontWeight = FontWeight.Bold,
                                                 color = TerracottaAccent
@@ -481,14 +481,14 @@ fun VisitDetailScreen(
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Text(
-                                        text = String.format(Locale.getDefault(), "Total Spend: $%.2f", totalSpend),
+                                        text = String.format(Locale.getDefault(), "Total Spend: ₹%.0f", totalSpend),
                                         style = MaterialTheme.typography.bodySmall,
                                         fontWeight = FontWeight.Bold,
                                         color = EspressoText
                                     )
 
                                     Text(
-                                        text = String.format(Locale.getDefault(), "Ratio: %.2f pts/$", priceToQualityRatio),
+                                        text = String.format(Locale.getDefault(), "Ratio: %.2f pts/₹", priceToQualityRatio),
                                         style = MaterialTheme.typography.bodySmall,
                                         fontWeight = FontWeight.Bold,
                                         color = TerracottaAccent

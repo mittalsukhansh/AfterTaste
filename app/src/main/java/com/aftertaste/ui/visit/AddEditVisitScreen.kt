@@ -556,7 +556,7 @@ fun AddEditVisitScreen(
                                     )
                                     Row(verticalAlignment = Alignment.CenterVertically) {
                                         Text(
-                                            text = String.format(Locale.getDefault(), "$%.2f", item.price),
+                                            text = String.format(Locale.getDefault(), "₹%.0f", item.price),
                                             style = MaterialTheme.typography.bodySmall,
                                             fontWeight = FontWeight.SemiBold,
                                             color = TerracottaAccent
@@ -601,7 +601,7 @@ fun AddEditVisitScreen(
                                         color = EspressoText.copy(alpha = 0.7f)
                                     )
                                     Text(
-                                        text = String.format(Locale.getDefault(), "$%.2f", totalSpend),
+                                        text = String.format(Locale.getDefault(), "₹%.0f", totalSpend),
                                         style = MaterialTheme.typography.titleMedium,
                                         fontWeight = FontWeight.Bold,
                                         color = EspressoText
@@ -615,7 +615,7 @@ fun AddEditVisitScreen(
                                         color = EspressoText.copy(alpha = 0.7f)
                                     )
                                     Text(
-                                        text = String.format(Locale.getDefault(), "%.2f pts/$", priceToQualityRatio),
+                                        text = String.format(Locale.getDefault(), "%.2f pts/₹", priceToQualityRatio),
                                         style = MaterialTheme.typography.titleMedium,
                                         fontWeight = FontWeight.Bold,
                                         color = TerracottaAccent
@@ -1111,7 +1111,7 @@ private fun AddItemDialog(
                 OutlinedTextField(
                     value = itemPriceText,
                     onValueChange = { itemPriceText = it },
-                    label = { Text("Price ($)") },
+                    label = { Text("Price (₹)") },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                     colors = customOutlinedTextFieldColors()

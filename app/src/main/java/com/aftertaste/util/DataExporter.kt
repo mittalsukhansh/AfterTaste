@@ -30,7 +30,7 @@ object DataExporter {
 
         for (details in visits) {
             val v = details.visit
-            val itemsStr = details.items.joinToString(";") { "${it.itemName} ($${it.itemPrice ?: 0.0})" }
+            val itemsStr = details.items.joinToString(";") { "${it.itemName} (₹${it.itemPrice ?: 0.0})" }
             val tagsStr = details.tags.joinToString(";") { it.tagName }
             val formattedDate = dateFormatter.format(Date(v.visitDate))
 
